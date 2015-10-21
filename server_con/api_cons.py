@@ -64,7 +64,7 @@ class SendSpace(object):
         except Exception as e2:
           print("Error: " + str(e) + ' ' + str(e2))
           exit()
-    # generate image from cat API
+    # generate image from cat API: http://thecatapi.com
     fd = urlopen('http://thecatapi.com/api/images/get?format=src&type=jpg')
 
     f = open('image.jpg', 'wb') # TODO:// currently saves image to local dir. use only in memory. 
@@ -95,22 +95,22 @@ class SendSpace(object):
     return b.getvalue().decode('utf-8')
 
 sendSpace = SendSpace("") # TODO:// send filename to encrypt inside image
-#try:
-con_r = sendSpace.connect()
-parsed_con_r = sendSpace.parseXML(con_r)
-upl_r = sendSpace.uploadImage(parsed_con_r)
-parsed_upl_r = sendSpace.parseXML(upl_r)
-
 try:
-  sendSpace.image_data['download_url'] = parsed_upl_r.download_url.string
-  sendSpace.image_data['delete_url'] = parsed_upl_r.delete_url.string
-except Exception as e:
-  try: 
-    print("Error parsing info for upload: " + str(parsed_upl_r.body))
-    exit()
-  except Exception as e2:
-    print("Error: " + str(e) + ' ' + str(e2))
-    exit()
-print(sendSpace.image_data['download_url'])
-#except Exception as e: 
-#  print("Cannot upload at this time: " + str(e))
+  con_r = sendSpace.connect()
+  parsed_con_r = sendSpace.parseXML(con_r)
+  upl_r = sendSpace.uploadImage(parsed_con_r)
+  parsed_upl_r = sendSpace.parseXML(upl_r)
+
+  try:
+    sendSpace.image_data['download_url'] = parsed_upl_r.download_url.string
+    sendSpace.image_data['delete_url'] = parsed_upl_r.delete_url.string
+  except Exception as e:
+    try: 
+      print("Error parsing info for upload: " + str(parsed_upl_r.body))
+      exit()
+    except Exception as e2:
+      print("Error: " + str(e) + ' ' + str(e2))
+      exit()
+  print(sendSpace.image_data['download_url'])
+except Exception as e: 
+  print("Cannot upload at this time: " + str(e))
