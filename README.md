@@ -17,7 +17,10 @@ Sprint broken into three sub-goals:
 ###Sprint 3: Beta release
   Basic stand-alone application to encode/decode a local covert file-system using the The Cat API as a source of images that is able to store, open, and delete files from the covert file-system. 
     
-##Setup: Python 3, pip3 (pip3 install -r utls/requirements.txt)
+##Setup: 
+  Covert FS is written in Python 3. 
+  Dependencies:
+    python3, pip3 (pip3 install -r utls/requirements.txt)
 
 ##Usage: 
   - View current directory
