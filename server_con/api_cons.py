@@ -2,8 +2,9 @@ import config # api keys
 from bs4 import BeautifulSoup # parse XML response
 import pycurl # send requests
 from urllib.parse import urlencode # encode parameters for get request
+from urllib.request import urlopen
 from io import BytesIO # read post response 
-from os.path import realpath # get absolute path for image upload TODO:// remove, use cat API
+import os # TODO:// delete temp image
 
 class SendSpace(object):
   # class variables
@@ -21,7 +22,6 @@ class SendSpace(object):
     connect_params = {'method':'anonymous.uploadGetInfo', 'api_key':self.api_key, 'api_version':1.0}
     
     # get request to get info for anonymous upload
-    # TODO:// error handling
     c = pycurl.Curl()
     c.setopt(c.URL, self.sendspace_url + '?' + urlencode(connect_params))
     c.setopt(c.HTTPGET, 1)
@@ -64,13 +64,17 @@ class SendSpace(object):
         except Exception as e2:
           print("Error: " + str(e) + ' ' + str(e2))
           exit()
-    # TODO:// generate image from cat API
-    filename = realpath('duca2.jpg')
-    
+    # generate image from cat API
+    fd = urlopen('http://thecatapi.com/api/images/get?format=src&type=jpg')
+
+    f = open('image.jpg', 'wb') # TODO:// currently saves image to local dir. use only in memory. 
+    f.write(fd.read())
+    f.close()
+        
     # parameters for anonymous image upload
     post_params = [
       ('extra_info', upl_extra_info),
-      ('userfile', (pycurl.FORM_FILE, filename,)),
+      ('userfile', (pycurl.FORM_FILE, 'image.jpg',)),
     ]
 
     # post request to upload image
@@ -82,25 +86,31 @@ class SendSpace(object):
     c.perform()
     c.close()
 
+    # delete image file
+    if os.path.exists('image.jpg'):
+      os.remove('image.jpg')
+    else:
+      print("Cannot remove tmp image: image.jpg")
+
     return b.getvalue().decode('utf-8')
 
-sendSpace = SendSpace("")
-try:
-  con_r = sendSpace.connect()
-  parsed_con_r = sendSpace.parseXML(con_r)
-  upl_r = sendSpace.uploadImage(parsed_con_r)
-  parsed_upl_r = sendSpace.parseXML(upl_r)
+sendSpace = SendSpace("") # TODO:// send filename to encrypt inside image
+#try:
+con_r = sendSpace.connect()
+parsed_con_r = sendSpace.parseXML(con_r)
+upl_r = sendSpace.uploadImage(parsed_con_r)
+parsed_upl_r = sendSpace.parseXML(upl_r)
 
-  try:
-    sendSpace.image_data['download_url'] = parsed_upl_r.download_url.string
-    sendSpace.image_data['delete_url'] = parsed_upl_r.delete_url.string
-  except Exception as e:
-    try: 
-      print("Error parsing info for upload: " + str(parsed_upl_r.body))
-      exit()
-    except Exception as e2:
-      print("Error: " + str(e) + ' ' + str(e2))
-      exit()
-  print(sendSpace.image_data['download_url'])
-except Exception as e: 
-  print("Cannot upload at this time: " + str(e))
+try:
+  sendSpace.image_data['download_url'] = parsed_upl_r.download_url.string
+  sendSpace.image_data['delete_url'] = parsed_upl_r.delete_url.string
+except Exception as e:
+  try: 
+    print("Error parsing info for upload: " + str(parsed_upl_r.body))
+    exit()
+  except Exception as e2:
+    print("Error: " + str(e) + ' ' + str(e2))
+    exit()
+print(sendSpace.image_data['download_url'])
+#except Exception as e: 
+#  print("Cannot upload at this time: " + str(e))
