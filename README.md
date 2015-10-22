@@ -7,9 +7,14 @@ It's covert and stuff.
 
 ###Sprint 1: Knowledge aquisition
 Sprint broken into three sub-goals: 
-  1. Implement basic step module to encode and decode an image in Python.
-  2. Determine a suitable social media site that meets our requirements (anonymous user upload, no or lossless compression).
-  3. Design and implement basic upload application in Python for the selected social media site.
+  1. Implement basic steg module to encode and decode an image in Python 
+    - `$ python3 Image\ Manipulation/lsbsteg.py [encode/decode] [image_path] [message]`
+    - encode saves a copy of the image_path with a _1 appended encoded with the message
+    - decode prints the encoded message in the image_path
+  2. Determine a suitable social media site that meets our requirements (anonymous user upload, no or lossless compression)
+  3. Design and implement basic upload application in Python for the selected social media site 
+    - `$ python3 Web\ Connection/api_cons.py`
+    - returns the download url for the uploaded random cat image (stores the delete URL as well)
 
 ###Sprint 2: Covert Mapping Structure
   Design the map structure for the covert file system to allow maximum flexibility and usability. Break large files into parts to encode in a large file across multiple images. 
