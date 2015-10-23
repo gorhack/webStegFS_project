@@ -8,8 +8,8 @@ It's covert and stuff.
 ###Sprint 1: Knowledge aquisition
 Sprint broken into three sub-goals: 
   1. Implement basic steg module to encode and decode an image in Python 
-    - `$ python3 Image\ Manipulation/lsbsteg.py [encode/decode] [image_path] [message]`
-    - encode saves a copy of the image_path with a _1 appended encoded with the message
+    - `$ python3 Image\ Manipulation/lsbsteg.py [encode/decode] --image_path [image_path] --message [message]`
+    - encode saves a copy of the image_path with a '_1' appended encoded with the message
     - decode prints the encoded message in the image_path
   2. Determine a suitable social media site that meets our requirements (anonymous user upload, no or lossless compression)
   3. Design and implement basic upload application in Python for the selected social media site 
@@ -26,6 +26,7 @@ Sprint broken into three sub-goals:
   Covert FS is written in Python 3. 
   Dependencies:
     python3, pip3 (pip3 install -r utls/requirements.txt)
+    config.py file in /Web\ Connection/ containing `key='API KEY GOES HERE'`
 
 ##Usage: 
   - View current directory
