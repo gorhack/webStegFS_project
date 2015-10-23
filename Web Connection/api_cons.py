@@ -111,6 +111,7 @@ try: # poor error handling with blanket try
     except Exception as e2:
       print("Error: " + str(e) + ' ' + str(e2))
       exit()
-  print(sendSpace.image_data['download_url'])
+  print('download url: ' + sendSpace.image_data['download_url'])
+  print('delete url: ' + sendSpace.image_data['delete_url'])
 except Exception as e: 
   print("Cannot upload at this time: " + str(e))

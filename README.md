@@ -30,10 +30,14 @@ Sprint broken into three sub-goals:
     - returns the download url for the uploaded random cat image (stores the delete URL as well)
 
 ###Sprint 2: Covert Mapping Structure
-Sprint broken into three sub-goals
+Sprint broken into four sub-goals
   1. Design the map structure for the covert file system to allow maximum flexibility and usability. 
   2. Break a large message file into parts to encode across multiple images. 
   3. Begin to add API connection and Encode/Decoder into Application. 
+  4. From previous Sprint: 
+      - Keep all images in memory
+      - Error handling in API connection
+      - Enforce restrictions on arguments in encode/decode
 
 ###Sprint 3: Beta release
   Basic stand-alone application to encode/decode a local covert file-system that is able to store, open, and delete files from the covert file-system. Command line program will work similar to a unix based directory system. 
