@@ -8,12 +8,7 @@ It's covert and stuff.
   
   - Dependencies:
     - python3, pip3 `pip3 install -r utls/requirements.txt`
-<<<<<<< HEAD
-    - config.py file in /Web Connection/ containing `key='API KEY GOES HERE'`
-=======
     - config.py file in /Web\ Connection/ containing `key='API KEY GOES HERE'`
->>>>>>> 857ceb0c8608db50a29b263690e12b637cd3e0e8
-
 
 ##Sprints: 
 
