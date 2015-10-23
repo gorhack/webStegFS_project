@@ -1,6 +1,3 @@
-#import sys
-#import argparse
-#import hashlib
 from PIL import Image
 import argparse
 import os
@@ -16,7 +13,7 @@ class Steg(object):
         self.uploaded = False
         self.action = args.action
         self.message = args.message
-        self.image_path = args.image_path
+        self.image = args.image
 
     def assignImage(self, name):
         try:
@@ -164,22 +161,20 @@ class Steg(object):
 if __name__ == '__main__':
   parser = argparse.ArgumentParser(description='Encode or decode message within an image with LSB encoding.')
   parser.add_argument('action', choices=['encode', 'decode'], help='Encode or decode image.')
-  parser.add_argument('--image_path', default='', help='Path to image') # local or relative 
-  parser.add_argument('--message', default='', help='Message to encode in image') # change to file path
+  parser.add_argument('-i', '--image', default='', required=True, help='Path to image') # local or relative 
+  parser.add_argument('-m', '--message', default='', help='Message to encode in image') # change to file path
 
-  # TODO:// if encoding image path and message required
-  # TODO:// if decoding image name required
   args = parser.parse_args()
   steg = Steg() #creates the object
   if (steg.action == 'encode'):
     # TODO:// error handling on params
-    newImageName = os.path.splitext(steg.image_path)[0] + '_1.png'
-    print('encoding ' + steg.message + ' to ' + steg.image_path + ' as ' + newImageName)
-    steg.assignImage(steg.image_path)
+    newImageName = os.path.splitext(steg.image)[0] + '_1.png'
+    print('encoding \"' + steg.message + '\" to ' + steg.image + ' as ' + newImageName)
+    steg.assignImage(steg.image)
     steg.encode(steg.message, newImageName)
   else: 
-    print('decoding ' + steg.image_path)
-    print(steg.decode(steg.image_path))
+    print('decoding ' + steg.image)
+    print(steg.decode(steg.image))
 
 def test(testNum, imageName, newImageName, message, predicted):
     steg = Steg()

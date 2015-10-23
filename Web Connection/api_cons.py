@@ -94,7 +94,7 @@ class SendSpace(object):
 
     return b.getvalue().decode('utf-8')
 
-sendSpace = SendSpace("") # TODO:// send filename to encrypt inside image
+sendSpace = SendSpace("") # TODO:// send filename to encode inside image
 try: # poor error handling with blanket try
   con_r = sendSpace.connect()
   parsed_con_r = sendSpace.parseXML(con_r)
