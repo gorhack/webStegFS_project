@@ -4,10 +4,11 @@ It's covert and stuff.
   A web-based application that allows users to covertly share files through social media sites while maintaining plausible deniability for both the user(s) and the social media site. 
 
 ##Setup: 
-  Covert FS is written in Python 3. 
-  Dependencies:
-    python3, pip3 (pip3 install -r utls/requirements.txt)
-    config.py file in /Web\ Connection/ containing `key='API KEY GOES HERE'`
+  Covert FS is written exclusively in Python 3 due to the vast modules and libraries that support our goals. 
+  
+  - Dependencies:
+    - python3, pip3 `pip3 install -r utls/requirements.txt`
+    - config.py file in /Web Connection/ containing `key='API KEY GOES HERE'`
 
 
 ##Sprints: 
@@ -19,15 +20,23 @@ Sprint broken into three sub-goals:
     - encode saves a copy of the image_path with a '_1' appended encoded with the message
     - decode prints the encoded message in the image_path
   2. Determine a suitable social media site that meets our requirements (anonymous user upload, no or lossless compression)
+    - social media sites investigated:
+      - SendSpace
+      - Whisper
+      - Flickr
+      - Yogile
   3. Design and implement basic upload application in Python for the selected social media site 
-    - `$ python3 Web\ Connection/api_cons.py`
+    - `$ python3 Web Connection/api_cons.py`
     - returns the download url for the uploaded random cat image (stores the delete URL as well)
 
 ###Sprint 2: Covert Mapping Structure
-  Design the map structure for the covert file system to allow maximum flexibility and usability. Break large files into parts to encode in a large file across multiple images. 
+Sprint broken into three sub-goals
+  1. Design the map structure for the covert file system to allow maximum flexibility and usability. 
+  2. Break a large message file into parts to encode across multiple images. 
+  3. Begin to add API connection and Encode/Decoder into Application. 
 
 ###Sprint 3: Beta release
-  Basic stand-alone application to encode/decode a local covert file-system using the The Cat API as a source of images that is able to store, open, and delete files from the covert file-system. 
+  Basic stand-alone application to encode/decode a local covert file-system that is able to store, open, and delete files from the covert file-system. Command line program will work similar to a unix based directory system. 
 
 ##Usage: 
   - View current directory
