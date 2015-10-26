@@ -11,6 +11,7 @@ class SendSpace(object):
   sendspace_url = 'http://api.sendspace.com/rest/'
   api_key = config.key
   image_data = {}
+  
   def __init__(self, file):
     self.file = file
   

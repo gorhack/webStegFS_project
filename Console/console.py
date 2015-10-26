@@ -90,7 +90,4 @@ class Console(cmd.Cmd):
             exec(line) in self._locals, self._globals
         except Exception as e:
             print(e.__class__, ":", e)
-
-if __name__ == '__main__':
-        console = Console()
-        console . cmdloop() 
+            
