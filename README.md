@@ -7,7 +7,7 @@ It's covert and stuff.
   Covert FS is written exclusively in Python 3 due to the vast modules and libraries that support our goals. 
   
   - Dependencies:
-    - python3, pip3 `pip3 install -r utls/requirements.txt`
+    - python3, pip3 `$ pip3 install -r utls/requirements.txt`
     - config.py file in /Web\ Connection/ containing `key='API KEY GOES HERE'`
 
 ##Sprints: 
@@ -32,11 +32,16 @@ Sprint broken into three sub-goals:
 Sprint broken into four sub-goals
   1. Design the map structure for the covert file system to allow maximum flexibility and usability. 
   2. Break a large message file into parts to encode across multiple images. 
+    - Analysis of how much data can be encoded using LSB
+    - Determine file system overhead in each image 
   3. Begin to add API connection and Encode/Decoder into Application. 
-  4. From previous Sprint: 
-      - Keep all images in memory
-      - Error handling in API connection
-      - Enforce restrictions on arguments in encode/decode
+    - `$ python3 main.py`
+    - `covertFS$ [command]`
+  4. Functional Design Documents
+  5. From previous Sprint: 
+    - Keep all images in memory
+    - Error handling in API connection
+    - Enforce restrictions on arguments in encode/decode
 
 ###Sprint 3: Beta release
   Basic stand-alone application to encode/decode a local covert file-system that is able to store, open, and delete files from the covert file-system. Command line program will work similar to a unix based directory system. 
