@@ -66,7 +66,7 @@ class SendSpace(object):
           print("Error: " + str(e) + ' ' + str(e2))
           exit()
     # generate image from cat API: http://thecatapi.com
-    fd = urlopen('http://thecatapi.com/api/images/get?format=src&type=jpg')
+    fd = urlopen('http://thecatapi.com/api/images/get?format=src&type=png')
 
     f = open('image.jpg', 'wb') # TODO:// currently saves image to local dir. use only in memory. 
     f.write(fd.read())
