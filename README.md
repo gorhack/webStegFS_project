@@ -50,15 +50,15 @@ Sprint broken into four sub-goals
   - `$ python3 main.py [url of folder/root]`
   - `covertFS$ [command]`
   - commands (default path current dir):
-    - ls [path]
-    - cd [path]
-    - addFile [local path] [covert path]
-    - rm [path]
-    - addMessage [name] [text] [path]: add txt file to path
-    - mkdir [path]
-    - rmdir [path] [--recursive]
-    - saveToDisk [covert path] [local path]: save a covert file to disk
-    - exit
+    - `ls [path]`
+    - `cd [path]`
+    - `addFile [local path] [covert path]`
+    - `rm [path]`
+    - `addMessage [name] [text] [path]: add txt file to path`
+    - `mkdir [path]`
+    - `rmdir [path] [--recursive]`
+    - `saveToDisk [covert path] [local path]: save a covert file to disk`
+    - `exit`
 
 ##Testing:
   - 26 tests in lsbsteg.py for varying length text encodings. 
