@@ -11,6 +11,7 @@ class SendSpace(object):
   sendspace_url = 'http://api.sendspace.com/rest/'
   api_key = config.key
   image_data = {}
+  
   def __init__(self, file):
     self.file = file
   
@@ -65,7 +66,7 @@ class SendSpace(object):
           print("Error: " + str(e) + ' ' + str(e2))
           exit()
     # generate image from cat API: http://thecatapi.com
-    fd = urlopen('http://thecatapi.com/api/images/get?format=src&type=jpg')
+    fd = urlopen('http://thecatapi.com/api/images/get?format=src&type=png')
 
     f = open('image.jpg', 'wb') # TODO:// currently saves image to local dir. use only in memory. 
     f.write(fd.read())
@@ -111,6 +112,7 @@ try: # poor error handling with blanket try
     except Exception as e2:
       print("Error: " + str(e) + ' ' + str(e2))
       exit()
-  print(sendSpace.image_data['download_url'])
+  print('download url: ' + sendSpace.image_data['download_url'])
+  print('delete url: ' + sendSpace.image_data['delete_url'])
 except Exception as e: 
   print("Cannot upload at this time: " + str(e))
