@@ -1,33 +1,32 @@
-import sys
-import argparse
-import hashlib
 from PIL import Image
-from io import BytesIO
 from urllib.request import urlopen
+from io import BytesIO
 
-#CDT Sjoholm learned how to work with byte streams from http://xlsxwriter.readthedocs.org/example_images_bytesio.html
+
 
 class Steg(object):
 
     name = None
     uploaded = False
     SIZE_FIELD_LEN = 64
-    imageBuffer = None
+    image = None
 
     def __int__(self):
         self.name = None
         self.uploaded = False
 
     def assignImage(self, url):
-        image_data = BytesIO(urlopen(url).read())
-        image_file = open("test2.png", "rb")
-        image_data = BytesIO(image_file.read())
+        #learned how to make image from byte stream from http://stackoverflow.com/questions/7391945/how-do-i-read-image-data-from-a-url-in-python
+        try:
+            file_data = BytesIO(urlopen(url).read())
+            image_file = Image.open(file_data)
+            self.image = image_file
+            self.uploaded = True
+        except:
+            self.uploaded = False
 
-        image = Image.open(image_file)
-        self.imageBuffer = image
-
-
-    #cite the git Kyle got this from!!!!!!!!
+    #note: as mentioned in sprint 1, the algorithm and most functions within encode came from a 
+    #git repo that CDT Gorak found. Go to Trello Board for the git repo.
     def encode(self, msg, newImageName):
 
         if type(msg) is not str:
@@ -36,8 +35,8 @@ class Steg(object):
         if type(newImageName) is not str:
             raise Exception("The name of the new image needs to be a string")
 
-        #if not self.uploaded:
-            #raise Exception("Use the assignImage method to select an image within the directory")
+        if not self.uploaded:
+            raise Exception("Use the assignImage method to select an image within the directory")
 
         def formatImage(newImageName):
             if newImageName[-4:-1] + newImageName[-1] is not ".png":
@@ -100,11 +99,7 @@ class Steg(object):
             return bits_from_bytes(s.encode('utf-8')) 
             return bits
 
-
-
-        image = self.imageBuffer
-        #newImageName = formatImage(newImageName)
-        
+        image = self.image
         embed(msg, image, newImageName)
         image.close()
 
@@ -160,10 +155,10 @@ class Steg(object):
         image.close()
         return decodedMsg
 
-def test(testNum, imageName, newImageName, message, predicted):
+def test(testNum, url, newImageName, message, predicted):
     steg = Steg()
     newImageName = newImageName + ".png"
-    steg.assignImage(imageName)
+    steg.assignImage(url)
     steg.encode(message, newImageName)
     actual = steg.decode(newImageName)
     if actual is None:
@@ -179,10 +174,39 @@ def test(testNum, imageName, newImageName, message, predicted):
         return -1
 
 if __name__ == '__main__':
-   url = "http://thecatapi.com/api/images/get?format=src&type=png"
-   steg = Steg()
-   steg.assignImage(url)
-   steg.encode("testing", "testBuffer.png")
-   print(steg.decode("testBuffer.png"))
+    url1 = "http://thecatapi.com/api/images/get?format=src&type=png"
+    newImageName1 = "test1.png"
+    message1 = "This is a basic test"
+    predicted1 = "This is a basic test"
+    test(1, url1, newImageName1, message1, predicted1)
 
-   #image_file.close()
+    url2 = "http://animalia-life.com/data_images/cat/cat2.jpg"
+    newImageName2 = "test2.png"
+    message2 = "This is a slightly longer message. It should pass despite this longer length, LOL"
+    predicted2 = "This is a slightly longer message. It should pass despite this longer length, LOL"
+    test(2, url2, newImageName2, message2, predicted2)
+
+    url3 = "http://thecatapi.com/api/images/get?format=src&type=png"
+    newImageName3 = "test3.png"
+    message3 = "This is another test with different symbols. *#*_#$@#$#::>{<?.;,[;.]l;..;,"
+    predicted3 = "This is another test with different symbols. *#*_#$@#$#::>{<?.;,[;.]l;..;,"
+    test(3, url3, newImageName3, message3, predicted3)
+
+    url4 = "http://thecatapi.com/api/images/get?format=src&type=png"
+    newImageName4 = "test4.png"
+    message4 = "So a message that is one hundred fifty one characters was a little too long Let's try one that is about one hundred"
+    predicted4 = "So a message that is one hundred fifty one characters was a little too long Let's try one that is about one hundred"
+    test(4, url4, newImageName4, message4, predicted4)
+
+    url5 = "http://thecatapi.com/api/images/get?format=src&type=png"
+    newImageName5 = "test5.png"
+    message5 = "A message with one hundred fifteen char worked. Let's make it 120 with symbols 239580(*)(&#$>.;.[].e32(&*)Hfefwegfwfwref"
+    predicted5 = "A message with one hundred fifteen char worked. Let's make it 120 with symbols 239580(*)(&#$>.;.[].e32(&*)Hfefwegfwfwref"
+    test(5, url5, newImageName5, message5, predicted5)
+
+    url6 = "http://thecatapi.com/api/images/get?format=src&type=png"
+    newImageName6 = "test6.png"
+    message6 = "One hundred twenty characters worked. I will test a message with 125 characters and symbols fg)&*feufbwfwef';.];'fwefaggarrg4"
+    predicted6 = "One hundred twenty characters worked. I will test a message with 125 characters and symbols fg)&*feufbwfwef';.];'fwefaggarrg4"
+    test(6, url6, newImageName6, message6, predicted6)
+
