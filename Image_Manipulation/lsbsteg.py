@@ -11,9 +11,9 @@ class Steg(object):
     def __init__(self):
         self.name = None
         self.uploaded = False
-        self.action = args.action
-        self.message = args.message
-        self.image = args.image
+        #self.action = args.action
+        #self.message = args.message
+        #self.image = args.image
 
     def assignImage(self, name):
         try:
@@ -157,7 +157,7 @@ class Steg(object):
         decodedMsg = extract(image)
         image.close()
         return decodedMsg
-
+"""
 if __name__ == '__main__':
   parser = argparse.ArgumentParser(description='Encode or decode message within an image with LSB encoding.')
   parser.add_argument('action', choices=['encode', 'decode'], help='Encode or decode image.')
@@ -175,6 +175,7 @@ if __name__ == '__main__':
   else: 
     print('decoding ' + steg.image)
     print(steg.decode(steg.image))
+"""
 
 def test(testNum, imageName, newImageName, message, predicted):
     steg = Steg()
