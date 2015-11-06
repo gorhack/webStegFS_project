@@ -1,19 +1,22 @@
-import config # api keys
 from bs4 import BeautifulSoup # parse XML response
 import pycurl # send requests
 from urllib.parse import urlencode # encode parameters for get request
 from urllib.request import urlopen
 from io import BytesIO # read post response 
 import os # TODO:// delete temp image
+import requests # GET requests
+try: # needed if running directly, otherwise main imports
+  from API_Keys import config
+except:
+  pass
 
 class SendSpace(object):
   # class variables
   sendspace_url = 'http://api.sendspace.com/rest/'
-  api_key = config.key
   image_data = {}
   
-  def __init__(self, file):
-    self.file = file
+  def __init__(self, key):
+    self.api_key = key
   
   ###
   ### Connect to SendSpace as anonymous user
@@ -97,7 +100,14 @@ class SendSpace(object):
 
     return b.getvalue().decode('utf-8')
 
-sendSpace = SendSpace("") # TODO:// send filename to encode inside image
+  def downloadImage(self, file_id):
+    r = requests.get(file_id)
+    return BeautifulSoup(r.text, "lxml").find("a", {"id": "download_button"})['href']
+    
+
+### automatically generate an image and upload
+"""
+sendSpace = SendSpace(config.sendSpaceKey)
 try: # poor error handling with blanket try
   con_r = sendSpace.connect()
   parsed_con_r = sendSpace.parseXML(con_r)
@@ -114,7 +124,8 @@ try: # poor error handling with blanket try
     except Exception as e2:
       print("Error: " + str(e) + ' ' + str(e2))
       exit()
-  print('download url: ' + sendSpace.image_data['download_url'])
+  print('download url: ' + sendSpace.downloadImage(sendSpace.image_data['download_url']))
   print('delete url: ' + sendSpace.image_data['delete_url'])
 except Exception as e: 
   print("Cannot upload at this time: " + str(e))
+"""

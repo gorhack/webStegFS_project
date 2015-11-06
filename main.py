@@ -16,7 +16,9 @@ import readline
 import argparse
 import shlex
 from Image_Manipulation import lsbsteg
-from Web_Connection import *
+from Image_Manipulation import stegByteStream
+from Web_Connection.API_Keys import config
+from Web_Connection import api_cons
 
 class Console(cmd.Cmd):
 
@@ -25,6 +27,16 @@ class Console(cmd.Cmd):
     cmd.Cmd.__init__(self)
     self.prompt = "covertFS$ "
     self.intro  = "Welcome to Covert File System's command line interface."  ## defaults to None
+
+    # /tmp until bytestream works:
+    sendSpace = api_cons.SendSpace(config.sendSpaceKey)
+    image_download_url = sendSpace.downloadImage(self.url)
+    
+    steg = lsbsteg.Steg() #creates the object
+    print('decoding image...')
+    # print(' decoded text: ' + steg.decode('image.png'))
+
+    # tmp/
 
     self.parser = argparse.ArgumentParser()
     
