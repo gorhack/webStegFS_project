@@ -51,7 +51,7 @@ class SendSpace(object):
   ###
   ### Send file for upload
   ###
-  def uploadImage(self, xml_data):
+  def uploadImage(self, xml_data, message):
     # initialize post request parameter values or exit
     try:
       upl_url = xml_data.result.upload["url"]
@@ -69,17 +69,18 @@ class SendSpace(object):
           print("Error: " + str(e) + ' ' + str(e2))
           exit()
     # generate image from cat API: http://thecatapi.com
-    # possibly helpful: http://stackoverflow.com/questions/13137817/how-to-download-image-using-requests
-    fd = urlopen('http://thecatapi.com/api/images/get?format=src&type=png')
+    url = 'http://thecatapi.com/api/images/get?format=src&type=png'
 
-    f = open('image.png', 'wb') # TODO:// currently saves image to local dir. use only in memory. 
-    f.write(fd.read())
-    f.close()
+    #use steg object to encode a message into an image
+    encodedImageName = "unsuspiciousImage-nothing to see here.png"
+    steg = Steg()
+    steg.assignImage(url)
+    steg.encode(message, encodedImageName)
         
     # parameters for anonymous image upload
     post_params = [
       ('extra_info', upl_extra_info),
-      ('userfile', (pycurl.FORM_FILE, 'image.png',)),
+      ('userfile', (pycurl.FORM_FILE, encodedImageName,)),
     ]
 
     # post request to upload image
@@ -92,10 +93,10 @@ class SendSpace(object):
     c.close()
 
     # delete image file
-    if os.path.exists('image.png'):
-      os.remove('image.png')
+    if os.path.exists(encodedImageName):
+      os.remove(encodedImageName)
     else:
-      print("Cannot remove tmp image: image.png")
+      print("Cannot remove tmp image: " + encodedImageName)
 
     return b.getvalue().decode('utf-8')
 
