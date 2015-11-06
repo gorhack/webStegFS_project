@@ -19,6 +19,7 @@ from Image_Manipulation import lsbsteg
 from Image_Manipulation import stegByteStream
 from Web_Connection.API_Keys import config
 from Web_Connection import api_cons
+import fsClass
 
 class Console(cmd.Cmd):
 
@@ -29,29 +30,93 @@ class Console(cmd.Cmd):
     self.intro  = "Welcome to Covert File System's command line interface."  ## defaults to None
 
     # /tmp until bytestream works:
+    print("Running self-test...\n")
+    print("Testing db connection:")
     sendSpace = api_cons.SendSpace(config.sendSpaceKey)
-    image_download_url = sendSpace.downloadImage(self.url)
+    image_download_url = sendSpace.downloadImage('https://www.sendspace.com/file/z2sr15')
     
     steg = lsbsteg.Steg() #creates the object
     print('decoding image...')
     # print(' decoded text: ' + steg.decode('image.png'))
-
+    print("Testing File-System integrity")
+    fs = fsClass.fileSystem("root/ root/alpha.txt,a.url,aDel.url root/bravo.txt,b.url,bDel.url")
+    #fs.decode(fs.fsString)
+    print(fs.loadFS('test'))
+    print(fs.ls())
+    print("Self-test complete.\n")
+    self.fs = fs
     # tmp/
 
-    self.parser = argparse.ArgumentParser()
-    
-    ###
-    ### Creating commands with arguments example 
-    ### http://stackoverflow.com/questions/12750393/python-using-argparse-with-cmd
-    ###
-    subparsers = self.parser.add_subparsers()
-    test_parser = subparsers.add_parser("test")
-    test_parser.add_argument("--foo", default="Hello")
-    test_parser.add_argument("--bar", default="World")
-    test_parser.set_defaults(func=self._do_test)
+  def do_ls(self, args):
+    """List items in directory"""
+    print(self.fs.ls()) #TODO:// ls [path]
 
-  def _do_test(self,args):
-    print(args.foo, args.bar)
+  def do_cd(self, args):
+    """Change directory to specified [path]\nUse: cd [path]*"""
+    self.fs.cd(args)
+
+  def do_addFile(self, args):
+    """addFile in Development.\nAdd a local file to the covert file system.\nUse: addFile [local path] [covert path]"""
+    a = args.split()
+    local_path = ''
+    covert_path = ''
+    if len(a)==1: #local path file
+      local_path = a[0]
+    elif len(a)==2:
+      local_path=a[0]
+      covert_path=a[1]
+    else:
+      print('*** invalid number of arguments\naddFile [local path] [covert path]*')
+      return
+
+    print("Command not implemented")
+    #fs.addFile(local_path, covert_path)
+
+  def do_rm(self, args):
+    """rm in Development.\nRemove a file from the covert file system.\nUse: rm [path]*"""
+    path = ''
+    a = args.split()
+    if len(a)==0:
+      path=''
+    elif len(a)==1:
+      path = a[0]
+    else:
+      print('*** invalid number of arguments\nrm [path]*')
+      return 
+    print("Command not implemented")
+    #self.fs.rm(path)
+
+  def do_addMessage(self, args):
+    """addMessage in Development.\nAdd a text file with a message to the file system.\nUse: addMessage [name] [message] [path]*"""
+    name = ''
+    message = ''
+    path = ''
+    a = args.split()
+    if len(a)==2:
+      name=a[0]
+      message=a[1]
+    elif len(a)==3:
+      name=a[0]
+      message=a[1]
+      path=a[2]
+    else:
+      print('*** invalid number of arguments\naddMessage [name] [message] [path]*')
+      return
+    print("Command not implemented")
+
+  def do_mkdir(self, args):
+    """mkdir in Development.\nMake a folder in the current directory.\nUse: mkdir [name]"""
+    print("Command not implemented")
+    #self.fs.mkdir(args)
+
+  def do_rmdir(self, args):
+    """rmdir in Development.\nRemove a folder in the current directory.\nUse: rmdir [name]"""
+    print("Command not implemented")
+    #self.fs.rmdir(args)
+
+  def do_save(self, args):
+    """save in Development.\nSave covert file to local storage.\nUse: save [covert path] [local path]"""
+    print("Command not implemented")
 
   ## Command definitions ##
   def do_hist(self, args):
