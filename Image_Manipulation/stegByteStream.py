@@ -9,7 +9,7 @@ class Steg(object):
     name = None
     uploaded = False
     SIZE_FIELD_LEN = 64
-    image = None
+    image_name = None
 
     def __int__(self):
         self.name = None
@@ -18,9 +18,12 @@ class Steg(object):
     def assignImage(self, url):
         #learned how to make image from byte stream from http://stackoverflow.com/questions/7391945/how-do-i-read-image-data-from-a-url-in-python
         try:
+            #file_data = BytesIO(urlopen(url).read())
+            #image_file = Image.open(file_data)
+            #self.image = image_file
+            #self.uploaded = True
             file_data = BytesIO(urlopen(url).read())
-            image_file = Image.open(file_data)
-            self.image = image_file
+            self.image_name = file_data
             self.uploaded = True
         except:
             self.uploaded = False
@@ -99,12 +102,12 @@ class Steg(object):
             return bits_from_bytes(s.encode('utf-8')) 
             return bits
 
-        image = self.image
+        image = Image.open(self.image_name)
         embed(msg, image, newImageName)
         image.close()
 
 
-    def decode(self, name):
+    def decode(self):
 
 
         def bytes_from_bits(bits):
@@ -150,7 +153,7 @@ class Steg(object):
             decodedMsg = message.decode('utf-8')
             return decodedMsg
 
-        image = Image.open(name)
+        image = Image.open(self.image_name)
         decodedMsg = extract(image)
         image.close()
         return decodedMsg
@@ -160,7 +163,7 @@ def test(testNum, url, newImageName, message, predicted):
     newImageName = newImageName + ".png"
     steg.assignImage(url)
     steg.encode(message, newImageName)
-    actual = steg.decode(newImageName)
+    actual = steg.decode()
     if actual is None:
         print("TEST " + str(testNum) + " FAILED: returned 'None'")
         return -1
@@ -173,40 +176,43 @@ def test(testNum, url, newImageName, message, predicted):
         print("TEST " + str(testNum) + " FAILED: " + predicted + " does not equal  '" + actual + "'")
         return -1
 
-if __name__ == '__main__':
-    url1 = "http://thecatapi.com/api/images/get?format=src&type=png"
-    newImageName1 = "test1.png"
-    message1 = "This is a basic test"
-    predicted1 = "This is a basic test"
-    test(1, url1, newImageName1, message1, predicted1)
+# if __name__ == '__main__':
+#     url1 = "http://thecatapi.com/api/images/get?format=src&type=png"
+#     newImageName1 = "test1.png"
+#     message1 = "This is a basic test"
+#     predicted1 = "This is a basic test"
+#     test(1, url1, newImageName1, message1, predicted1)
 
-    url2 = "http://animalia-life.com/data_images/cat/cat2.jpg"
-    newImageName2 = "test2.png"
-    message2 = "This is a slightly longer message. It should pass despite this longer length, LOL"
-    predicted2 = "This is a slightly longer message. It should pass despite this longer length, LOL"
-    test(2, url2, newImageName2, message2, predicted2)
+#     url2 = "http://animalia-life.com/data_images/cat/cat2.jpg"
+#     newImageName2 = "test2.png"
+#     message2 = "This is a slightly longer message. It should pass despite this longer length, LOL"
+#     predicted2 = "This is a slightly longer message. It should pass despite this longer length, LOL"
+#     test(2, url2, newImageName2, message2, predicted2)
 
-    url3 = "http://thecatapi.com/api/images/get?format=src&type=png"
-    newImageName3 = "test3.png"
-    message3 = "This is another test with different symbols. *#*_#$@#$#::>{<?.;,[;.]l;..;,"
-    predicted3 = "This is another test with different symbols. *#*_#$@#$#::>{<?.;,[;.]l;..;,"
-    test(3, url3, newImageName3, message3, predicted3)
+#     url3 = "http://thecatapi.com/api/images/get?format=src&type=png"
+#     newImageName3 = "test3.png"
+#     message3 = "This is another test with different symbols. *#*_#$@#$#::>{<?.;,[;.]l;..;,"
+#     predicted3 = "This is another test with different symbols. *#*_#$@#$#::>{<?.;,[;.]l;..;,"
+#     test(3, url3, newImageName3, message3, predicted3)
 
-    url4 = "http://thecatapi.com/api/images/get?format=src&type=png"
-    newImageName4 = "test4.png"
-    message4 = "So a message that is one hundred fifty one characters was a little too long Let's try one that is about one hundred"
-    predicted4 = "So a message that is one hundred fifty one characters was a little too long Let's try one that is about one hundred"
-    test(4, url4, newImageName4, message4, predicted4)
+#     url4 = "http://thecatapi.com/api/images/get?format=src&type=png"
+#     newImageName4 = "test4.png"
+#     message4 = "So a message that is one hundred fifty one characters was a little too long Let's try one that is about one hundred"
+#     predicted4 = "So a message that is one hundred fifty one characters was a little too long Let's try one that is about one hundred"
+#     test(4, url4, newImageName4, message4, predicted4)
 
-    url5 = "http://thecatapi.com/api/images/get?format=src&type=png"
-    newImageName5 = "test5.png"
-    message5 = "A message with one hundred fifteen char worked. Let's make it 120 with symbols 239580(*)(&#$>.;.[].e32(&*)Hfefwegfwfwref"
-    predicted5 = "A message with one hundred fifteen char worked. Let's make it 120 with symbols 239580(*)(&#$>.;.[].e32(&*)Hfefwegfwfwref"
-    test(5, url5, newImageName5, message5, predicted5)
+#     url5 = "http://thecatapi.com/api/images/get?format=src&type=png"
+#     newImageName5 = "test5.png"
+#     message5 = "A message with one hundred fifteen char worked. Let's make it 120 with symbols 239580(*)(&#$>.;.[].e32(&*)Hfefwegfwfwref"
+#     predicted5 = "A message with one hundred fifteen char worked. Let's make it 120 with symbols 239580(*)(&#$>.;.[].e32(&*)Hfefwegfwfwref"
+#     test(5, url5, newImageName5, message5, predicted5)
 
-    url6 = "http://thecatapi.com/api/images/get?format=src&type=png"
-    newImageName6 = "test6.png"
-    message6 = "One hundred twenty characters worked. I will test a message with 125 characters and symbols fg)&*feufbwfwef';.];'fwefaggarrg4"
-    predicted6 = "One hundred twenty characters worked. I will test a message with 125 characters and symbols fg)&*feufbwfwef';.];'fwefaggarrg4"
-    test(6, url6, newImageName6, message6, predicted6)
+#     url6 = "http://thecatapi.com/api/images/get?format=src&type=png"
+#     newImageName6 = "test6.png"
+#     message6 = "One hundred twenty characters worked. I will test a message with 125 characters and symbols fg)&*feufbwfwef';.];'fwefaggarrg4"
+#     predicted6 = "One hundred twenty characters worked. I will test a message with 125 characters and symbols fg)&*feufbwfwef';.];'fwefaggarrg4"
+#     test(6, url6, newImageName6, message6, predicted6)
 
+steg = Steg()
+steg.assignImage("http://thecatapi.com/api/images/get?format=src&type=png")
+steg.encode("testing", "randomTest.png")
