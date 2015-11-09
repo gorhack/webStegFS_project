@@ -1,14 +1,6 @@
-# start with command line interface
-# cmd-support for line-oriented command interpreters: https://docs.python.org/2/library/cmd.html
-# http://stackoverflow.com/questions/17352630/creating-a-terminal-program-with-python
-# https://pymotw.com/2/cmd/
-
-## console.py
-## Author:   James Thiele
-## Date:     27 April 2004
-## Version:  1.0
+## Modified version of James Thiele (c) 2004 console.py
+## Last updated 27 April 2004, downloaded 26 October 2015
 ## Location: http://www.eskimo.com/~jet/python/examples/cmd/
-## Copyright (c) 2004, James Thiele
 
 import os
 import cmd
@@ -26,7 +18,7 @@ class Console(cmd.Cmd):
     self.url = args.url # url to the file system. TODO:// Decode url to make FS below
     cmd.Cmd.__init__(self)
     self.prompt = "covertFS$ "
-    self.intro  = "Welcome to Covert File System's command line interface."  ## defaults to None
+    self.intro  = "Welcome to Covert File System's command line interface."  
 
     fs = fsClass.fileSystem("root/ root/alpha.txt,a.url,aDel.url root/bravo.txt,b.url,bDel.url")
     print(fs.loadFS('test'))
@@ -35,14 +27,14 @@ class Console(cmd.Cmd):
     self.steg = stegByteStream.Steg()
     # tmp/
 
-  def do_encodeImage(self, msg):
-    """Encode a message to an image and upload to social media.\nReturns the url.\nUse: encodeImage [message]"""
-    self.steg.encode(msg)
-    (download_url,delete_url) = self.sendSpace.upload()
+  def do_encodeimage(self, msg):
+    """Encode a message to an image and upload to social media.\nReturns the url.\nUse: encodeimage [message]"""
+    img = self.steg.encode(msg)
+    (download_url,delete_url) = self.sendSpace.upload(img)
     print("URL: " + download_url)
 
-  def do_decodeImage(self, url):
-    """Decode the message in an image.\nReturns the message in plain text.\ndecodeImage [direct download url]"""
+  def do_decodeimage(self, url):
+    """Decode the message in an image.\nReturns the message in plain text.\ndecodeimage [direct download url]"""
     self.steg.assignImage(url)
     msg = self.steg.decode()
     print("Decoded message: " + msg)
@@ -55,8 +47,8 @@ class Console(cmd.Cmd):
     """Change directory to specified [path]\nUse: cd [path]*"""
     self.fs.cd(args)
 
-  def do_addFile(self, args):
-    """addFile in Development.\nAdd a local file to the covert file system.\nUse: addFile [local path] [covert path]"""
+  def do_upload(self, args):
+    """upload in Development.\nUpload a local file to the covert file system.\nUse: upload [local path] [covert path]"""
     a = args.split()
     local_path = ''
     covert_path = ''
@@ -66,7 +58,24 @@ class Console(cmd.Cmd):
       local_path=a[0]
       covert_path=a[1]
     else:
-      print('*** invalid number of arguments\naddFile [local path] [covert path]*')
+      print('*** invalid number of arguments\nupload [local path] [covert path]*')
+      return
+
+    print("Command not implemented")
+    #fs.addFile(local_path, covert_path)
+
+  def do_download(self, args):
+    """download in Development.\nDownload a covert file to the local file system.\nUse: download [covert path] [local path]"""
+    a = args.split()
+    local_path = ''
+    covert_path = ''
+    if len(a)==1: #local path file
+      local_path = a[0]
+    elif len(a)==2:
+      local_path=a[0]
+      covert_path=a[1]
+    else:
+      print('*** invalid number of arguments\ndownload [covert path] [local path]*')
       return
 
     print("Command not implemented")
@@ -86,8 +95,8 @@ class Console(cmd.Cmd):
     print("Command not implemented")
     #self.fs.rm(path)
 
-  def do_addMessage(self, args):
-    """addMessage in Development.\nAdd a text file with a message to the file system.\nUse: addMessage [name] [message] [path]*"""
+  def do_mkfile(self, args):
+    """mkfile in Development.\nAdd a text file with a message to the file system.\nUse: mkfile [name] [message] [path]*"""
     name = ''
     message = ''
     path = ''
@@ -100,7 +109,7 @@ class Console(cmd.Cmd):
       message=a[1]
       path=a[2]
     else:
-      print('*** invalid number of arguments\naddMessage [name] [message] [path]*')
+      print('*** invalid number of arguments\nmkfile [name] [message] [path]*')
       return
     print("Command not implemented")
 

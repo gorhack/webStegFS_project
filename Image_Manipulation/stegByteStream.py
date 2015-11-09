@@ -1,6 +1,6 @@
 from PIL import Image
-from urllib.request import urlopen
 from io import BytesIO
+import requests
 
 class Steg(object):
   name = None
@@ -13,34 +13,23 @@ class Steg(object):
     self.uploaded = False
 
   def assignImage(self, url):
-    #learned how to make image from byte stream from http://stackoverflow.com/questions/7391945/how-do-i-read-image-data-from-a-url-in-python
     try:
-      #file_data = BytesIO(urlopen(url).read())
-      #image_file = Image.open(file_data)
-      #self.image = image_file
-      #self.uploaded = True
-      file_data = BytesIO(urlopen(url).read()) #requests.get('http://thecatapi.com/api/images/get?format=src&type=png').content
-      self.image_name = file_data
+      self.image_name = BytesIO(requests.get(url).content)
       self.uploaded = True
     except:
       self.uploaded = False
 
-  #note: as mentioned in sprint 1, the algorithm and most functions within encode came from a 
-  #git repo that CDT Gorak found. Go to Trello Board for the git repo.
+  # https://github.com/adrg/lsbsteg/blob/master/lsbsteg.py
   def encode(self, msg):
+    output_image = BytesIO() # image to output
+
     if type(msg) is not str:
       raise Exception("The message being encoded needs to be a string")
 
     self.assignImage('http://thecatapi.com/api/images/get?format=src&type=png')
 
     if not self.uploaded:
-      raise Exception("Use the assignImage method to select an image within the directory")
-
-    def formatImage(newImageName):
-      if newImageName[-4:-1] + newImageName[-1] is not ".png":
-        return newImageName + ".png"
-      else:
-        return newImageName
+      raise Exception("Failed to assign the image. Error with retrieving the image.")
 
     def set_bit(target, index, value):
       mask = 1 << index
@@ -73,17 +62,14 @@ class Steg(object):
             if bit is None:
               pixels[x, y] = tuple(pixel)
               return
-
             pixel[i] = set_bit(b, 0, bit)
-
           pixels[x, y] = tuple(pixel)
 
-    def embed(msg, image, newImageName):
+    def embed(msg, image):
       bits = bits_from_str(msg)
 
       embed_message(bits, image)
-      image.save(newImageName, "PNG")
-
+      image.save(output_image, format="PNG")
 
     def bits_from_bytes(bytes):
       bits = []
@@ -98,8 +84,9 @@ class Steg(object):
       return bits
 
     image = Image.open(self.image_name)
-    embed(msg, image, 'tmp.png')
+    embed(msg, image)
     image.close()
+    return output_image # returns image as BytesIO object
 
   def decode(self):
     def bytes_from_bits(bits):
