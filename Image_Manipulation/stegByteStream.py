@@ -19,7 +19,7 @@ class Steg(object):
       #image_file = Image.open(file_data)
       #self.image = image_file
       #self.uploaded = True
-      file_data = BytesIO(urlopen(url).read())
+      file_data = BytesIO(urlopen(url).read()) #requests.get('http://thecatapi.com/api/images/get?format=src&type=png').content
       self.image_name = file_data
       self.uploaded = True
     except:

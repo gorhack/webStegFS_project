@@ -23,7 +23,7 @@ import fsClass
 class Console(cmd.Cmd):
 
   def __init__(self):
-    self.url = args.url # url to the file system. TODO:// Decode 
+    self.url = args.url # url to the file system. TODO:// Decode url to make FS below
     cmd.Cmd.__init__(self)
     self.prompt = "covertFS$ "
     self.intro  = "Welcome to Covert File System's command line interface."  ## defaults to None
@@ -36,11 +36,13 @@ class Console(cmd.Cmd):
     # tmp/
 
   def do_encodeImage(self, msg):
+    """Encode a message to an image and upload to social media.\nReturns the url.\nUse: encodeImage [message]"""
     self.steg.encode(msg)
     (download_url,delete_url) = self.sendSpace.upload()
     print("URL: " + download_url)
 
   def do_decodeImage(self, url):
+    """Decode the message in an image.\nReturns the message in plain text.\ndecodeImage [direct download url]"""
     self.steg.assignImage(url)
     msg = self.steg.decode()
     print("Decoded message: " + msg)
