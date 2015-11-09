@@ -15,7 +15,6 @@ import cmd
 import readline
 import argparse
 import shlex
-from Image_Manipulation import lsbsteg
 from Image_Manipulation import stegByteStream
 from Web_Connection.API_Keys import config
 from Web_Connection import api_cons
@@ -24,28 +23,27 @@ import fsClass
 class Console(cmd.Cmd):
 
   def __init__(self):
-    self.url = args.url
+    self.url = args.url # url to the file system. TODO:// Decode 
     cmd.Cmd.__init__(self)
     self.prompt = "covertFS$ "
     self.intro  = "Welcome to Covert File System's command line interface."  ## defaults to None
 
-    # /tmp until bytestream works:
-    print("Running self-test...\n")
-    print("Testing db connection:")
-    sendSpace = api_cons.SendSpace(config.sendSpaceKey)
-    image_download_url = sendSpace.downloadImage('https://www.sendspace.com/file/z2sr15')
-    
-    steg = lsbsteg.Steg() #creates the object
-    print('decoding image...')
-    # print(' decoded text: ' + steg.decode('image.png'))
-    print("Testing File-System integrity")
     fs = fsClass.fileSystem("root/ root/alpha.txt,a.url,aDel.url root/bravo.txt,b.url,bDel.url")
-    #fs.decode(fs.fsString)
     print(fs.loadFS('test'))
-    print(fs.ls())
-    print("Self-test complete.\n")
     self.fs = fs
+    self.sendSpace = api_cons.SendSpace(config.sendSpaceKey)
+    self.steg = stegByteStream.Steg()
     # tmp/
+
+  def do_encodeImage(self, msg):
+    self.steg.encode(msg)
+    (download_url,delete_url) = self.sendSpace.upload()
+    print("URL: " + download_url)
+
+  def do_decodeImage(self, url):
+    self.steg.assignImage(url)
+    msg = self.steg.decode()
+    print("Decoded message: " + msg)
 
   def do_ls(self, args):
     """List items in directory"""

@@ -1,6 +1,3 @@
-#from Image_Manipulation import lsbsteg
-#from Web_Connection import *
-
 class fileSystem(object):
 	def __init__(self, fsString):
 		self.currentDir = None
@@ -33,7 +30,7 @@ class fileSystem(object):
 	def loadFS(self, url):
 		if url == 'test':
 			self.currentDir = self.decode()
-			return 'works'
+			return 'Test FS read complete'
 		steg = lsbsteg.Steg()
 		try:
 			steg.assignImage(url)

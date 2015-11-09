@@ -13,10 +13,36 @@ except:
 class SendSpace(object):
   # class variables
   sendspace_url = 'http://api.sendspace.com/rest/'
-  image_data = {}
-  
+  #image_data = {}
+
   def __init__(self, key):
     self.api_key = key
+
+  ###
+  ### User facing upload
+  def upload(self):
+    try:
+      con_r = self.connect()
+      parsed_con_r = self.parseXML(con_r)
+      upl_r = self.uploadImage(parsed_con_r)
+      parsed_upl_r = self.parseXML(upl_r)
+      
+      download_url=''
+      delete_url=''
+      try:
+        download_url = self.downloadImage(parsed_upl_r.download_url.string)
+        delete_url = parsed_upl_r.delete_url.string
+      except Exception as e:
+        try: 
+          print("Error parsing info for upload: " + str(parsed_upl_r.body))
+          exit()
+        except Exception as e2:
+          print("Error: " + str(e) + ' ' + str(e2))
+          exit()
+      return (download_url, delete_url)
+    except Exception as e: 
+      print("Cannot upload at this time: " + str(e))
+      exit()
   
   ###
   ### Connect to SendSpace as anonymous user
@@ -51,7 +77,7 @@ class SendSpace(object):
   ###
   ### Send file for upload
   ###
-  def uploadImage(self, xml_data, message):
+  def uploadImage(self, xml_data):
     # initialize post request parameter values or exit
     try:
       upl_url = xml_data.result.upload["url"]
@@ -62,21 +88,15 @@ class SendSpace(object):
       #post_data['MAX_FILE_SIZE'] = con_max_file_size # already in url
       #post_data['UPLOAD_IDENTIFIER'] = con_upload_identifier # already in url
     except Exception as e:
-        try: 
-          print("Error parsing info for upload: " + str(xml_data.body.error))
-          exit()
-        except Exception as e2:
-          print("Error: " + str(e) + ' ' + str(e2))
-          exit()
-    # generate image from cat API: http://thecatapi.com
-    url = 'http://thecatapi.com/api/images/get?format=src&type=png'
+      try: 
+        print("Error parsing info for upload: " + str(xml_data.body.error))
+        exit()
+      except Exception as e2:
+        print("Error: " + str(e) + ' ' + str(e2))
+        exit()
+    
+    encodedImageName = 'tmp.png'
 
-    #use steg object to encode a message into an image
-    encodedImageName = "unsuspiciousImage-nothing to see here.png"
-    steg = Steg()
-    steg.assignImage(url)
-    steg.encode(message, encodedImageName)
-        
     # parameters for anonymous image upload
     post_params = [
       ('extra_info', upl_extra_info),
@@ -96,7 +116,7 @@ class SendSpace(object):
     if os.path.exists(encodedImageName):
       os.remove(encodedImageName)
     else:
-      print("Cannot remove tmp image: " + encodedImageName)
+      print("Cannot remove tmp image")
 
     return b.getvalue().decode('utf-8')
 
@@ -104,14 +124,13 @@ class SendSpace(object):
     r = requests.get(file_id)
     return BeautifulSoup(r.text, "lxml").find("a", {"id": "download_button"})['href']
     
-
 ### automatically generate an image and upload
 """
 sendSpace = SendSpace(config.sendSpaceKey)
 try: # poor error handling with blanket try
   con_r = sendSpace.connect()
   parsed_con_r = sendSpace.parseXML(con_r)
-  upl_r = sendSpace.uploadImage(parsed_con_r)
+  upl_r = sendSpace.uploadImage(parsed_con_r,image name...from steg or)
   parsed_upl_r = sendSpace.parseXML(upl_r)
 
   try:
