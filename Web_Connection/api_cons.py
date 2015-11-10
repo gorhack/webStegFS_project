@@ -57,7 +57,7 @@ class SendSpace(object):
       parsed_upl_r = self.parseXML(r.text)
       # try to parse the response
       try: 
-        download_url = self.downloadImage(parsed_upl_r.download_url.string)
+        download_url = parsed_upl_r.download_url.string
         delete_url = parsed_upl_r.delete_url.string
       except Exception as e: 
         print("Error parsing URLs from response.\n" + e.value + "\n" + r.text)

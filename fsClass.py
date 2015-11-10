@@ -155,11 +155,11 @@ class fsFile(object):
 		self.downLink = downLink
 		self.delLink = delLink
 
-if __name__ == "__main__":
-	fs = fileSystem("root/ root/alpha.txt,a.url,aDel.url root/bravo.txt,b.url,bDel.url\nroot/folderA/ root/folderA/a.txt,asdf.ase,asgr.yhu\nroot/folderA/folderB/\nroot/folderA/folderB/folderC/")
-	#fs.decode(fs.fsString)
-	(fs.loadFS('test'))
-	nextfs = (fs.writeFolder())
-	newFS = fileSystem(nextfs)
-	newFS.loadFS('test')
-	print(newFS.ls())
+# if __name__ == "__main__":
+# 	fs = fileSystem("root/ root/alpha.txt,a.url,aDel.url root/bravo.txt,b.url,bDel.url\nroot/folderA/ root/folderA/a.txt,asdf.ase,asgr.yhu\nroot/folderA/folderB/\nroot/folderA/folderB/folderC/")
+# 	#fs.decode(fs.fsString)
+# 	(fs.loadFS('test'))
+# 	nextfs = (fs.writeFolder())
+# 	newFS = fileSystem(nextfs)
+# 	newFS.loadFS('test')
+# 	print(newFS.ls())
