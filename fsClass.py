@@ -71,8 +71,13 @@ class fileSystem(object):
 				return 'Already in highest folder'
 			else:
 				self.currentDir = self.currentDir.parent
-		elif isinstance(self.currentDir.contents[destDirFull], fsFolder) & ((destDirFull) in self.currentDir.contents.keys()):
-			self.currentDir = self.currentDir.contents[destDirFull]
+		elif ((destDirFull) in self.currentDir.contents.keys()):
+			if isinstance(self.currentDir.contents[destDirFull], fsFolder) :
+				self.currentDir = self.currentDir.contents[destDirFull]
+			else:
+				print("Input name is not a directory")
+		else:
+			print ("Desired directory is not in current directory")
 		return self.currentDir.name
 
 	def rm(self, fName):
@@ -126,9 +131,10 @@ class fsFile(object):
 #def fsSend(root):
 fs = fileSystem("root/ root/alpha.txt,a.url,aDel.url root/bravo.txt,b.url,bDel.url\nroot/folderA/ root/folderA/a.txt,asdf.ase,asgr.yhu\nroot/folderA/folderB/\nroot/folderA/folderB/folderC/")
 #fs.decode(fs.fsString)
-print(fs.loadFS('test'))
-print(fs.ls())
-print(fs.cd('folderA'))
-print(fs.ls())
-print(fs.rm('a.txt'))
-print(fs.ls())
+(fs.loadFS('test'))
+(fs.ls())
+(fs.cd('folderA'))
+(fs.ls())
+fs.rm('a.txt')
+(fs.ls())
+fs.cd("../..")
