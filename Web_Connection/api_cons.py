@@ -37,7 +37,7 @@ class SendSpace(object):
     else: 
       print("Invalid response code " + r.status_code + "\n" + r.text)
       exit()
-    
+    r.close()
     return (upl_url, upl_extra_info)
   
   ### Parse response as xml
@@ -65,10 +65,12 @@ class SendSpace(object):
     else: 
       print("Invalid response code " + r.status_code + "\n" + r.text)
       exit()
-    
+    r.close()
     return (download_url, delete_url)
 
   ### Retrieve the direct download URL from the download URL
   def downloadImage(self, file_id):
     r = requests.get(file_id)
-    return BeautifulSoup(r.text, "lxml").find("a", {"id": "download_button"})['href']
+    dd_url = BeautifulSoup(r.text, "lxml").find("a", {"id": "download_button"})['href']
+    r.close()
+    return dd_url

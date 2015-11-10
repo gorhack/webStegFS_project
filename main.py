@@ -20,23 +20,22 @@ class Console(cmd.Cmd):
     self.prompt = "covertFS$ "
     self.intro  = "Welcome to Covert File System's command line interface."  
 
-    fs = fsClass.fileSystem("root/ root/alpha.txt,a.url,aDel.url root/bravo.txt,b.url,bDel.url")
+    fs = fsClass.fileSystem("root/ root/alpha.txt,a.url,aDel.url root/bravo.txt,b.url,bDel.url\nroot/folderA/ root/folderA/a.txt,asdf.ase,asgr.yhu\nroot/folderA/folderB/\nroot/folderA/folderB/folderC/")
     print(fs.loadFS('test'))
     self.fs = fs
     self.sendSpace = api_cons.SendSpace(config.sendSpaceKey)
-    self.steg = stegByteStream.Steg()
     # tmp/
 
   def do_encodeimage(self, msg):
     """Encode a message to an image and upload to social media.\nReturns the url.\nUse: encodeimage [message]"""
-    img = self.steg.encode(msg)
+    img = stegByteStream.Steg().encode(msg)
     (download_url,delete_url) = self.sendSpace.upload(img)
+    img.close()
     print("URL: " + download_url)
 
   def do_decodeimage(self, url):
     """Decode the message in an image.\nReturns the message in plain text.\ndecodeimage [direct download url]"""
-    self.steg.assignImage(url)
-    msg = self.steg.decode()
+    msg = stegByteStream.Steg().decode(url)
     print("Decoded message: " + msg)
 
   def do_ls(self, args):
