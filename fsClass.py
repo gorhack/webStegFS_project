@@ -6,6 +6,7 @@ class fileSystem(object):
 	def __init__(self, fsString):
 		self.currentDir = None
 		self.fsString = fsString
+		self.root = None
 
 	def decode(self):
 		rootCont = self.fsString.split('\n')
@@ -32,12 +33,13 @@ class fileSystem(object):
 			if foldLevel > 0:
 				tempDict[foldName].parent.contents[foldName] = (tempDict[foldName])
 #				tempDict[foldName].foldNames.append(foldName)
-		return tempDict['root/']
+		self.root = tempDict['root/']
+		return self.root
 
 	def loadFS(self, url):
 		if url == 'test':
 			self.currentDir = self.decode()
-			return 'Test FS read complete'
+			return 'works'
 		steg = lsbsteg.Steg()
 		try:
 			steg.assignImage(url)
@@ -63,6 +65,9 @@ class fileSystem(object):
 			length = len(name)
 			outString+= name + (16-length)*" "
 		return outString
+
+	def cdRoot(self):
+		self.currentDir = self.root
 
 	def cd(self, destDir, fullyQual = False):
 		destDirFull = self.currentDir.name + destDir + '/'
@@ -120,6 +125,10 @@ class fileSystem(object):
 			outString += nextString
 		return outString
 
+	def writeFS(self):
+		self.cdRoot()
+		return self.writeFolder()
+
 
 def uploadFile(localPath):
 	pass
@@ -145,7 +154,6 @@ class fsFile(object):
 		self.name = name
 		self.downLink = downLink
 		self.delLink = delLink
-<<<<<<< HEAD
 
 if __name__ == "__main__":
 	fs = fileSystem("root/ root/alpha.txt,a.url,aDel.url root/bravo.txt,b.url,bDel.url\nroot/folderA/ root/folderA/a.txt,asdf.ase,asgr.yhu\nroot/folderA/folderB/\nroot/folderA/folderB/folderC/")
@@ -155,6 +163,3 @@ if __name__ == "__main__":
 	newFS = fileSystem(nextfs)
 	newFS.loadFS('test')
 	print(newFS.ls())
-=======
-		
->>>>>>> efdec75ebd180d989a6e08bba16b4ec8f5944629
