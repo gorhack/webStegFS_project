@@ -22,7 +22,7 @@ class fileSystem(object):
 				fileDel = fileInfo[2]
 				foldCont[fileName] = (fsFile(fileName,fileDown,fileDel))
 #				fileNameCont.append(fileName)
-			foldLevel = foldName.count('/') - 1
+			foldLevel = foldName.count('/') -1
 			if foldLevel>0:
 				foldParent = tempDict[foldName.rsplit('/',2)[0] + '/']
 			else:
@@ -64,8 +64,10 @@ class fileSystem(object):
 			outString+= name + (16-length)*" "
 		return outString
 
-	def cd(self, destDir):
+	def cd(self, destDir, fullyQual = False):
 		destDirFull = self.currentDir.name + destDir + '/'
+		if fullyQual:
+			destDirFull = destDir
 		if destDir == '..':
 			if (self.currentDir.name == 'root/'):
 				return 'Already in highest folder'
@@ -87,6 +89,7 @@ class fileSystem(object):
 		elif isinstance(self.currentDir.contents[fileName], fsFolder):
 			return 'Use "rmdir" command to remove directories'
 		else:
+			out = ''
 			try:
 				delStat = deleteFile(self.currentDir.contents[fileName].deleteUrl)
 				print('deleted from sendSpace')
@@ -101,6 +104,21 @@ class fileSystem(object):
 			return 'File already in current directory| pick another name'
 		else:
 			deleLink, uploadFile(localPath)
+
+	def writeFolder(self):
+		outString = self.currentDir.name
+		currentDict = self.currentDir.contents
+		nextString = '\n'
+		for node in currentDict.values():
+			if isinstance(node, fsFile):
+				outString += ' ' + node.name + ',' + node.downLink + ',' + node.delLink 
+			else:
+				self.cd(node.name, True)
+				nextString += self.writeFolder() 
+				self.cd('..')
+		if len(nextString) > 2:
+			outString += nextString
+		return outString
 
 
 def uploadFile(localPath):
@@ -128,13 +146,11 @@ class fsFile(object):
 		self.downLink = downLink
 		self.delLink = delLink
 
-#def fsSend(root):
-fs = fileSystem("root/ root/alpha.txt,a.url,aDel.url root/bravo.txt,b.url,bDel.url\nroot/folderA/ root/folderA/a.txt,asdf.ase,asgr.yhu\nroot/folderA/folderB/\nroot/folderA/folderB/folderC/")
-#fs.decode(fs.fsString)
-(fs.loadFS('test'))
-(fs.ls())
-(fs.cd('folderA'))
-(fs.ls())
-fs.rm('a.txt')
-(fs.ls())
-fs.cd("../..")
+if __name__ == "__main__":
+	fs = fileSystem("root/ root/alpha.txt,a.url,aDel.url root/bravo.txt,b.url,bDel.url\nroot/folderA/ root/folderA/a.txt,asdf.ase,asgr.yhu\nroot/folderA/folderB/\nroot/folderA/folderB/folderC/")
+	#fs.decode(fs.fsString)
+	(fs.loadFS('test'))
+	nextfs = (fs.writeFolder())
+	newFS = fileSystem(nextfs)
+	newFS.loadFS('test')
+	print(newFS.ls())
