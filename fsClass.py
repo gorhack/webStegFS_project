@@ -37,7 +37,7 @@ class fileSystem(object):
 	def loadFS(self, url):
 		if url == 'test':
 			self.currentDir = self.decode()
-			return 'works'
+			return 'Test FS read complete'
 		steg = lsbsteg.Steg()
 		try:
 			steg.assignImage(url)
@@ -124,11 +124,11 @@ class fsFile(object):
 		self.delLink = delLink
 
 #def fsSend(root):
-fs = fileSystem("root/ root/alpha.txt,a.url,aDel.url root/bravo.txt,b.url,bDel.url\nroot/folderA/ root/folderA/a.txt,asdf.ase,asgr.yhu\nroot/folderA/folderB/\nroot/folderA/folderB/folderC/")
-#fs.decode(fs.fsString)
-print(fs.loadFS('test'))
-print(fs.ls())
-print(fs.cd('folderA'))
-print(fs.ls())
-print(fs.rm('a.txt'))
-print(fs.ls())
+# fs = fileSystem("root/ root/alpha.txt,a.url,aDel.url root/bravo.txt,b.url,bDel.url\nroot/folderA/ root/folderA/a.txt,asdf.ase,asgr.yhu\nroot/folderA/folderB/\nroot/folderA/folderB/folderC/")
+# #fs.decode(fs.fsString)
+# print(fs.loadFS('test'))
+# print(fs.ls())
+# print(fs.cd('folderA'))
+# print(fs.ls())
+# print(fs.rm('a.txt'))
+# print(fs.ls())
