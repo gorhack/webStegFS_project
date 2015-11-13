@@ -3,12 +3,13 @@
 import requests
 
 class fileSystem(object):
-	def __init__(self, fsString):
+	def __init__(self, fsString = None):
 		self.currentDir = None
 		self.fsString = fsString
 		self.root = None
+		self.history = None
 
-	def decode(self):
+	def readFS(self):
 		rootCont = self.fsString.split('\n')
 		tempDict = {}
 		for rootNode in rootCont:
@@ -36,17 +37,11 @@ class fileSystem(object):
 		self.root = tempDict['root/']
 		return self.root
 
-	def loadFS(self, url):
-		if url == 'test':
-			self.currentDir = self.decode()
-			return 'works'
-		steg = lsbsteg.Steg()
-		try:
-			steg.assignImage(url)
-		except:
-			print('Bad URL or computer offline')
-			
-		self.currentDir = decode(steg.decode())
+	def loadFS(self):
+		if self.fsString == None:
+			print ("No input string! New filesystem created.")
+			return self.newFS()
+		self.currentDir = self.readFS()
 		return 'File system loaded, currently in root/'
 
 	def newFS(self):
@@ -94,12 +89,11 @@ class fileSystem(object):
 		elif isinstance(self.currentDir.contents[fileName], fsFolder):
 			return 'Use "rmdir" command to remove directories'
 		else:
-			out = ''
-			try:
+			"""try:
 				delStat = deleteFile(self.currentDir.contents[fileName].deleteUrl)
 				print('deleted from sendSpace')
 			except:
-				print('not deleted from sendSpace')
+				print('not deleted from sendSpace')"""
 			del self.currentDir.contents[fileName]
 			return 'File deleted'
 
@@ -108,7 +102,7 @@ class fileSystem(object):
 		if fileName in self.currentDir.contents.keys():
 			return 'File already in current directory| pick another name'
 		else:
-			deleLink, uploadFile(localPath)
+			pass
 
 	def writeFolder(self):
 		outString = self.currentDir.name
@@ -133,7 +127,7 @@ class fileSystem(object):
 def uploadFile(localPath):
 	pass
 
-def deleteFile(deleteUrl):
+def deleteFile(deleteUrl): #deprecated, no longer deleting files from sendspace (as it is pointless)
 	payload = {'delete':'Delete+File'}
 	proxies = {'https':'https://165.139.149.169:3128'}
 	r = requests.post(deleteUrl, data=payload, proxies = proxies)
@@ -159,7 +153,7 @@ if __name__ == "__main__":
 	fs = fileSystem("root/ root/alpha.txt,a.url,aDel.url root/bravo.txt,b.url,bDel.url\nroot/folderA/ root/folderA/a.txt,asdf.ase,asgr.yhu\nroot/folderA/folderB/\nroot/folderA/folderB/folderC/")
 	#fs.decode(fs.fsString)
 	(fs.loadFS('test'))
-	nextfs = (fs.writeFolder())
+	nextfs = (fs.writeFS())
 	newFS = fileSystem(nextfs)
 	newFS.loadFS('test')
 	print(newFS.ls())

@@ -4,7 +4,7 @@
 
 import os
 import cmd
-import readline
+#import readline
 import argparse
 import shlex
 from Image_Manipulation import stegByteStream
@@ -21,7 +21,7 @@ class Console(cmd.Cmd):
     self.intro  = "Welcome to Covert File System's command line interface."  
 
     fs = fsClass.fileSystem("root/ root/alpha.txt,a.url,aDel.url root/bravo.txt,b.url,bDel.url\nroot/folderA/ root/folderA/a.txt,asdf.ase,asgr.yhu\nroot/folderA/folderB/\nroot/folderA/folderB/folderC/")
-    print(fs.loadFS('test'))
+    print(fs.loadFS())
     self.fs = fs
     self.sendSpace = api_cons.SendSpace(config.sendSpaceKey)
     # tmp/
@@ -45,6 +45,10 @@ class Console(cmd.Cmd):
   def do_cd(self, args):
     """Change directory to specified [path]\nUse: cd [path]*"""
     self.fs.cd(args)
+
+  def do_uploadfs(self, args):
+    """Upload covert fileSystem to sendspace"""
+    self.do_encodeimage(self.fs.writeFS())
 
   def do_upload(self, args):
     """upload in Development.\nUpload a local file to the covert file system.\nUse: upload [local path] [covert path]"""
