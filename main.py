@@ -21,6 +21,8 @@ class Console(cmd.Cmd):
     self.intro  = "Welcome to Covert File System's command line interface."  
 
     self.sendSpace = api_cons.SendSpace(config.sendSpaceKey)
+    # https://www.sendspace.com/file/xvdmcn tmp link
+    # TODO:// optionally take last 6 characters of URL (file descriptor)
     fs = fsClass.fileSystem(stegByteStream.Steg().decode(self.sendSpace.downloadImage(self.url)))
     fs.loadFS("test")
 
@@ -205,6 +207,7 @@ class Console(cmd.Cmd):
 
 if __name__ == '__main__':
   parser = argparse.ArgumentParser()
+  # TODO:// allow no URL for empty File System
   parser.add_argument('-u', '--url', required=True,  default='', help='URL to folder')
   args = parser.parse_args()
   console = Console()
