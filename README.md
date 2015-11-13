@@ -37,7 +37,7 @@ Sprint broken into four sub-goals
   - Analysis of how much data can be encoded using LSB
   - Determine file system overhead in each image 
 3. Begin to add API connection and Encode/Decoder into Application. 
-  - `$ python3 main.py [url]`
+  - `$ python3 main.py -u [url]`
   - `covertFS$ [command]`
 4. Functional Design Documents
 5. From previous Sprint: 
@@ -46,20 +46,21 @@ Sprint broken into four sub-goals
   - Enforce restrictions on arguments in encode/decode
 
 ###Sprint 3: Beta release
-  Basic stand-alone application to encode/decode a local covert file-system that is able to store, open, and delete files from the covert file-system. Command line program will work similar to a unix based directory system. 
+  Basic stand-alone application to encode/decode a local covert file-system that is able to store, open, and delete files from the covert file-system. Command line program will work similar to a unix based directory system. Using these commands will require breaking the file structure across multiple encoded images. Everything is seamless to the user who only needs to keep track of the /root image URL and then navigate the file system with ease. 
 
 ##Usage: 
   - `$ python3 main.py [url of folder/root]`
   - `covertFS$ [command]`
   - commands (default path current dir):
-    - `ls [path]`
+    - `ls [path]*`
     - `cd [path]`
-    - `addFile [local path] [covert path]`
+    - `upload [local path] [covert path]*`
     - `rm [path]`
-    - `addMessage [name] [text] [path]: add txt file to path`
+    - `mkfile [name] [text] [path]*: add txt file to path`
     - `mkdir [path]`
-    - `rmdir [path] [--recursive]`
-    - `saveToDisk [covert path] [local path]: save a covert file to disk`
+    - `rmdir [path]: deletes all files in path`
+    - `download [covert path] [local path]*: save a covert file to disk`
+    - `save: save the covert file system, returns URL to root`
     - `exit`
 
 ##Testing:
