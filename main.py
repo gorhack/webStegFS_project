@@ -6,7 +6,6 @@ import os
 import cmd
 import sys
 import readline
-import argparse
 import shlex
 from Image_Manipulation import stegByteStream
 from Web_Connection.API_Keys import config
@@ -87,6 +86,7 @@ class Console(cmd.Cmd, object):
 
   def do_download(self, args):
     """download in Development.\nDownload a covert file to the local file system.\nUse: download [covert path] [local path]"""
+    print(args)
     a = args.split()
     local_path = ''
     covert_path = ''
@@ -225,9 +225,6 @@ class Console(cmd.Cmd, object):
         cmd.Cmd.default(self, line)
       except:
         print(e.__class__,":",e)
-
-  def parse(arg):
-    return tuple(map(str, arg.split()))
 
 if __name__ == '__main__':
   Console().cmdloop()
