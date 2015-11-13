@@ -4,6 +4,7 @@
 
 import os
 import cmd
+import sys
 import readline
 import argparse
 import shlex
@@ -12,21 +13,37 @@ from Web_Connection.API_Keys import config
 from Web_Connection import api_cons
 import fsClass
 
-class Console(cmd.Cmd):
+class Console(cmd.Cmd, object):
 
   def __init__(self):
-    self.url = args.url # url to the file system. TODO:// Decode url to make FS below
     cmd.Cmd.__init__(self)
     self.prompt = "covertFS$ "
     self.intro  = "Welcome to Covert File System's command line interface."  
-
     self.sendSpace = api_cons.SendSpace(config.sendSpaceKey)
-    # https://www.sendspace.com/file/xvdmcn tmp link
-    # TODO:// optionally take last 6 characters of URL (file descriptor)
-    fs = fsClass.fileSystem(stegByteStream.Steg().decode(self.sendSpace.downloadImage(self.url)))
-    fs.loadFS("test")
-
-    self.fs = fs
+    self.fs = None
+    if len(sys.argv)  > 1: # has URL
+      self.loadfs(sys.argv[1])
+    else: # no URL
+      self.loadfs('')
+  
+  ### Load a file system
+  def loadfs(self, url):
+    if len(url) == 0:
+      fs = fsClass.fileSystem('')
+      self.fs = fs.newFS()
+      print("Creating new File System...to load a covert File System: loadfs [url]\n")
+    else:
+      if len(url) == 6: # has short URL
+        self.url = "https://www.sendspace.com/file/" + url
+      else: # has long URL
+        self.url = url
+      self.fs = fsClass.fileSystem(stegByteStream.Steg().decode(self.sendSpace.downloadImage(self.url)))
+      self.fs.loadFS("test")
+      print("Loaded Covert File System\n")
+  
+  def do_loadfs(self, url):
+    """Load a covert file system.\nUse: loadfs [url]"""
+    self.loadfs(url)
 
   def do_encodeimage(self, msg):
     """Encode a message to an image and upload to social media.\nReturns the url.\nUse: encodeimage [message]"""
@@ -158,6 +175,10 @@ class Console(cmd.Cmd):
     cmd.Cmd.do_help(self, args)
 
   ## Override methods in Cmd object ##
+  def completedefault(self, text, line, begidx, endidx):
+    # Allow Tab autocompletion of file names
+    return [i for i in self.fs.ls() if i.startswith(text)] # TODO:// update ls() to return a List
+
   def preloop(self):
     """Initialization before prompting user for commands.
        Despite the claims in the Cmd documentaion, Cmd.preloop() is not a stub.
@@ -205,10 +226,8 @@ class Console(cmd.Cmd):
       except:
         print(e.__class__,":",e)
 
+  def parse(arg):
+    return tuple(map(str, arg.split()))
+
 if __name__ == '__main__':
-  parser = argparse.ArgumentParser()
-  # TODO:// allow no URL for empty File System
-  parser.add_argument('-u', '--url', required=True,  default='', help='URL to folder')
-  args = parser.parse_args()
-  console = Console()
-  console.cmdloop()
+  Console().cmdloop()
