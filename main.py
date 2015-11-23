@@ -5,8 +5,6 @@
 import os
 import cmd
 import subprocess
-#import readline
-import argparse
 import sys
 import readline
 import shlex
@@ -20,14 +18,14 @@ class Console(cmd.Cmd, object):
   def __init__(self):
     cmd.Cmd.__init__(self)
     self.prompt = "covertFS$ "
-    self.intro  = "Welcome to Covert File System's command line interface."  
+    self.intro  = "Welcome to Covert File System's command line interface." 
 
     self.sendSpace = api_cons.SendSpace(config.sendSpaceKey)
     self.fs = None
-    if len(sys.argv)  > 1: # has URL
+    if len(sys.argv) > 1: # has URL
       self.loadfs(sys.argv[1])
     else: # no URL
-      self.loadfs('')
+      self.loadfs("")
   
   ### Load a file system
   def loadfs(self, url):
@@ -41,7 +39,7 @@ class Console(cmd.Cmd, object):
       else: # has long URL
         self.url = url
       self.fs = fsClass.fileSystem(stegByteStream.Steg().decode(self.sendSpace.downloadImage(self.url)))
-      self.fs.loadFS("test")
+      self.fs.loadFS()
       print("Loaded Covert File System\n")
   
   def do_loadfs(self, url):
@@ -244,9 +242,4 @@ class Console(cmd.Cmd, object):
         print(e.__class__,":",e)
 
 if __name__ == '__main__':
-  parser = argparse.ArgumentParser()
-  # TODO:// allow no URL for empty File System
-  parser.add_argument('-u', '--url',  default='', help='URL to folder')
-  args = parser.parse_args()
-  console = Console()
-  console.cmdloop()
+  Console().cmdloop()
