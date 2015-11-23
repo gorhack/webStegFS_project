@@ -37,7 +37,7 @@ Sprint broken into four sub-goals
   - Analysis of how much data can be encoded using LSB
   - Determine file system overhead in each image 
 3. Begin to add API connection and Encode/Decoder into Application. 
-  - `$ python3 main.py -u [url]`
+  - `$ python3 main.py [url]` // url can be the full url path or the file id (6 character ending, i.e xvdmcn)
   - `covertFS$ [command]`
 4. Functional Design Documents
 5. From previous Sprint: 
