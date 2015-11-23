@@ -29,10 +29,11 @@ class fileSystem(object):
 				foldParent = tempDict[foldName.rsplit('/',2)[0] + '/']
 			else:
 				foldParent = None
-			tempDict[foldName] = fsFolder(foldName, foldCont, foldLevel, foldParent)
+			foldNameShort = foldName.rsplit('/')[-2]
+			tempDict[foldName] = fsFolder(foldNameShort, foldCont, foldLevel, foldParent)
 			tempDict[foldName].fileNames = fileNameCont
 			if foldLevel > 0:
-				tempDict[foldName].parent.contents[foldName] = (tempDict[foldName])
+				tempDict[foldName].parent.contents[foldNameShort] = (tempDict[foldName])
 #				tempDict[foldName].foldNames.append(foldName)
 		self.root = tempDict['root/']
 		return self.root
@@ -45,42 +46,52 @@ class fileSystem(object):
 		return 'File system loaded, currently in root/'
 
 	def newFS(self):
-		self.currentDir = fsFolder('root', [], 0, '')
+		self.currentDir = fsFolder('root', {}, 0, '')
+		self.root = self.currentDir
 		return 'New file system created'
 
-	def ls(self):
-		outString = "The folder '" + self.currentDir.name + "' contains:\n"
-		for node in self.currentDir.contents.keys():
+	def ls(self, path = None):
+		#outString = "The folder '" + self.currentDir.name + "' contains:\n"
+		#for node in self.currentDir.contents.keys():
 			#if type(node) is fsFolder:
 				#TODO color outputs
-			if isinstance(self.currentDir.contents[node], fsFile):
-				name = self.currentDir.contents[node].name.rsplit('/')[-1]
-			else:
-				name = self.currentDir.contents[node].name.rsplit('/')[-2]
-			length = len(name)
-			outString+= name + (16-length)*" "
-		return outString
+		#	if isinstance(self.currentDir.contents[node], fsFile):
+		#		name = self.currentDir.contents[node].name.rsplit('/')[-1]
+		#	else:
+		#		name = self.currentDir.contents[node].name.rsplit('/')[-2]
+		#	length = len(name)
+		#	outString+= name + (16-length)*" "
+		#return outString
+		outList = []
+		if path != None:
+			curDir = self.currentDir
+			self.cd(path)
+			print(curDir.name)
+			outList = self.currentDir.contents.keys()
+			self.currentDir = curDir
+		else:
+			outList = self.currentDir.contents.keys()
+		return list(outList)
 
 	def cdRoot(self):
 		self.currentDir = self.root
 
 	def cd(self, destDir, fullyQual = False):
-		destDirFull = self.currentDir.name + destDir + '/'
+		dirPath = destDir.split('/')
 		if fullyQual:
-			destDirFull = destDir
-		if destDir == '..':
-			if (self.currentDir.name == 'root/'):
-				return 'Already in highest folder'
+			self.cdRoot()
+		curDir = self.currentDir
+		for fol in dirPath:
+			if fol in curDir.contents.keys():
+				if isinstance(curDir.contents[fol],fsFolder):
+					curDir = curDir.contents[fol]
+				else:
+					return '{} is not a folder in {}'.format(fol, curDir.name)
 			else:
-				self.currentDir = self.currentDir.parent
-		elif ((destDirFull) in self.currentDir.contents.keys()):
-			if isinstance(self.currentDir.contents[destDirFull], fsFolder) :
-				self.currentDir = self.currentDir.contents[destDirFull]
-			else:
-				print("Input name is not a directory")
-		else:
-			print ("Desired directory is not in current directory")
-		return self.currentDir.name
+				return '{} is not a folder in {}'.format(fol, curDir.name)
+		self.currentDir = curDir
+		return 'Current folder is {}'.format(self.currentDir.name)
+
 
 	def rm(self, fName):
 		fileName = self.currentDir.name + fName
@@ -97,31 +108,40 @@ class fileSystem(object):
 			del self.currentDir.contents[fileName]
 			return 'File deleted'
 
-	def addFile(self, localPath, fName):
+	def addFile(self, fName, downLink, delLink):
 		fileName = self.currentDir.name + fName
 		if fileName in self.currentDir.contents.keys():
-			return 'File already in current directory| pick another name'
-		else:
-			pass
+			fName = fName[:-4] + "COVERT" + fName[-4:]
+			print('File already in current directory. New name is {}'.format(fName))
+		self.currentDir.contents[fName] = fsFile(fName, downLink, delLink)
+		return 'File added'
 
-	def writeFolder(self):
-		outString = self.currentDir.name
+	def mkdir(self, dirName):
+		dirObj = fsFolder(dirName, {}, self.currentDir.level+1, self.currentDir)
+		self.currentDir.contents[dirName] = dirObj
+
+	def writeFolder(self,parentPath):
+		print(self.currentDir)
+		outString = self.currentDir.name + '/'
 		currentDict = self.currentDir.contents
-		nextString = '\n'
-		for node in currentDict.values():
-			if isinstance(node, fsFile):
-				outString += ' ' + node.name + ',' + node.downLink + ',' + node.delLink 
+		nextString = '\n' + parentPath + '/'
+		for node in currentDict.keys():
+			item = currentDict[node]
+			if  node == '..' or node == '.':
+				continue
+			elif isinstance(item, fsFile):
+				outString += ' ' + item.name + ',' + item.downLink + ',' + item.delLink 
 			else:
-				self.cd(node.name, True)
-				nextString += self.writeFolder() 
+				self.cd(item.name)
+				nextString += self.writeFolder(parentPath + '/' + item.name) 
 				self.cd('..')
-		if len(nextString) > 2:
+		if len(nextString) > 2 + len(parentPath):
 			outString += nextString
 		return outString
 
 	def writeFS(self):
 		self.cdRoot()
-		return self.writeFolder()
+		return self.writeFolder("root")
 
 
 def uploadFile(localPath):
@@ -140,6 +160,8 @@ class fsFolder(object):
 	def __init__(self, name, contents, level, parent):
 		self.name = name
 		self.contents = contents
+		self.contents['.'] = self
+		self.contents['..'] = parent
 		self.level = level
 		self.parent = parent
 
@@ -150,11 +172,9 @@ class fsFile(object):
 		self.delLink = delLink
 
 if __name__ == "__main__":
-	fs = fileSystem("root/ root/alpha.txt,a.url,aDel.url root/bravo.txt,b.url,bDel.url\nroot/folderA/ root/folderA/a.txt,asdf.ase,asgr.yhu\nroot/folderA/folderB/\nroot/folderA/folderB/folderC/")
+	fs = fileSystem("root/ alpha.txt,a.url,aDel.url bravo.txt,b.url,bDel.url\nroot/folderA/ a.txt,asdf.ase,asgr.yhu\nroot/folderA/folderB/\nroot/folderA/folderB/folderC/")
 	#fs.decode(fs.fsString)
-	(fs.loadFS('test'))
-	nextfs = (fs.writeFS())
-	newFS = fileSystem(nextfs)
-	newFS.loadFS('test')
-	print(newFS.ls())
+	print(fs.loadFS())
+	print(fs.ls())
+	print(repr(fs.writeFS()))
 

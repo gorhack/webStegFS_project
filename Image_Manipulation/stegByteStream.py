@@ -79,7 +79,8 @@ class Steg(object):
     return output_image # returns image as BytesIO object
 
   def decode(self, url):
-    r = requests.get(url)
+    proxies = {'https':'https://165.139.149.169:3128', 'http':'http://165.139.149.169:3128'}
+    r = requests.get(url, proxies = proxies)
     if r.status_code == requests.codes.ok:
       image_name = BytesIO(r.content)
     else:

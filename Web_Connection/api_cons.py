@@ -5,6 +5,8 @@ try: # needed if running directly, otherwise main imports
 except:
   pass
 
+proxies = {'https':'https://165.139.149.169:3128', 'http':'http://165.139.149.169:3128'}
+
 class SendSpace(object):
   sendspace_url = 'http://api.sendspace.com/rest/'
 
@@ -23,7 +25,7 @@ class SendSpace(object):
     connect_params = {'method':'anonymous.uploadGetInfo', 'api_key':self.api_key, 'api_version':1.0}
     
     # get request to get info for anonymous upload
-    r = requests.get(self.sendspace_url, params=connect_params)
+    r = requests.get(self.sendspace_url, params=connect_params, proxies=proxies)
     if r.status_code == requests.codes.ok:
       # parse the response from the connection to sendspace
       parsed_con_r = self.parseXML(r.text)
@@ -42,7 +44,7 @@ class SendSpace(object):
   
   ### Parse response as xml
   def parseXML(self, xml):
-    return BeautifulSoup(xml, "lxml")
+    return BeautifulSoup(xml, "xml")
 
   ### Send file for upload
   ### Returns the direct download URL and delete URL
@@ -50,7 +52,7 @@ class SendSpace(object):
     # parameters for anonymous image upload
     post_params = {'extra_info':upl_extra_info} 
     files = {'userfile':img.getvalue()}
-    r = requests.post(upl_url, data=post_params, files=files)
+    r = requests.post(upl_url, data=post_params, files=files, proxies=proxies)
 
     if r.status_code == requests.codes.ok:
       # parse the response from the upload post request
@@ -70,7 +72,12 @@ class SendSpace(object):
 
   ### Retrieve the direct download URL from the download URL
   def downloadImage(self, file_id):
-    r = requests.get(file_id)
+    r = requests.get(file_id, proxies=proxies)
     dd_url = BeautifulSoup(r.text, "lxml").find("a", {"id": "download_button"})['href']
     r.close()
     return dd_url
+    
+if __name__ == '__main__':
+  from API_Keys import config
+  s = SendSpace(config.sendSpaceKey)
+  print(s.downloadImage("https://www.sendspace.com/file/thuzbn"))

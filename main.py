@@ -4,6 +4,7 @@
 
 import os
 import cmd
+import subprocess
 #import readline
 import argparse
 import shlex
@@ -24,8 +25,11 @@ class Console(cmd.Cmd):
     self.sendSpace = api_cons.SendSpace(config.sendSpaceKey)
     # https://www.sendspace.com/file/xvdmcn tmp link
     # TODO:// optionally take last 6 characters of URL (file descriptor)
-    fs = fsClass.fileSystem(stegByteStream.Steg().decode(self.sendSpace.downloadImage(self.url)))
-    fs.loadFS("test")
+    if self.url == '':
+      fs = fsClass.fileSystem()
+    else:
+      fs = fsClass.fileSystem(stegByteStream.Steg().decode(self.sendSpace.downloadImage(self.url)))
+    fs.loadFS()
 
     self.fs = fs
 
@@ -63,14 +67,24 @@ class Console(cmd.Cmd):
     covert_path = ''
     if len(a)==1: #local path file
       local_path = a[0]
+      covert_path=a[0]
     elif len(a)==2:
       local_path=a[0]
       covert_path=a[1]
     else:
       print('*** invalid number of arguments\nupload [local path] [covert path]*')
       return
+    try:
+      fileCont = subprocess.check_output(["type", (local_path)],shell=True).decode('ascii')[:-1]
+    except:
+      print ("{} is not in current OS directory".format(local_path))
+      return
+    img = stegByteStream.Steg().encode(fileCont)
+    (download_url,delete_url) = self.sendSpace.upload(img)
+    img.close()
+    print(self.fs.addFile(covert_path, download_url, delete_url))
 
-    print("Command not implemented")
+    #print("Command not implemented")
     #fs.addFile(local_path, covert_path)
 
   def do_download(self, args):
@@ -122,10 +136,9 @@ class Console(cmd.Cmd):
       return
     print("Command not implemented")
 
-  def do_mkdir(self, args):
+  def do_mkdir(self, dirname):
     """mkdir in Development.\nMake a folder in the current directory.\nUse: mkdir [name]"""
-    print("Command not implemented")
-    #self.fs.mkdir(args)
+    self.fs.mkdir(dirname)
 
   def do_rmdir(self, args):
     """rmdir in Development.\nRemove a folder in the current directory.\nUse: rmdir [name]"""
@@ -213,7 +226,7 @@ class Console(cmd.Cmd):
 if __name__ == '__main__':
   parser = argparse.ArgumentParser()
   # TODO:// allow no URL for empty File System
-  parser.add_argument('-u', '--url', required=True,  default='', help='URL to folder')
+  parser.add_argument('-u', '--url',  default='', help='URL to folder')
   args = parser.parse_args()
   console = Console()
   console.cmdloop()
