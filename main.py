@@ -17,34 +17,38 @@ class Console(cmd.Cmd, object):
 
   def __init__(self):
     cmd.Cmd.__init__(self)
-    self.prompt = "covertFS$ "
+    self.preprompt = "covertFS: "
+    self.folder = "/"
+    self.prompt = self.preprompt + self.folder + "$ "
     self.intro  = "Welcome to Covert File System's command line interface." 
 
     self.sendSpace = api_cons.SendSpace(config.sendSpaceKey)
-    self.fs = None
+    self.fs = fsClass.CovertFilesystem()
     if len(sys.argv) > 1: # has URL
-      self.loadfs(sys.argv[1])
-    else: # no URL
-      self.loadfs("")
-  
+      self.fs.loadfs(url = sys.argv[1])
+      self.folder = self.fs.current_dir
+    
   ### Load a file system
-  def loadfs(self, url):
-    if len(url) == 0:
-      fs = fsClass.fileSystem('')
-      self.fs = fs.newFS()
-      print("Creating new File System...to load a covert File System: loadfs [url]\n")
-    else:
-      if len(url) == 6: # has short URL
-        self.url = "https://www.sendspace.com/file/" + url
-      else: # has long URL
-        self.url = url
-      self.fs = fsClass.fileSystem(stegByteStream.Steg().decode(self.sendSpace.downloadImage(self.url)))
-      self.fs.loadFS()
+  def loadfs(self, url = None):
+    if len(url) == 6: # has short URL
+      self.url = "https://www.sendspace.com/file/" + url
+    else: # has long URL
+      self.url = url
+    try:
+      self.fs = fsClass.CovertFilesystem(stegByteStream.Steg().decode(self.sendSpace.downloadImage(self.url)))
+      self.fs.loadfs()
+      self.folder = self.fs.current_dir
+      self.prompt = self.preprompt + self.folder + "$ "
       print("Loaded Covert File System\n")
+    except:
+      print("Invalid url given")
   
   def do_loadfs(self, url):
     """Load a covert file system.\nUse: loadfs [url]"""
-    self.loadfs(url)
+    if url != None:
+      self.loadfs(url)
+    else:
+      print("Use: loadfs [url]")
 
   def do_encodeimage(self, msg):
     """Encode a message to an image and upload to social media.\nReturns the url.\nUse: encodeimage [message]"""
@@ -68,90 +72,94 @@ class Console(cmd.Cmd, object):
   def do_cd(self, args):
     """Change directory to specified [path]\nUse: cd [path]*"""
     self.fs.cd(args)
+    self.folder = self.fs.current_dir
+    self.prompt = self.preprompt + self.folder + "$ "
 
   def do_uploadfs(self, args):
     """Upload covert fileSystem to sendspace"""
-    self.do_encodeimage(self.fs.writeFS())
+    self.do_encodeimage(self.fs.save())
+
+  def uploadfile(self, contents):
+    img = stegByteStream.Steg().encode(contents)
+    (download_url,delete_url) = self.sendSpace.upload(img)
+    img.close()
+    contents += '\r' + download_url + '.' + delete_url
+    return contents
+
+  def addfiletofs(self, path, contents):
+    upload_contents = self.uploadfile(contents).encode('utf-8')
+    self.fs.addfile(path, upload_contents)
 
   def do_upload(self, args):
     """upload in Development.\nUpload a local file to the covert file system.\nUse: upload [local path] [covert path]"""
     a = args.split()
-    local_path = ''
-    covert_path = ''
-    if len(a)==1: #local path file
-      local_path = a[0]
-      covert_path=a[0]
-    elif len(a)==2:
-      local_path=a[0]
-      covert_path=a[1]
-    else:
-      print('*** invalid number of arguments\nupload [local path] [covert path]*')
+    if len(a) != 2:
+      print ("Use: upload [local path] [covert path]")
       return
+    local_path = a[0]
+    covert_path = a[1]
     try:
-      fileCont = subprocess.check_output(["type", (local_path)],shell=True).decode('ascii')[:-1]
+      fileCont = subprocess.check_output(["cat " + local_path],shell=True)
     except:
       print ("{} is not in current OS directory".format(local_path))
       return
-    img = stegByteStream.Steg().encode(fileCont)
-    (download_url,delete_url) = self.sendSpace.upload(img)
-    img.close()
-    print(self.fs.addFile(covert_path, download_url, delete_url))
+    return self.addfiletofs(covert_path, fileCont.decode())
 
     #print("Command not implemented")
     #fs.addFile(local_path, covert_path)
 
   def do_download(self, args):
     """download in Development.\nDownload a covert file to the local file system.\nUse: download [covert path] [local path]"""
-    print(args)
     a = args.split()
-    local_path = ''
-    covert_path = ''
-    if len(a)==1: #local path file
-      local_path = a[0]
-    elif len(a)==2:
-      local_path=a[0]
-      covert_path=a[1]
-    else:
-      print('*** invalid number of arguments\ndownload [covert path] [local path]*')
+    if len(a)!=2: #local path file
+      print("Use: download [covert path] [local path]")
       return
+    else:
+      covert_path=a[0]
+      local_path=a[1]
+      try:
+        subprocess.check_output(["ls " + local_path.rsplit('/',1)],shell=True)
+      except:
+        print("Given directory does not exist")
+        return 
+      try:
+        subprocess.check_output(["cat " + local_path], shell = True)
+        print("Overwriting file currently at given local path")
+      except:
+        pass
+      try:
+        covert_contents = self.fs.getcontents(covert_path)
+      except:
+        print ("Given cover path does not exist")
+      with open(local_path, 'w') as f:
+        f.write(covert_contents)
+      return
+      
 
     print("Command not implemented")
     #fs.addFile(local_path, covert_path)
 
   def do_rm(self, args):
     """rm in Development.\nRemove a file from the covert file system.\nUse: rm [path]*"""
-    path = ''
     a = args.split()
-    if len(a)==0:
-      path=''
-    elif len(a)==1:
-      path = a[0]
-    else:
-      print('*** invalid number of arguments\nrm [path]*')
-      return 
-    print("Command not implemented")
+    if len(a)!=1:
+      print ("Use: rm path")
+      return
+    self.fs.rm(a[0])
+    #print("Command not implemented")
     #self.fs.rm(path)
 
   def do_mkfile(self, args):
-    """mkfile in Development.\nAdd a text file with a message to the file system.\nUse: mkfile [name] [message] [path]*"""
-    name = ''
-    message = ''
-    path = ''
-    a = args.split()
-    if len(a)==2:
-      name=a[0]
-      message=a[1]
-    elif len(a)==3:
-      name=a[0]
-      message=a[1]
-      path=a[2]
-    else:
-      print('*** invalid number of arguments\nmkfile [name] [message] [path]*')
+    """mkfile in Development.\nAdd a text file with a message to the file system.\nUse: mkfile [message] [path]"""
+    a = args.split(' ', 1)
+    if len(a)!=2:
+      print ("Use: mkfile [message] [path[")
       return
-    print("Command not implemented")
+    return self.addfiletofs(a[1], a[0])
+
 
   def do_mkdir(self, dirname):
-    """mkdir in Development.\nMake a folder in the current directory.\nUse: mkdir [name]"""
+    """mkdir in Development.\nMake a folder at the given path.\nUse: mkdir [name]"""
     self.fs.mkdir(dirname)
 
   def do_rmdir(self, args):
@@ -159,9 +167,9 @@ class Console(cmd.Cmd, object):
     print("Command not implemented")
     #self.fs.rmdir(args)
 
-  def do_save(self, args):
-    """save in Development.\nSave covert file to local storage.\nUse: save [covert path] [local path]"""
-    print("Command not implemented")
+  #def do_save(self, args): #implemented in download
+  #  """save in Development.\nSave covert file to local storage.\nUse: save [covert path] [local path]"""
+  #  print("Command not implemented")
 
   ## Command definitions ##
   def do_hist(self, args):

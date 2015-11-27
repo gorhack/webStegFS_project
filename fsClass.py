@@ -1,180 +1,123 @@
-#from Image_Manipulation import lsbsteg
-#from Web_Connection import *
-import requests
+from fs.memoryfs import MemoryFS
+import fs.errors
 
-class fileSystem(object):
-	def __init__(self, fsString = None):
-		self.currentDir = None
-		self.fsString = fsString
-		self.root = None
-		self.history = None
+class CovertFilesystem(MemoryFS):
 
-	def readFS(self):
-		rootCont = self.fsString.split('\n')
-		tempDict = {}
-		for rootNode in rootCont:
-			foldOrCont = rootNode.split()
-			foldName = foldOrCont[0]
-			foldCont = {}
-			fileNameCont = []
-			for node in foldOrCont[1:]:
-				fileInfo = node.split(',')
-				fileName = fileInfo[0]
-				fileDown = fileInfo[1]
-				fileDel = fileInfo[2]
-				foldCont[fileName] = (fsFile(fileName,fileDown,fileDel))
-#				fileNameCont.append(fileName)
-			foldLevel = foldName.count('/') -1
-			if foldLevel>0:
-				foldParent = tempDict[foldName.rsplit('/',2)[0] + '/']
+	def __init__(self, url = None):
+		super(CovertFilesystem, self).__init__()
+		self.url = url
+		self.current_dir = '/'
+
+	def sanitize_path(self, path = None):
+		if path == '.' or path == None:
+			return (self.current_dir, 'dir')
+		elif path == '..':
+			if self.current_dir == '/':
+				return (self.current_dir, 'dir')
 			else:
-				foldParent = None
-			foldNameShort = foldName.rsplit('/')[-2]
-			tempDict[foldName] = fsFolder(foldNameShort, foldCont, foldLevel, foldParent)
-			tempDict[foldName].fileNames = fileNameCont
-			if foldLevel > 0:
-				tempDict[foldName].parent.contents[foldNameShort] = (tempDict[foldName])
-#				tempDict[foldName].foldNames.append(foldName)
-		self.root = tempDict['root/']
-		return self.root
+				return (self.current_dir.rsplit('/',2)[0]+'/', 'dir')
+		else:
+			if path[0] == '/':
+				fullpath = path
+			else:
+				if path[-1] != '/':
+					path+='/'
+				fullpath = self.current_dir + path
+			if self.exists(fullpath):
+				if self.isdir(fullpath):
+					return fullpath, 'dir'
+				else:
+					return fullpath, 'fil'
+			else:
+				return fullpath, 'non'
 
-	def loadFS(self):
-		if self.fsString == None:
-			print ("No input string! New filesystem created.")
-			return self.newFS()
-		self.currentDir = self.readFS()
-		return 'File system loaded, currently in root/'
-
-	def newFS(self):
-		self.currentDir = fsFolder('root', {}, 0, '')
-		self.root = self.currentDir
-		return 'New file system created'
+	def loadfs(self, fsstring):
+		for fol in fsstring.split("\n"):
+			folderconents = fol.split(' ')
+			curpath = folderconents[0]
+			if curpath != '/':
+				self.makedir(curpath)
+			for filestring in folderconents[1:]:
+				fileinfo = filestring.split(',')
+				filename = fileinfo[0]
+				downlink = fileinfo[1]
+				dellink = fileinfo[2]
+				self.open(curpath + filename, 'wb').close()
 
 	def ls(self, path = None):
-		#outString = "The folder '" + self.currentDir.name + "' contains:\n"
-		#for node in self.currentDir.contents.keys():
-			#if type(node) is fsFolder:
-				#TODO color outputs
-		#	if isinstance(self.currentDir.contents[node], fsFile):
-		#		name = self.currentDir.contents[node].name.rsplit('/')[-1]
-		#	else:
-		#		name = self.currentDir.contents[node].name.rsplit('/')[-2]
-		#	length = len(name)
-		#	outString+= name + (16-length)*" "
-		#return outString
-		outList = []
-		if path != None:
-			curDir = self.currentDir
-			self.cd(path)
-			print(curDir.name)
-			outList = self.currentDir.contents.keys()
-			self.currentDir = curDir
+		san_path, node = self.sanitize_path(path)
+		if node == 'dir':
+			return self.listdir(san_path)
+		elif node == 'fil':
+			print ("File path given, directory path required")
 		else:
-			outList = self.currentDir.contents.keys()
-		return list(outList)
+			print ("Path given does not exist")
 
-	def cdRoot(self):
-		self.currentDir = self.root
-
-	def cd(self, destDir, fullyQual = False):
-		dirPath = destDir.split('/')
-		if fullyQual:
-			self.cdRoot()
-		curDir = self.currentDir
-		for fol in dirPath:
-			if fol in curDir.contents.keys():
-				if isinstance(curDir.contents[fol],fsFolder):
-					curDir = curDir.contents[fol]
-				else:
-					return '{} is not a folder in {}'.format(fol, curDir.name)
-			else:
-				return '{} is not a folder in {}'.format(fol, curDir.name)
-		self.currentDir = curDir
-		return 'Current folder is {}'.format(self.currentDir.name)
-
-
-	def rm(self, fName):
-		fileName = self.currentDir.name + fName
-		if fileName not in self.currentDir.contents.keys():
-			return 'File not in current directory'
-		elif isinstance(self.currentDir.contents[fileName], fsFolder):
-			return 'Use "rmdir" command to remove directories'
+	def cd(self, path = '/'):
+		san_path, node = self.sanitize_path(path)
+		if node == 'dir':
+			self.current_dir = san_path
+			return self.current_dir
+		elif node == 'fil':
+			print ("File path given, directory path required")
 		else:
-			"""try:
-				delStat = deleteFile(self.currentDir.contents[fileName].deleteUrl)
-				print('deleted from sendSpace')
+			print ("Path given does not exist")
+
+	def mkdir(self, path):
+		san_path, node = self.sanitize_path(path)
+		if node == 'dir':
+			print ("Directory already exists")
+		else:
+			self.makedir(san_path, recursive = True)
+			return san_path
+
+	def rmdir(self, path = None, force = False):
+		san_path, node = self.sanitize_path(path)
+		if node == 'fil':
+			print ("Given path is a file; use rm")
+		elif node == 'non':
+			print ("Given path is not existent")
+		else:
+			try:
+				fs.removedir(san_path, force = force)
+				return
 			except:
-				print('not deleted from sendSpace')"""
-			del self.currentDir.contents[fileName]
-			return 'File deleted'
+				print("Directory is not empty. Use force option to delete")
 
-	def addFile(self, fName, downLink, delLink):
-		fileName = self.currentDir.name + fName
-		if fileName in self.currentDir.contents.keys():
-			fName = fName[:-4] + "COVERT" + fName[-4:]
-			print('File already in current directory. New name is {}'.format(fName))
-		self.currentDir.contents[fName] = fsFile(fName, downLink, delLink)
-		return 'File added'
+	def addfile(self, path, contents):
+		san_path, node = self.sanitize_path(path)
+		if path.find('/') != -1 and self.sanitize_path(path.rsplit('/',1)[1])[1] == 'non':
+			print("Directory does not exist to put a file into. Use mkdir")
+			return
+		elif node == 'fil':
+			print ("File already exists: file not added")
+		elif node == 'dir':
+			print ("Given path is a directory; name your file something else")
+		else:
+			self.setcontents(san_path, data = contents)
+			return
 
-	def mkdir(self, dirName):
-		dirObj = fsFolder(dirName, {}, self.currentDir.level+1, self.currentDir)
-		self.currentDir.contents[dirName] = dirObj
+	def rm(self, path):
+		san_path, node = self.sanitize_path(path)
+		if node == 'fil':
+			self.remove(san_path)
+		elif node == 'dir':
+			print ("Directory path given, file path required: use rmdir to remove directories")
+		else:
+			print ("Path given does not exist")
 
-	def writeFolder(self,parentPath):
-		print(self.currentDir)
-		outString = self.currentDir.name + '/'
-		currentDict = self.currentDir.contents
-		nextString = '\n' + parentPath + '/'
-		for node in currentDict.keys():
-			item = currentDict[node]
-			if  node == '..' or node == '.':
-				continue
-			elif isinstance(item, fsFile):
-				outString += ' ' + item.name + ',' + item.downLink + ',' + item.delLink 
-			else:
-				self.cd(item.name)
-				nextString += self.writeFolder(parentPath + '/' + item.name) 
-				self.cd('..')
-		if len(nextString) > 2 + len(parentPath):
-			outString += nextString
-		return outString
+	def save(self):
+		save_string = ''
+		for directory, files in fs.walk():
+			save_string += directory
+			for f in files:
+				conts = fs.getcontents(directory + '/' + f).rsplit('\r',1)
+				fs.setcontents(directory + '/' + f, data = conts[0])
+				links = conts[1].split(',')
+				save_string += ' ' + f + ',' + links[0]  + ',' + links[1]
+			save_string += '\n'
+		return save_string
 
-	def writeFS(self):
-		self.cdRoot()
-		return self.writeFolder("root")
+	
 
-
-def uploadFile(localPath):
-	pass
-
-def deleteFile(deleteUrl): #deprecated, no longer deleting files from sendspace (as it is pointless)
-	payload = {'delete':'Delete+File'}
-	proxies = {'https':'https://165.139.149.169:3128'}
-	r = requests.post(deleteUrl, data=payload, proxies = proxies)
-	if r.status_code == 200:
-		return "File Deleted"
-	else:
-		return "Error deleting file"
-
-class fsFolder(object):
-	def __init__(self, name, contents, level, parent):
-		self.name = name
-		self.contents = contents
-		self.contents['.'] = self
-		self.contents['..'] = parent
-		self.level = level
-		self.parent = parent
-
-class fsFile(object):
-	def __init__(self, name, downLink, delLink):
-		self.name = name
-		self.downLink = downLink
-		self.delLink = delLink
-
-if __name__ == "__main__":
-	fs = fileSystem("root/ alpha.txt,a.url,aDel.url bravo.txt,b.url,bDel.url\nroot/folderA/ a.txt,asdf.ase,asgr.yhu\nroot/folderA/folderB/\nroot/folderA/folderB/folderC/")
-	#fs.decode(fs.fsString)
-	print(fs.loadFS())
-	print(fs.ls())
-	print(repr(fs.writeFS()))
-
+"/ alpha.txt,a.url,aDel.url bravo.txt,b.url,bDel.url\n/folderA/ a.txt,asdf.ase,asgr.yhu\nr/folderA/folderB/\n/folderA/folderB/folderC/"
