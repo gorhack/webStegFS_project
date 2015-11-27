@@ -9,7 +9,9 @@ class CovertFilesystem(MemoryFS):
 		self.current_dir = '/'
 
 	def sanitize_path(self, path = None):
-		if path == '.' or path == None:
+		if path == '/':
+			return ('/', 'dir')
+		elif path == None or path == '.':
 			return (self.current_dir, 'dir')
 		elif path == '..':
 			if self.current_dir == '/':
@@ -20,8 +22,6 @@ class CovertFilesystem(MemoryFS):
 			if path[0] == '/':
 				fullpath = path
 			else:
-				if path[-1] != '/':
-					path+='/'
 				fullpath = self.current_dir + path
 			if self.exists(fullpath):
 				if self.isdir(fullpath):
@@ -32,7 +32,7 @@ class CovertFilesystem(MemoryFS):
 				return fullpath, 'non'
 
 	def loadfs(self, fsstring):
-		for fol in fsstring.split("\n"):
+		for fol in fsstring.split("\n")[:-1]:
 			folderconents = fol.split(' ')
 			curpath = folderconents[0]
 			if curpath != '/':
@@ -49,66 +49,86 @@ class CovertFilesystem(MemoryFS):
 		if node == 'dir':
 			return self.listdir(san_path)
 		elif node == 'fil':
-			print ("File path given, directory path required")
+			return ("File path given, directory path required")
 		else:
-			print ("Path given does not exist")
+			return ("Path given does not exist")
 
 	def cd(self, path = '/'):
-		san_path, node = self.sanitize_path(path)
-		if node == 'dir':
-			self.current_dir = san_path
-			return self.current_dir
-		elif node == 'fil':
-			print ("File path given, directory path required")
+		if path == '/':
+			self.current_dir = path
+			return 1
 		else:
-			print ("Path given does not exist")
+			san_path, node = self.sanitize_path(path)
+			if san_path[-1] != '/':
+				san_path+='/'
+			if node == 'dir':
+				self.current_dir = san_path
+				return 1
+			elif node == 'fil':
+				return "File path given, directory path required"
+			else:
+				return "Path given does not exist"
 
 	def mkdir(self, path):
 		san_path, node = self.sanitize_path(path)
+		if san_path[-1] != '/':
+			san_path+='/'
 		if node == 'dir':
-			print ("Directory already exists")
+			return ("Directory already exists")
 		else:
 			self.makedir(san_path, recursive = True)
-			return san_path
+			return 1
 
 	def rmdir(self, path = None, force = False):
 		san_path, node = self.sanitize_path(path)
+		if san_path[-1] != '/':
+			san_path+='/'
 		if node == 'fil':
-			print ("Given path is a file; use rm")
+			return ("Given path is a file; use rm")
 		elif node == 'non':
-			print ("Given path is not existent")
+			return ("Given path is not existent")
 		else:
 			try:
 				fs.removedir(san_path, force = force)
-				return
+				return 1
 			except:
-				print("Directory is not empty. Use force option to delete")
+				return ("Directory is not empty. Use force option to delete")
+
+
+	def check_parent_dir(self, path):
+		if path.find("/") == -1 or path.count("/") == 1 and path.find("/") == 0:
+			return True
+		san_path, node = self.sanitize_path(path)
+		if self.exists(san_path.rsplit('/',1)[0] + '/'):
+			return True
+		print(san_path)
+		return False
 
 	def addfile(self, path, contents):
 		san_path, node = self.sanitize_path(path)
-		if path.find('/') != -1 and self.sanitize_path(path.rsplit('/',1)[1])[1] == 'non':
-			print("Directory does not exist to put a file into. Use mkdir")
-			return
+		if not self.check_parent_dir(path):
+			return ("Parent directory does not exist. Use mkdir")
 		elif node == 'fil':
-			print ("File already exists: file not added")
+			return ("File already exists: file not added")
 		elif node == 'dir':
-			print ("Given path is a directory; name your file something else")
+			return ("Given path is a directory; name your file something else")
 		else:
 			self.setcontents(san_path, data = contents)
-			return
+			return 1
 
 	def rm(self, path):
 		san_path, node = self.sanitize_path(path)
 		if node == 'fil':
 			self.remove(san_path)
+			return 1
 		elif node == 'dir':
-			print ("Directory path given, file path required: use rmdir to remove directories")
+			return ("Directory path given, file path required: use rmdir to remove directories")
 		else:
-			print ("Path given does not exist")
+			return ("Path given does not exist")
 
 	def save(self):
 		save_string = ''
-		for directory, files in fs.walk():
+		for directory, files in self.walk():
 			save_string += directory
 			for f in files:
 				conts = fs.getcontents(directory + '/' + f).rsplit('\r',1)

@@ -37,7 +37,7 @@ class SendSpace(object):
         print("Error parsing connection response.\n" + e.value + "\n" + r.text)
         exit()
     else: 
-      print("Invalid response code " + r.status_code + "\n" + r.text)
+      print("Invalid response code " + str(r.status_code) + "\n" + r.text)
       exit()
     r.close()
     return (upl_url, upl_extra_info)
