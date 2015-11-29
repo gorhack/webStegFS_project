@@ -6,7 +6,7 @@ import os
 import cmd
 import subprocess
 import sys
-import readline
+#import readline
 import shlex
 from Image_Manipulation import stegByteStream
 from Web_Connection.API_Keys import config
