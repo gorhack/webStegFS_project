@@ -42,7 +42,7 @@ class CovertFilesystem(MemoryFS):
 				filename = fileinfo[0]
 				downlink = fileinfo[1]
 				dellink = fileinfo[2]
-				self.open(curpath + filename, 'wb').close()
+				self.setcontents(curpath + filename, downlink + ',' + dellink)
 
 	def ls(self, path = None):
 		san_path, node = self.sanitize_path(path)
@@ -86,10 +86,11 @@ class CovertFilesystem(MemoryFS):
 		if node == 'fil':
 			return ("Given path is a file; use rm")
 		elif node == 'non':
+			print(san_path)
 			return ("Given path is not existent")
 		else:
 			try:
-				fs.removedir(san_path, force = force)
+				self.removedir(san_path, force = force)
 				return 1
 			except:
 				return ("Directory is not empty. Use force option to delete")
@@ -101,7 +102,6 @@ class CovertFilesystem(MemoryFS):
 		san_path, node = self.sanitize_path(path)
 		if self.exists(san_path.rsplit('/',1)[0] + '/'):
 			return True
-		print(san_path)
 		return False
 
 	def addfile(self, path, contents):
@@ -130,9 +130,11 @@ class CovertFilesystem(MemoryFS):
 		save_string = ''
 		for directory, files in self.walk():
 			save_string += directory
+			if directory[-1]!='/':
+				save_string += '/'
 			for f in files:
-				conts = fs.getcontents(directory + '/' + f).rsplit('\r',1)
-				fs.setcontents(directory + '/' + f, data = conts[0])
+				conts = self.getcontents(directory + '/' + f).decode().rsplit('\r',1)
+				#self.setcontents(directory + '/' + f, data = conts[0])
 				links = conts[1].split(',')
 				save_string += ' ' + f + ',' + links[0]  + ',' + links[1]
 			save_string += '\n'
