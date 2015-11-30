@@ -1,4 +1,4 @@
 config.py
 *.pyc
 __init__.py
-docs/
+/docs
