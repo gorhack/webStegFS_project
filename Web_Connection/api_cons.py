@@ -1,17 +1,19 @@
 from bs4 import BeautifulSoup # parse XML response
 import requests # GET and POST requests
+import proxy_list
 try: # needed if running directly, otherwise main imports
   from API_Keys import config
 except:
   pass
 
-proxies = {'https':'https://165.139.149.169:3128', 'http':'http://165.139.149.169:3128'}
+proxies = proxy_list.proxies
 
 class SendSpace(object):
   sendspace_url = 'http://api.sendspace.com/rest/'
 
-  def __init__(self, key):
+  def __init__(self, key, proxy = True):
     self.api_key = key
+    self.proxy = proxy
 
   ### User facing upload
   def upload(self, img):
@@ -25,7 +27,10 @@ class SendSpace(object):
     connect_params = {'method':'anonymous.uploadGetInfo', 'api_key':self.api_key, 'api_version':1.0}
     
     # get request to get info for anonymous upload
-    r = requests.get(self.sendspace_url, params=connect_params, proxies=proxies)
+    if self.proxy:
+      r = requests.get(self.sendspace_url, params=connect_params, proxies=proxies)
+    else: 
+      r = requests.get(self.sendspace_url, params=connect_params)
     if r.status_code == requests.codes.ok:
       # parse the response from the connection to sendspace
       parsed_con_r = self.parseXML(r.text)
@@ -52,7 +57,10 @@ class SendSpace(object):
     # parameters for anonymous image upload
     post_params = {'extra_info':upl_extra_info} 
     files = {'userfile':img.getvalue()}
-    r = requests.post(upl_url, data=post_params, files=files, proxies=proxies)
+    if self.proxy:
+      r = requests.post(upl_url, data=post_params, files=files, proxies=proxies)
+    else:
+      r = requests.post(upl_url, data=post_params, files=files)
 
     if r.status_code == requests.codes.ok:
       # parse the response from the upload post request
@@ -72,7 +80,10 @@ class SendSpace(object):
 
   ### Retrieve the direct download URL from the download URL
   def downloadImage(self, file_id):
-    r = requests.get(file_id, proxies=proxies)
+    if self.proxy:
+      r = requests.get(file_id, proxies=proxies)
+    else:
+      r = requests.get(file_id)
     dd_url = BeautifulSoup(r.text, "lxml").find("a", {"id": "download_button"})['href']
     r.close()
     return dd_url
