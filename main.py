@@ -22,8 +22,9 @@ class Console(cmd.Cmd, object):
         self.folder = "/"
         self.prompt = self.preprompt + self.folder + "$ "
         self.intro = "Welcome to Covert File System's command line interface." 
+        self.proxy = True
 
-        self.sendSpace = api_cons.SendSpace(config.sendSpaceKey)
+        self.sendSpace = api_cons.SendSpace(config.sendSpaceKey, self.proxy)
         self.test = False  # used to test the interface
         self.fs = fsClass.CovertFilesystem() 
         if len(sys.argv) > 1:  # has URL
@@ -35,7 +36,7 @@ class Console(cmd.Cmd, object):
         conts = self.fs.getcontents(filename).decode()
         download_url, delete_url = conts.split(',')
         try:
-            msg = stegByteStream.Steg().decode(
+            msg = stegByteStream.Steg(self.proxy).decode(
                 self.sendSpace.downloadImage(download_url))
         except:
             print("A file in the system is corrupt, the file is not accessible. \
@@ -59,7 +60,7 @@ class Console(cmd.Cmd, object):
                     .url\n/folderA/ a.txt,asdf.ase,asgr.yhu\n/folderA/folderB\
                     /\n/folderA/folderB/folderC/")
             else:
-                self.fs.loadfs(stegByteStream.Steg().decode(
+                self.fs.loadfs(stegByteStream.Steg(self.proxy).decode(
                     self.sendSpace.downloadImage(self.url)))
                 for f in self.fs.walkfiles():
                     # fs is set up
@@ -74,6 +75,14 @@ class Console(cmd.Cmd, object):
         except:
             print("Invalid url given")
             return 0
+
+    def do_noproxy(self, args):
+        self.proxy = False
+        self.sendSpace = api_cons.SendSpace(config.sendSpaceKey, self.proxy)
+
+    def do_proxy(self, args):
+        self.proxy = True
+        self.sendSpace = api_cons.SendSpace(config.sendSpaceKey, self.proxy)
 
     def do_loadfs(self, url):
         """Load a covert file system.\nUse: loadfs [url]"""
@@ -101,7 +110,7 @@ class Console(cmd.Cmd, object):
             download_url, delete_url = ('foo.url', 'bar.url')
         else:
             try:
-                img = stegByteStream.Steg().encode(msg)
+                img = stegByteStream.Steg(self.proxy).encode(msg)
                 (download_url, delete_url) = self.sendSpace.upload(img)
                 img.close()
             except:
@@ -122,7 +131,7 @@ class Console(cmd.Cmd, object):
         """Decode the message in an image.\nReturns the message in plain text.\
         \ndecodeimage [download url]"""
         try:
-            msg = stegByteStream.Steg().decode(
+            msg = stegByteStream.Steg(self.proxy).decode(
                 self.sendSpace.downloadImage(url))
             print("Decoded message: " + msg)
             return 0
@@ -171,7 +180,7 @@ class Console(cmd.Cmd, object):
 
     def uploadfile(self, contents):
         if self.test is False:
-            img = stegByteStream.Steg().encode(contents)
+            img = stegByteStream.Steg(self.proxy).encode(contents)
             (download_url, delete_url) = self.sendSpace.upload(img)
             img.close()
             contents += '\r' + download_url + ',' + delete_url

@@ -1,9 +1,15 @@
 from PIL import Image
 from io import BytesIO
 import requests
+try:
+    import proxy_list  # import the proxy addresses
+except:
+    from Web_Connection import proxy_list
+
+proxies = proxy_list.proxies
 
 class Steg(object):
-  def __init__(self):
+  def __init__(self, proxy = True):
     self.SIZE_FIELD_LEN = 64
 
   # https://github.com/adrg/lsbsteg/blob/master/lsbsteg.py
@@ -79,8 +85,10 @@ class Steg(object):
     return output_image # returns image as BytesIO object
 
   def decode(self, url):
-    proxies = {'https':'https://165.139.149.169:3128', 'http':'http://165.139.149.169:3128'}
-    r = requests.get(url, proxies = proxies)
+    if proxy:
+      r = requests.get(url, proxies = proxies)
+    else:
+      r = requests.get(url)
     if r.status_code == requests.codes.ok:
       image_name = BytesIO(r.content)
     else:
