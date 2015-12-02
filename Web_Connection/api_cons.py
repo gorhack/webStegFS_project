@@ -1,9 +1,6 @@
 from bs4 import BeautifulSoup  # parse XML response
 import requests  # GET and POST requests
-try:  # needed if running directly, otherwise main imports
-    from API_Keys import config
-except:
-    pass
+
 try:
     import proxy_list  # import the proxy addresses
 except:

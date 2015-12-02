@@ -11,7 +11,7 @@ import shlex
 from Image_Manipulation import stegByteStream
 from Web_Connection.API_Keys import config
 from Web_Connection import api_cons
-import fsClass
+from File_System import fsClass
 
 
 class Console(cmd.Cmd, object):
