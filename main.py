@@ -15,9 +15,8 @@ import fsClass
 
 
 class Console(cmd.Cmd, object):
-    def __init__(self, stdin=None, stdout=None):
-        # stdin and stdout for testing purposes
-        cmd.Cmd.__init__(self, stdin, stdout)
+    def __init__(self):
+        cmd.Cmd.__init__(self)
         self.preprompt = "covertFS: "
         self.folder = "/"
         self.prompt = self.preprompt + self.folder + "$ "
@@ -198,11 +197,14 @@ class Console(cmd.Cmd, object):
         \nUse: upload [local path] [covert path]"""
         out = None
         a = args.split()
-        if len(a) != 2:
+        if len(a) > 2 or len(a) < 1:
             print("Use: upload [local path] [covert path]")
             return 0
         local_path = a[0]
-        covert_path = a[1]
+        if len(a) == 1:
+            covert_path = a[0]
+        else:
+            covert_path = a[1]
         try:
             fileCont = subprocess.check_output(
                 ["cat " + local_path],
