@@ -20,12 +20,12 @@ class Console(cmd.Cmd, object):
         self.preprompt = "covertFS: "
         self.folder = "/"
         self.prompt = self.preprompt + self.folder + "$ "
-        self.intro = "Welcome to Covert File System's command line interface." 
+        self.intro = "Welcome to Covert File System's command line interface."
         self.proxy = True
 
         self.sendSpace = api_cons.SendSpace(config.sendSpaceKey, self.proxy)
         self.test = False  # used to test the interface
-        self.fs = fsClass.CovertFilesystem() 
+        self.fs = fsClass.CovertFilesystem()
         if len(sys.argv) > 1:  # has URL
             self.loadfs(url=sys.argv[1])
             self.folder = self.fs.current_dir
@@ -46,12 +46,11 @@ class Console(cmd.Cmd, object):
 
     # Load a file system
     def loadfs(self, url=None):
-        if len(url) == 6:  # has short URL
-            self.url = "https://www.sendspace.com/file/" + url
-        else:  # has long URL
-            self.url = url
-            if url == 'test':
-                self.test = True
+        self.url = url
+        if url == 'test':
+            self.test = True
+        else:
+            self.test = False
         try:
             self.fs = fsClass.CovertFilesystem()
             if self.test:  # if we are just testing the fs, use a fake system
@@ -130,13 +129,11 @@ class Console(cmd.Cmd, object):
         """Decode the message in an image.\nReturns the message in plain text.\
         \ndecodeimage [download url]"""
         try:
-            msg = stegByteStream.Steg(self.proxy).decode(
-                self.sendSpace.downloadImage(url))
+            msg = stegByteStream.Steg(self.proxy).decode(self.sendSpace.downloadImage(url))
             print("Decoded message: " + msg)
             return 0
         except:
-            print("Unable to access online resources, \
-                or the given URL is wrong")
+            print("Unable to access online resources, or the given URL is wrong")
             return 0
 
     def do_ls(self, args):
@@ -240,7 +237,7 @@ class Console(cmd.Cmd, object):
             local_path = a[1]
             try:
                 subprocess.check_output(
-                    ["ls " + local_path.rsplit('/', 1)[0]], 
+                    ["ls " + local_path.rsplit('/', 1)[0]],
                     shell=True
                 )
             except:

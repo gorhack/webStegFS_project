@@ -2,205 +2,208 @@ from PIL import Image
 from io import BytesIO
 import requests
 try:
-    import proxy_list  # import the proxy addresses
+        import proxy_list    # import the proxy addresses
 except:
-    from Web_Connection import proxy_list
+        from Web_Connection import proxy_list
 
 proxies = proxy_list.proxies
 
+
 class Steg(object):
-  def __init__(self, proxy = True):
-    self.SIZE_FIELD_LEN = 64
+    def __init__(self, proxy):
+        self.SIZE_FIELD_LEN = 64
+        self.proxy = proxy
 
-  # https://github.com/adrg/lsbsteg/blob/master/lsbsteg.py
-  def encode(self, msg):
-    output_image = BytesIO() # image to output
+    # https://github.com/adrg/lsbsteg/blob/master/lsbsteg.py
+    def encode(self, msg):
+        output_image = BytesIO()  # image to output
 
-    if type(msg) is not str:
-      raise Exception("The message being encoded needs to be a string")
+        if type(msg) is not str:
+            raise Exception("The message being encoded needs to be a string")
 
-    r = requests.get('http://thecatapi.com/api/images/get?format=src&type=png')
-    if r.status_code == requests.codes.ok:
-      image_name = BytesIO(r.content)
-    else:
-      image_name = None
+        r = requests.get('http://thecatapi.com/api/images/get?format=src&type=png')
+        if r.status_code == requests.codes.ok:
+            image_name = BytesIO(r.content)
+        else:
+            image_name = None
 
-    if image_name == None:
-      raise Exception("Failed to assign the image. Error with retrieving the image.")
+        if image_name is None:
+            raise Exception("Failed to assign the image. Error with retrieving the image.")
 
-    def set_bit(target, index, value):
-      mask = 1 << index
-      target &= ~mask
-      return target | mask if value else target
-    
-    def bits_from_int(i, width=1):
-      bits = bin(i)[2:].zfill(width)
-      return [int(b) for b in bits]  
+        def set_bit(target, index, value):
+            mask = 1 << index
+            target &= ~mask
+            return target | mask if value else target
 
-    def embed_message(bits, img):
-      pixels = img.load()
-      width, height = img.size
-      pixel_comps = len(pixels[0, 0])
+        def bits_from_int(i, width=1):
+            bits = bin(i)[2:].zfill(width)
+            return [int(b) for b in bits]
 
-      padding = []
-      if self.SIZE_FIELD_LEN % pixel_comps != 0:
-        padding = (pixel_comps - self.SIZE_FIELD_LEN % pixel_comps) * [0]
+        def embed_message(bits, img):
+            pixels = img.load()
+            width, height = img.size
+            pixel_comps = len(pixels[0, 0])
 
-      bits = bits_from_int(len(bits), self.SIZE_FIELD_LEN) + padding + bits
-      if len(bits) > width * height * pixel_comps * 0.1:
-        raise Exception('The message you are trying to embed is too long')
+            padding = []
+            if self.SIZE_FIELD_LEN % pixel_comps != 0:
+                padding = (pixel_comps - self.SIZE_FIELD_LEN % pixel_comps) * [0]
 
-      bits = iter(bits)
-      for x in range(width):
-        for y in range(height):
-          pixel = list(pixels[x, y])
-          for i, b in enumerate(pixel):
-            bit = next(bits, None)
-            if bit is None:
-              pixels[x, y] = tuple(pixel)
-              return
-            pixel[i] = set_bit(b, 0, bit)
-          pixels[x, y] = tuple(pixel)
+            bits = bits_from_int(len(bits), self.SIZE_FIELD_LEN) + padding + bits
+            if len(bits) > width * height * pixel_comps * 0.1:
+                raise Exception('The message you are trying to embed is too long')
 
-    def embed(msg, image):
-      bits = bits_from_str(msg)
+            bits = iter(bits)
+            for x in range(width):
+                for y in range(height):
+                    pixel = list(pixels[x, y])
+                    for i, b in enumerate(pixel):
+                        bit = next(bits, None)
+                        if bit is None:
+                            pixels[x, y] = tuple(pixel)
+                            return
+                        pixel[i] = set_bit(b, 0, bit)
+                    pixels[x, y] = tuple(pixel)
 
-      embed_message(bits, image)
-      image.save(output_image, format="PNG")
+        def embed(msg, image):
+            bits = bits_from_str(msg)
 
-    def bits_from_bytes(bytes):
-      bits = []
-      for b in bytes:
-        bits.extend([((b >> i) & 1) for i in range(7, -1, -1)])
-      return bits
+            embed_message(bits, image)
+            image.save(output_image, format="PNG")
 
-    def bits_from_str(s):
-      return bits_from_bytes(s.encode('utf-8')) 
+        def bits_from_bytes(bytes):
+            bits = []
+            for b in bytes:
+                bits.extend([((b >> i) & 1) for i in range(7, -1, -1)])
+            return bits
 
-    image = Image.open(image_name)
-    embed(msg, image)
-    image.close()
-    image_name.close()
-    r.close()
-    return output_image # returns image as BytesIO object
+        def bits_from_str(s):
+            return bits_from_bytes(s.encode('utf-8'))
 
-  def decode(self, url):
-    if proxy:
-      r = requests.get(url, proxies = proxies)
-    else:
-      r = requests.get(url)
-    if r.status_code == requests.codes.ok:
-      image_name = BytesIO(r.content)
-    else:
-      image_name = None
+        image = Image.open(image_name)
+        embed(msg, image)
+        image.close()
+        image_name.close()
+        r.close()
+        return output_image  # returns image as BytesIO object
 
-    if image_name == None:
-      raise Exception("Failed to assign the image. Error with retrieving the image.")
+    def decode(self, url):
+        if self.proxy:
+            r = requests.get(url, proxies=proxies)
+        else:
+            r = requests.get(url)
 
-    def bytes_from_bits(bits):
-      bytes = []
+        if r.status_code == requests.codes.ok:
+            image_name = BytesIO(r.content)
+        else:
+            image_name = None
 
-      lenBits = len(bits)
-      for i in range(0, lenBits, 8):
-        byte = bits[i:i+8]
-        bytes.append(sum([(byte[8-b-1] << b) for b in range(7, -1, -1)]))
+        if image_name is None:
+            raise Exception("Failed to assign the image. Error with retrieving the image.")
 
-      return bytes
+        def bytes_from_bits(bits):
+            bytes = []
 
-    def extract_length(pixels, width, height):
-      bits = []
-      for x in range(width):
-        for y in range(height):
-          if len(bits) >= self.SIZE_FIELD_LEN:
-            return int(''.join(map(str, bits[:self.SIZE_FIELD_LEN])), 2), x, y
+            lenBits = len(bits)
+            for i in range(0, lenBits, 8):
+                byte = bits[i:i+8]
+                bytes.append(sum([(byte[8-b-1] << b) for b in range(7, -1, -1)]))
 
-          pixel = list(pixels[x, y])
-          bits.extend([(b & 1) for b in pixel])
+            return bytes
 
+        def extract_length(pixels, width, height):
+            bits = []
+            for x in range(width):
+                for y in range(height):
+                    if len(bits) >= self.SIZE_FIELD_LEN:
+                        return int(''.join(map(str, bits[:self.SIZE_FIELD_LEN])), 2), x, y
 
-    def extract_message(img):
-      pixels = img.load()
+                    pixel = list(pixels[x, y])
+                    bits.extend([(b & 1) for b in pixel])
 
-      width, height = img.size
-      length, offset_x, offset_y = extract_length(pixels, width, height)
+        def extract_message(img):
+            pixels = img.load()
 
-      bits = []
-      for x in range(offset_x, width):
-        for y in range(offset_y, height):
-          pixel = list(pixels[x, y])
-          for b in pixel:
-            if len(bits) == length:
-              return bytes(bytes_from_bits(bits))
-            bits.append(b & 1)
+            width, height = img.size
+            length, offset_x, offset_y = extract_length(pixels, width, height)
 
-    def extract(image):
-      message = extract_message(image)
-      try: 
-        decodedMsg = message.decode('utf-8', 'strict')
-      except UnicodeError as e:
-        print("Error decoding, decoded message may not be correct")
-        decodedMsg = message.decode('utf-8', 'ignore')
-      
-      return decodedMsg
+            bits = []
+            for x in range(offset_x, width):
+                for y in range(offset_y, height):
+                    pixel = list(pixels[x, y])
+                    for b in pixel:
+                        if len(bits) == length:
+                            return bytes(bytes_from_bits(bits))
+                        bits.append(b & 1)
 
-    image = Image.open(image_name)
-    decodedMsg = extract(image)
-    image.close()
-    image_name.close()
-    r.close()
-    return decodedMsg
+        def extract(image):
+            message = extract_message(image)
+            try:
+                decodedMsg = message.decode('utf-8', 'strict')
+            except UnicodeError as e:
+                print("Error decoding, decoded message may not be correct")
+                decodedMsg = message.decode('utf-8', 'ignore')
+
+            return decodedMsg
+
+        image = Image.open(image_name)
+        decodedMsg = extract(image)
+        image.close()
+        image_name.close()
+        r.close()
+        return decodedMsg
+
 
 def test(testNum, url, newImageName, message, predicted):
-  steg = Steg()
-  newImageName = newImageName + ".png"
-  steg.assignImage(url)
-  steg.encode(message, newImageName)
-  actual = steg.decode()
-  if actual is None:
-    print("TEST " + str(testNum) + " FAILED: returned 'None'")
-    return -1
+    steg = Steg()
+    newImageName = newImageName + ".png"
+    steg.assignImage(url)
+    steg.encode(message, newImageName)
+    actual = steg.decode()
+    if actual is None:
+        print("TEST " + str(testNum) + " FAILED: returned 'None'")
+        return -1
 
-  elif predicted == actual:
-    print("TEST " + str(testNum) + " PASSED")
-    return 1
+    elif predicted == actual:
+        print("TEST " + str(testNum) + " PASSED")
+        return 1
 
-  else:
-    print("TEST " + str(testNum) + " FAILED: " + predicted + " does not equal  '" + actual + "'")
-    return -1
+    else:
+        print("TEST " + str(testNum) + " FAILED: " + predicted + " does not equal '" + actual + "'")
+        return -1
 
 # if __name__ == '__main__':
-#   url1 = "http://thecatapi.com/api/images/get?format=src&type=png"
-#   newImageName1 = "test1.png"
-#   message1 = "This is a basic test"
-#   predicted1 = "This is a basic test"
-#   test(1, url1, newImageName1, message1, predicted1)
+#     url1 = "http://thecatapi.com/api/images/get?format=src&type=png"
+#     newImageName1 = "test1.png"
+#     message1 = "This is a basic test"
+#     predicted1 = "This is a basic test"
+#     test(1, url1, newImageName1, message1, predicted1)
 
-#   url2 = "http://animalia-life.com/data_images/cat/cat2.jpg"
-#   newImageName2 = "test2.png"
-#   message2 = "This is a slightly longer message. It should pass despite this longer length, LOL"
-#   predicted2 = "This is a slightly longer message. It should pass despite this longer length, LOL"
-#   test(2, url2, newImageName2, message2, predicted2)
+#     url2 = "http://animalia-life.com/data_images/cat/cat2.jpg"
+#     newImageName2 = "test2.png"
+#     message2 = "This is a slightly longer message. It should pass despite this longer length, LOL"
+#     predicted2 = "This is a slightly longer message. It should pass despite this longer length, LOL"
+#     test(2, url2, newImageName2, message2, predicted2)
 
-#   url3 = "http://thecatapi.com/api/images/get?format=src&type=png"
-#   newImageName3 = "test3.png"
-#   message3 = "This is another test with different symbols. *#*_#$@#$#::>{<?.;,[;.]l;..;,"
-#   predicted3 = "This is another test with different symbols. *#*_#$@#$#::>{<?.;,[;.]l;..;,"
-#   test(3, url3, newImageName3, message3, predicted3)
+#     url3 = "http://thecatapi.com/api/images/get?format=src&type=png"
+#     newImageName3 = "test3.png"
+#     message3 = "This is another test with different symbols. *#*_#$@#$#::>{<?.;,[;.]l;..;,"
+#     predicted3 = "This is another test with different symbols. *#*_#$@#$#::>{<?.;,[;.]l;..;,"
+#     test(3, url3, newImageName3, message3, predicted3)
 
-#   url4 = "http://thecatapi.com/api/images/get?format=src&type=png"
-#   newImageName4 = "test4.png"
-#   message4 = "So a message that is one hundred fifty one characters was a little too long Let's try one that is about one hundred"
-#   predicted4 = "So a message that is one hundred fifty one characters was a little too long Let's try one that is about one hundred"
-#   test(4, url4, newImageName4, message4, predicted4)
+#     url4 = "http://thecatapi.com/api/images/get?format=src&type=png"
+#     newImageName4 = "test4.png"
+#     message4 = "So a message that is one hundred fifty one characters was a little too long Let's try one that is about one hundred"
+#     predicted4 = "So a message that is one hundred fifty one characters was a little too long Let's try one that is about one hundred"
+#     test(4, url4, newImageName4, message4, predicted4)
 
-#   url5 = "http://thecatapi.com/api/images/get?format=src&type=png"
-#   newImageName5 = "test5.png"
-#   message5 = "A message with one hundred fifteen char worked. Let's make it 120 with symbols 239580(*)(&#$>.;.[].e32(&*)Hfefwegfwfwref"
-#   predicted5 = "A message with one hundred fifteen char worked. Let's make it 120 with symbols 239580(*)(&#$>.;.[].e32(&*)Hfefwegfwfwref"
-#   test(5, url5, newImageName5, message5, predicted5)
+#     url5 = "http://thecatapi.com/api/images/get?format=src&type=png"
+#     newImageName5 = "test5.png"
+#     message5 = "A message with one hundred fifteen char worked. Let's make it 120 with symbols 239580(*)(&#$>.;.[].e32(&*)Hfefwegfwfwref"
+#     predicted5 = "A message with one hundred fifteen char worked. Let's make it 120 with symbols 239580(*)(&#$>.;.[].e32(&*)Hfefwegfwfwref"
+#     test(5, url5, newImageName5, message5, predicted5)
 
-#   url6 = "http://thecatapi.com/api/images/get?format=src&type=png"
-#   newImageName6 = "test6.png"
-#   message6 = "One hundred twenty characters worked. I will test a message with 125 characters and symbols fg)&*feufbwfwef';.];'fwefaggarrg4"
-#   predicted6 = "One hundred twenty characters worked. I will test a message with 125 characters and symbols fg)&*feufbwfwef';.];'fwefaggarrg4"
-#   test(6, url6, newImageName6, message6, predicted6)
+#     url6 = "http://thecatapi.com/api/images/get?format=src&type=png"
+#     newImageName6 = "test6.png"
+#     message6 = "One hundred twenty characters worked. I will test a message with 125 characters and symbols fg)&*feufbwfwef';.];'fwefaggarrg4"
+#     predicted6 = "One hundred twenty characters worked. I will test a message with 125 characters and symbols fg)&*feufbwfwef';.];'fwefaggarrg4"
+#     test(6, url6, newImageName6, message6, predicted6)

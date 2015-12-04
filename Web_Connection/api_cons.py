@@ -90,12 +90,13 @@ class SendSpace(object):
 
     # Retrieve the direct download URL from the download URL
     def downloadImage(self, file_id):
+        # check if using full url or partial
+        url = "https://www.sendspace.com/file/{}".format(file_id) if len(file_id) == 6 else file_id
         if self.proxy:
-            r = requests.get(file_id, proxies=proxies)
+            r = requests.get(url, proxies=proxies)
         else:
-            r = requests.get(file_id)
-        dd_url = BeautifulSoup(r.text, "lxml").find(
-            "a", {"id": "download_button"})['href']
+            r = requests.get(url)
+        dd_url = BeautifulSoup(r.text, "lxml").find("a", {"id": "download_button"})['href']
         r.close()
         return dd_url
 
