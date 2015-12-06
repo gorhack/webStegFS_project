@@ -42,12 +42,10 @@ class SendSpace(object):
                 upl_url = parsed_con_r.result.upload["url"]
                 upl_extra_info = parsed_con_r.result.upload["extra_info"]
             except ValueError as e:
-                print("Error parsing connection response.\
-                    \n" + e.value + "\n" + r.text)
+                print("Error parsing connection response.\n" + e.value + "\n" + r.text)
                 exit()
         else:
-            print("Invalid response code \
-                " + str(r.status_code) + "\n" + r.text)
+            print("Invalid response code " + str(r.status_code) + "\n" + r.text)
             exit()
         r.close()
         return (upl_url, upl_extra_info)
@@ -76,8 +74,7 @@ class SendSpace(object):
                 download_url = parsed_upl_r.download_url.string
                 delete_url = parsed_upl_r.delete_url.string
             except ValueError as e:
-                print("Error parsing URLs from response.\
-                    \n" + e.value + "\n" + r.text)
+                print("Error parsing URLs from response.\n" + e.value + "\n" + r.text)
                 exit()
         else:
             print("Invalid response code " + r.status_code + "\n" + r.text)

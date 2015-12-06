@@ -38,8 +38,7 @@ class Console(cmd.Cmd, object):
             msg = stegByteStream.Steg(self.proxy).decode(
                 self.sendSpace.downloadImage(download_url))
         except:
-            print("A file in the system is corrupt, the file is not accessible. \
-                File is not longer in FS")
+            print("A file in the system is corrupt, the file is not accessible. File is not longer in FS")
             return False
         self.fs.setcontents(filename, msg+'\r'+download_url+','+delete_url)
         return True
@@ -54,9 +53,7 @@ class Console(cmd.Cmd, object):
         try:
             self.fs = fsClass.CovertFilesystem()
             if self.test:  # if we are just testing the fs, use a fake system
-                self.fs.loadfs("/ alpha.txt,a.url,aDel.url bravo.txt,b.url,bDel\
-                    .url\n/folderA/ a.txt,asdf.ase,asgr.yhu\n/folderA/folderB\
-                    /\n/folderA/folderB/folderC/")
+                self.fs.loadfs("/ alpha.txt,a.url,aDel.url bravo.txt,b.url,bDel.url\n/folderA/ a.txt,asdf.ase,asgr.yhu\n/folderA/folderB/\n/folderA/folderB/folderC/")
             else:
                 self.fs.loadfs(stegByteStream.Steg(
                                self.proxy).decodeImageFromURL(
@@ -93,8 +90,7 @@ class Console(cmd.Cmd, object):
             return 0
 
     def do_newfs(self, args):
-        """Create a covert file system, return the URL of the old fs.\
-        \nUse: newfs"""
+        """Create a covert file system, return the URL of the old fs.\nUse: newfs"""
         print("New file system created. Old file system located at ", end='')
         old_url = self.do_uploadfs(None)
         self.fs = fsClass.CovertFilesystem()
@@ -103,8 +99,7 @@ class Console(cmd.Cmd, object):
         return 0
 
     def do_encodeimage(self, msg):
-        """Encode a message to an image and upload to social media.\
-        \nReturns the url.\nUse: encodeimage [message]"""
+        """Encode a message to an image and upload to social media.\nReturns the url.\nUse: encodeimage [message]"""
         if self.test:
             download_url, delete_url = ('foo.url', 'bar.url')
         else:
@@ -127,8 +122,7 @@ class Console(cmd.Cmd, object):
             return 0
 
     def do_decodeimage(self, url):
-        """Decode the message in an image.\nReturns the message in plain text.\
-        \ndecodeimage [download url]"""
+        """Decode the message in an image.\nReturns the message in plain text.\ndecodeimage [download url]"""
         try:
             msg = stegByteStream.Steg(
                                       self.proxy).decodeImageFromURL(
@@ -193,8 +187,7 @@ class Console(cmd.Cmd, object):
         return self.fs.addfile(path, upload_contents)
 
     def do_upload(self, args):
-        """Upload a local file to the covert file system.\
-        \nUse: upload [local path] [covert path]"""
+        """Upload a local file to the covert file system.\nUse: upload [local path] [covert path]"""
         out = None
         a = args.split()
         if len(a) > 2 or len(a) < 1:
@@ -229,8 +222,7 @@ class Console(cmd.Cmd, object):
         return contents
 
     def do_download(self, args):
-        """Download a covert file to the local file system.\
-        \nUse: download [covert path] [local path]"""
+        """Download a covert file to the local file system.\nUse: download [covert path] [local path]"""
         a = args.split()
         if len(a) != 2:  # local path file
             print("Use: download [covert path] [local path]")
@@ -258,8 +250,7 @@ class Console(cmd.Cmd, object):
         # fs.addFile(local_path, covert_path)
 
     def do_cat(self, args):
-        """cat in Development.\nView the contents of a file in the fileSystem\
-        \nUse: cat [covert path] """
+        """cat in Development.\nView the contents of a file in the fileSystem.\nUse: cat [covert path] """
         a = args.split()
         if len(a) != 1:  # local path file
             print("Use: cat [covert path]")
@@ -275,8 +266,7 @@ class Console(cmd.Cmd, object):
             return 0
 
     def do_rm(self, args):
-        """rm in Development.\nRemove a file from the covert file system.\
-        \nUse: rm [path]*"""
+        """rm in Development.\nRemove a file from the covert file system.\nUse: rm [path]*"""
         a = args.split()
         if len(a) != 1:
             print("Use: rm [path]")
@@ -289,9 +279,7 @@ class Console(cmd.Cmd, object):
             return 0
 
     def do_mkfile(self, args):
-        """mkfile in Development.\
-        \nAdd a text file with a message to the file system.\
-        \nUse: mkfile [path] [message]"""
+        """mkfile in Development.\nAdd a text file with a message to the file system.\nUse: mkfile [path] [message]"""
         a = args.split()
         if len(a) < 2:
             print("Use: mkfile [path] [message]")
@@ -308,8 +296,7 @@ class Console(cmd.Cmd, object):
             return 0
 
     def do_mkdir(self, args):
-        """mkdir in Development.\nMake a folder at the given path.\
-        \nUse: mkdir [name]"""
+        """mkdir in Development.\nMake a folder at the given path.\nUse: mkdir [name]"""
         a = args.split()
         if len(a) != 1:
             print("Use: mkdir [name]")
@@ -322,8 +309,7 @@ class Console(cmd.Cmd, object):
             return 0
 
     def do_rmdir(self, args):
-        """rmdir in Development.\nRemove a folder in the current directory.\
-        \nUse: rmdir [name]"""
+        """rmdir in Development.\nRemove a folder in the current directory.\nUse: rmdir [name]"""
         a = args.split()
         if len(a) != 1 and len(a) != 2:
             print("Use: rmdir [name] [-f]*")

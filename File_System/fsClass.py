@@ -188,8 +188,7 @@ class CovertFilesystem(MemoryFS):
             self.remove(san_path)
             return 1
         elif node == 'dir':
-            return ("Directory path given, file path required: \
-                    use rmdir to remove directories")
+            return ("Directory path given, file path required: use rmdir to remove directories")
         else:
             return ("Path given does not exist")
 
@@ -204,8 +203,7 @@ class CovertFilesystem(MemoryFS):
             if directory[-1] != '/':
                 save_string += '/'
             for f in files:
-                conts = self.getcontents(directory + '\
-                                         /' + f).decode().rsplit('\r', 1)
+                conts = self.getcontents(directory + '/' + f).decode().rsplit('\r', 1)
                 # self.setcontents(directory + '/' + f, data = conts[0])
                 links = conts[1].split(',')
                 save_string += ' ' + f + ',' + links[0] + ',' + links[1]
