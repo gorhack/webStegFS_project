@@ -1,10 +1,7 @@
 from bs4 import BeautifulSoup  # parse XML response
 import requests  # GET and POST requests
-
-try:
-    import proxy_list  # import the proxy addresses
-except:
-    from Web_Connection import proxy_list
+from PIL import Image
+from Web_Connection import proxy_list
 
 proxies = proxy_list.proxies
 
@@ -44,7 +41,7 @@ class SendSpace(object):
             try:
                 upl_url = parsed_con_r.result.upload["url"]
                 upl_extra_info = parsed_con_r.result.upload["extra_info"]
-            except Exception as e:
+            except ValueError as e:
                 print("Error parsing connection response.\
                     \n" + e.value + "\n" + r.text)
                 exit()
@@ -78,7 +75,7 @@ class SendSpace(object):
             try:
                 download_url = parsed_upl_r.download_url.string
                 delete_url = parsed_upl_r.delete_url.string
-            except Exception as e:
+            except ValueError as e:
                 print("Error parsing URLs from response.\
                     \n" + e.value + "\n" + r.text)
                 exit()

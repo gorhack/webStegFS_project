@@ -1,10 +1,8 @@
 from PIL import Image
 from io import BytesIO
 import requests
-try:
-        import proxy_list    # import the proxy addresses
-except:
-        from Web_Connection import proxy_list
+from Web_Connection import proxy_list
+from Image_Manipulation import genImage
 
 proxies = proxy_list.proxies
 
@@ -16,20 +14,6 @@ class Steg(object):
 
     # https://github.com/adrg/lsbsteg/blob/master/lsbsteg.py
     def encode(self, msg):
-        output_image = BytesIO()  # image to output
-
-        if type(msg) is not str:
-            raise Exception("The message being encoded needs to be a string")
-
-        r = requests.get('http://thecatapi.com/api/images/get?format=src&type=png')
-        if r.status_code == requests.codes.ok:
-            image_name = BytesIO(r.content)
-        else:
-            image_name = None
-
-        if image_name is None:
-            raise Exception("Failed to assign the image. Error with retrieving the image.")
-
         def set_bit(target, index, value):
             mask = 1 << index
             target &= ~mask
@@ -50,7 +34,7 @@ class Steg(object):
 
             bits = bits_from_int(len(bits), self.SIZE_FIELD_LEN) + padding + bits
             if len(bits) > width * height * pixel_comps * 0.1:
-                raise Exception('The message you are trying to embed is too long')
+                raise ValueError('The message you are trying to embed is too long')
 
             bits = iter(bits)
             for x in range(width):
@@ -64,12 +48,6 @@ class Steg(object):
                         pixel[i] = set_bit(b, 0, bit)
                     pixels[x, y] = tuple(pixel)
 
-        def embed(msg, image):
-            bits = bits_from_str(msg)
-
-            embed_message(bits, image)
-            image.save(output_image, format="PNG")
-
         def bits_from_bytes(bytes):
             bits = []
             for b in bytes:
@@ -79,26 +57,47 @@ class Steg(object):
         def bits_from_str(s):
             return bits_from_bytes(s.encode('utf-8'))
 
-        image = Image.open(image_name)
-        embed(msg, image)
-        image.close()
-        image_name.close()
-        r.close()
-        return output_image  # returns image as BytesIO object
+        def embed(msg, input_image, output_image):
+            bits = bits_from_str(msg)
 
-    def decode(self, url):
+            embed_message(bits, input_image)
+            input_image.save(output_image, format="PNG")
+            input_image.close()
+            if self.checkImageIntegrity(msg, output_image) is False:
+                print("Failed to verify image integrity...trying again.")
+                return prepareNewImage()
+            else:
+                return output_image
+
+        if type(msg) is not str:
+            raise TypeError("The message being encoded needs to be a string")
+
+        def prepareNewImage():
+            image = Image.open(genImage.genCatImage())
+            return embed(msg, image, BytesIO())
+
+        return prepareNewImage()  # returns image as BytesIO object
+
+    def checkImageIntegrity(self, msg, img):
+        if msg == self.decode(img):
+            return True
+        else:
+            return False
+
+    def decodeImageFromURL(self, url):
         if self.proxy:
             r = requests.get(url, proxies=proxies)
         else:
             r = requests.get(url)
 
         if r.status_code == requests.codes.ok:
-            image_name = BytesIO(r.content)
+            return self.decode(BytesIO(r.content))
         else:
-            image_name = None
+            raise FileNotFoundError("Could not retrieve image at {}.".format(url))
 
-        if image_name is None:
-            raise Exception("Failed to assign the image. Error with retrieving the image.")
+    def decode(self, img):
+        if img is None:
+            raise FileNotFoundError("Could not load image...image None")
 
         def bytes_from_bits(bits):
             bytes = []
@@ -140,16 +139,13 @@ class Steg(object):
             try:
                 decodedMsg = message.decode('utf-8', 'strict')
             except UnicodeError as e:
-                print("Error decoding, decoded message may not be correct")
                 decodedMsg = message.decode('utf-8', 'ignore')
 
             return decodedMsg
 
-        image = Image.open(image_name)
+        image = Image.open(img)
         decodedMsg = extract(image)
         image.close()
-        image_name.close()
-        r.close()
         return decodedMsg
 
 

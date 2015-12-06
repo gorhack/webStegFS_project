@@ -58,8 +58,9 @@ class Console(cmd.Cmd, object):
                     .url\n/folderA/ a.txt,asdf.ase,asgr.yhu\n/folderA/folderB\
                     /\n/folderA/folderB/folderC/")
             else:
-                self.fs.loadfs(stegByteStream.Steg(self.proxy).decode(
-                    self.sendSpace.downloadImage(self.url)))
+                self.fs.loadfs(stegByteStream.Steg(
+                               self.proxy).decodeImageFromURL(
+                               self.sendSpace.downloadImage(self.url)))
                 for f in self.fs.walkfiles():
                     # fs is set up
                     # go through and actually download the files
@@ -111,8 +112,8 @@ class Console(cmd.Cmd, object):
                 img = stegByteStream.Steg(self.proxy).encode(msg)
                 (download_url, delete_url) = self.sendSpace.upload(img)
                 img.close()
-            except:
-                print("Unable to access online resources")
+            except Exception as e:
+                print("Unable to access online resources " + str(e))
                 return 0
         print("URL: " + download_url)
         return 0
@@ -129,7 +130,9 @@ class Console(cmd.Cmd, object):
         """Decode the message in an image.\nReturns the message in plain text.\
         \ndecodeimage [download url]"""
         try:
-            msg = stegByteStream.Steg(self.proxy).decode(self.sendSpace.downloadImage(url))
+            msg = stegByteStream.Steg(
+                                      self.proxy).decodeImageFromURL(
+                                      self.sendSpace.downloadImage(url))
             print("Decoded message: " + msg)
             return 0
         except:
