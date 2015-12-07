@@ -64,7 +64,7 @@ class Steg(object):
             input_image.save(output_image, format="PNG")
             input_image.close()
             if self.checkImageIntegrity(msg, output_image) is False:
-                print("Failed to verify image integrity...trying again.")
+                print("Failed to verify image integrity...trying again.")  #TODO:// log
                 return prepareNewImage()
             else:
                 return output_image

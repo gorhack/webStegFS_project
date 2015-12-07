@@ -22,6 +22,8 @@ class Console(cmd.Cmd, object):
         self.prompt = self.preprompt + self.folder + "$ "
         self.intro = "Welcome to Covert File System's command line interface."
         self.proxy = True
+        self.max_message_length = 136
+        self.url_identifier = "URLLIB->"
 
         self.sendSpace = api_cons.SendSpace(config.sendSpaceKey, self.proxy)
         self.test = False  # used to test the interface
@@ -103,14 +105,24 @@ class Console(cmd.Cmd, object):
         if self.test:
             download_url, delete_url = ('foo.url', 'bar.url')
         else:
-            try:
-                img = stegByteStream.Steg(self.proxy).encode(msg)
-                (download_url, delete_url) = self.sendSpace.upload(img)
-                img.close()
-            except Exception as e:
-                print("Unable to access online resources " + str(e))
-                return 0
-        print("URL: " + download_url)
+            count = 0
+            chunks = [msg[i:i+self.max_message_length] for i in range(0, len(msg), self.max_message_length)]
+            total = len(chunks)
+            append_url = ' ' + str(total)
+            while (len(chunks) > 0):
+                count += 1
+                print("encoding image {}/{}".format(count, total))  # TODO:// log, not print
+                try:
+                    chunk = chunks.pop()
+                    img = stegByteStream.Steg(self.proxy).encode(chunk + append_url)
+                    (download_url, delete_url) = self.sendSpace.upload(img)
+                    img.close()
+                    append_url = self.url_identifier + download_url + ' ' + str(total)
+                except Exception as e:
+                    print("Unable to access online resources " + e)
+                    return 0
+        print(append_url[:-(len(str(total)) + 1)])
+        count = 0
         return 0
 
     def do_createdownloadlink(self, url):
@@ -123,14 +135,38 @@ class Console(cmd.Cmd, object):
 
     def do_decodeimage(self, url):
         """Decode the message in an image.\nReturns the message in plain text.\ndecodeimage [download url]"""
+        msg = ''
+        next_url = url
+        id_length = len(self.url_identifier) + 6
+        count = 0
+        total = 0
         try:
-            msg = stegByteStream.Steg(
-                                      self.proxy).decodeImageFromURL(
-                                      self.sendSpace.downloadImage(url))
-            print("Decoded message: " + msg)
+            msg += stegByteStream.Steg(
+                          self.proxy).decodeImageFromURL(
+                          self.sendSpace.downloadImage(url))
+            total = msg[-(len(msg) - (msg.rfind(' ') + 1)):]
+            if total == '1':
+                print("Decoded message: " + msg[:-2])
+                return 0
+            len_total = len(total) + 1
+            offset = id_length + len_total
+            while(next_url != "*NO URL*"):
+                count += 1
+                print("decoding image {}/{}".format(count, str(total)))
+
+                if (msg[-offset:-(6 + len_total)] == self.url_identifier):
+                    next_url = msg[-(6 + len_total):-len_total]
+                    msg = msg[:-(offset)]
+                    msg += stegByteStream.Steg(
+                          self.proxy).decodeImageFromURL(
+                          self.sendSpace.downloadImage(next_url))
+                else:
+                    next_url = "*NO URL*"
+
+            print("Decoded message: " + msg[:-len_total])
             return 0
-        except:
-            print("Unable to access online resources, or the given URL is wrong")
+        except Exception as e:
+            print("Unable to access online resources, or the given URL is wrong " + str(e))
             return 0
 
     def do_ls(self, args):

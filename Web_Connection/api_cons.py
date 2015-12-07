@@ -1,7 +1,10 @@
 from bs4 import BeautifulSoup  # parse XML response
 import requests  # GET and POST requests
 from PIL import Image
-from Web_Connection import proxy_list
+try:
+    from Web_Connection import proxy_list
+except:
+    import proxy_list
 
 proxies = proxy_list.proxies
 
@@ -63,6 +66,8 @@ class SendSpace(object):
         if self.proxy:
             r = requests.post(upl_url, data=post_params,
                               files=files, proxies=proxies)
+            # TODO:// FIX MaxRetryError, ConnectionError (Caused by ProxyError('Cannot connect to proxy.', BrokenPipeError(32, 'Broken pipe')))
+
         else:
             r = requests.post(upl_url, data=post_params, files=files)
 
@@ -71,7 +76,7 @@ class SendSpace(object):
             parsed_upl_r = self.parseXML(r.text)
             # try to parse the response
             try:
-                download_url = parsed_upl_r.download_url.string
+                download_url = parsed_upl_r.download_url.string[-6:]
                 delete_url = parsed_upl_r.delete_url.string
             except ValueError as e:
                 print("Error parsing URLs from response.\n" + e.value + "\n" + r.text)
