@@ -37,7 +37,7 @@ Sprint broken into four sub-goals
   - Analysis of how much data can be encoded using LSB
   - Determine file system overhead in each image
 3. Begin to add API connection and Encode/Decoder into Application.
-  - `$ python3 main.py [url]*` // url can be the full url path or the file id (6 character ending, i.e xvdmcn)
+  - `$ python3 main.py [url]`<sup>[*](#option)</sup> // url can be the full url path or the file id (6 character ending, i.e xvdmcn)
   - `covertFS$ [command]`
 4. Functional Design Documents
 5. From previous Sprint:
@@ -49,12 +49,12 @@ Sprint broken into four sub-goals
   Basic stand-alone application to encode/decode a local covert file-system that is able to store, open, and delete files from the covert file-system. Command line program will work similar to a unix based directory system. Using these commands will require breaking the file structure across multiple encoded images. Everything is seamless to the user who only needs to keep track of the /root image URL and then navigate the file system with ease.
 
 ##Usage:
-  - `$ python3 main.py [url of folder/root]*`
+  - `$ python3 main.py [url of folder/root]`<sup>[*](#option)</sup>
   - `covertFS$ [command]`
   - documented commands:
     - `newfs` uploads the old fs and returns the url. loads a new covert file system.
     - `loadfs [url]` load a covert file system
-    - `ls [path]*` list directory contents
+    - `ls [path]`<sup>[*](#option)</sup> list directory contents
     - `cd [path]` change directory in the covert file system to the path
     - `cat [file]` concatenate and print files
     - `upload [local path] [covert path]` upload a file to the covert file system
@@ -62,13 +62,13 @@ Sprint broken into four sub-goals
     - `mkfile [name] [text] [path]` create a text file in the covert file system at the path
     - `mkdir [path]` make directories in the covert file system at the given path
     - `rmdir [path]` remove directories in the covert file system at the given path
-    - `download [covert path] [local path]:` download a file on the covert file system to disk
+    - `download [covert path] [local path]` download a file on the covert file system to disk
     - `uploadfs [url]` save the covert file system, returns URL to the root image. To load the same file system this URL must be retained.
     - `encodeimage [msg]` encode an image with a message, returns the URL to the image
     - `decodeimage [msg]` decode an image, returns the message
     - `hist` show the history of previous commands
     - `shell [cmd]` run shell commands
-    -  `help [cmd]*` show list of commands or documentation for a specific command
+    -  `help [cmd]`<sup>[*](#option)</sup> show list of commands or documentation for a specific command
     - `exit` exit the covert file system
     - `proxy / noproxy` turns the built in proxy on/off respectively
 
@@ -78,4 +78,5 @@ Sprint broken into four sub-goals
   - api_cons.py tested with .png and .jpg and does not hinder encoding/decoding of images uploaded or downloaded.
   - built in test cases for each encode/decode prior to upload
 
-* optional parameter
+
+<a name="option">*</a>optional parameter
