@@ -1,4 +1,5 @@
 from fs.memoryfs import MemoryFS
+from fs.memoryfs import MemoryFile
 import fs.errors
 """@package fsClass
 
@@ -12,6 +13,11 @@ writing any FS information to disk. This
 allows for plausible deniability.
 """
 
+class CovertFile(MemoryFile):
+
+    def __init__(self, path, memory_fs, mem_file, mode, lock):
+        super(CovertFile, self).__init__(path, memory_fs, mem_file, mode, lock)
+        self.downlink = None
 
 class CovertFilesystem(MemoryFS):
     """
@@ -24,7 +30,7 @@ class CovertFilesystem(MemoryFS):
         """
         The constructor. Extends the superclass constructor.
         """
-        super(CovertFilesystem, self).__init__()
+        super(CovertFilesystem, self).__init__(file_factory = CovertFile)
         self.url = url
         self.current_dir = '/'
 
@@ -74,7 +80,7 @@ class CovertFilesystem(MemoryFS):
                 filename = fileinfo[0]
                 downlink = fileinfo[1]
                 dellink = fileinfo[2]
-                self.setcontents(curpath + filename, downlink + ',' + dellink)
+                self.setcontents(curpath + filename, '')
 
     def ls(self, path=None):
         """

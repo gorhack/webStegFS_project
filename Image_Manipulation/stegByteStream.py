@@ -9,8 +9,9 @@ except:
 proxies = proxy_list.proxies
 
 class Steg(object):
-  def __init__(self, proxy = True):
+  def __init__(self, proxy):
     self.SIZE_FIELD_LEN = 64
+    self.proxy = proxy
 
   # https://github.com/adrg/lsbsteg/blob/master/lsbsteg.py
   def encode(self, msg):
@@ -85,7 +86,7 @@ class Steg(object):
     return output_image # returns image as BytesIO object
 
   def decode(self, url):
-    if proxy:
+    if self.proxy:
       r = requests.get(url, proxies = proxies)
     else:
       r = requests.get(url)
