@@ -16,8 +16,8 @@ allows for plausible deniability.
 class CovertFilesystem(MemoryFS):
     """
     The CovertFilesystem class is the FS object used in main.py.
-    It is a subclass of MemoryFS, and it has functions within
-    it that utilize (but do not extend) functions from the
+    It is a subclass of MemoryFS, and it has methods within
+    it that utilize (but do not extend) methods from the
     superclass.
     """
     def __init__(self, url=None):
@@ -30,8 +30,8 @@ class CovertFilesystem(MemoryFS):
 
     def sanitize_path(self, path=None):
         """
-        This function takes a user-input path and makes it
-        function-readable, by adding the current path to the
+        This method takes a user-input path and makes it
+        method-readable, by adding the current path to the
         front (if the desired path doesn't start with /) or
         returning the root path if no path is given.
         """
@@ -94,7 +94,7 @@ class CovertFilesystem(MemoryFS):
         """
         Changes current directory. Superclass has no concept of
         current directory (all calls are made from root dir), so
-        this function is purely local.
+        this method is purely local.
         Error if given path does not exist, or is a file.
         """
         if path == '/':

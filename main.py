@@ -1,12 +1,10 @@
-# Modified version of James Thiele (c) 2004 console.py
-# Last updated 27 April 2004, downloaded 26 October 2015
-# Location: http://www.eskimo.com/~jet/python/examples/cmd/
+#!/usr/bin/env python3
 
 import os
 import cmd
 import subprocess
 import sys
-# import readline
+import readline
 import shlex
 from Image_Manipulation import stegByteStream
 from Web_Connection.API_Keys import config
@@ -360,10 +358,9 @@ class Console(cmd.Cmd, object):
         else:
             return 0
 
-    # def do_save(self, args): #implemented in download
-    #   """save in Development.\nSave covert file to local storage.\
-    # \nUse: save [covert path] [local path]"""
-    #   print("Command not implemented")
+    # Modified version of James Thiele (c) 2004 console.py
+    # Last updated 27 April 2004, downloaded 26 October 2015
+    # Location: http://www.eskimo.com/~jet/python/examples/cmd/
 
     # Command definitions ##
     def do_hist(self, args):
@@ -395,8 +392,8 @@ class Console(cmd.Cmd, object):
     # Override methods in Cmd object ##
     def completedefault(self, text, line, begidx, endidx):
         # Allow Tab autocompletion of file names
+        # TODO:// tmp current directory to walk down path
         return [i for i in self.fs.ls() if i.startswith(text)]
-        # TODO:// update ls() to return a List
 
     def preloop(self):
         """Initialization before prompting user for commands.
