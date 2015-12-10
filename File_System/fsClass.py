@@ -70,17 +70,27 @@ class CovertFilesystem(MemoryFS):
         makes necessary directories, and creates necessary files
         (empty for now) that are then loaded by main.py.
         """
+        print(fsstring)
         for fol in fsstring.split("\n")[:-1]:
             folderconents = fol.split(' ')
-            curpath = folderconents[0]
+            curpath = foldercontents[0]
             if curpath != '/':
                 self.makedir(curpath)
-            for filestring in folderconents[1:]:
+            print(curpath)
+            for filestring in foldercontents[1:]:
                 fileinfo = filestring.split(',')
                 filename = fileinfo[0]
                 downlink = fileinfo[1]
-                dellink = fileinfo[2]
                 self.setcontents(curpath + filename, '')
+                print('wtf')
+                print(curpath)
+                normpath = fs.path.normpath(curpath)
+                print(normpath)
+                parent_dir = self._get_dir_entry(normpath)
+                file_object = parent_dir.contents[filename]
+                file_object.downlink = downlink
+                print(file_object.downlink)
+                parent_dir.contents[filename] = file_object
 
     def ls(self, path=None):
         """
@@ -194,8 +204,7 @@ class CovertFilesystem(MemoryFS):
             self.remove(san_path)
             return 1
         elif node == 'dir':
-            return ("Directory path given, file path required: \
-                    use rmdir to remove directories")
+            return ("Directory path given, file path required: use rmdir to remove directories")
         else:
             return ("Path given does not exist")
 
@@ -210,10 +219,11 @@ class CovertFilesystem(MemoryFS):
             if directory[-1] != '/':
                 save_string += '/'
             for f in files:
-                conts = self.getcontents(directory + '\
-                                         /' + f).decode().rsplit('\r', 1)
-                # self.setcontents(directory + '/' + f, data = conts[0])
-                links = conts[1].split(',')
-                save_string += ' ' + f + ',' + links[0] + ',' + links[1]
+                normpath = fs.path.normpath(directory)
+                parent_dir = self._get_dir_entry(normpath)
+                file_object = parent_dir.contents[f]
+                downlink = file_object.downlink
+                save_string += ' ' + f + ',' + downlink
             save_string += '\n'
+        print(save_string)
         return save_string

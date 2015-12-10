@@ -1,10 +1,10 @@
 from bs4 import BeautifulSoup  # parse XML response
 import requests  # GET and POST requests
-
+from PIL import Image
 try:
-    import proxy_list  # import the proxy addresses
-except:
     from Web_Connection import proxy_list
+except:
+    import proxy_list
 
 proxies = proxy_list.proxies
 
@@ -44,13 +44,11 @@ class SendSpace(object):
             try:
                 upl_url = parsed_con_r.result.upload["url"]
                 upl_extra_info = parsed_con_r.result.upload["extra_info"]
-            except Exception as e:
-                print("Error parsing connection response.\
-                    \n" + e.value + "\n" + r.text)
+            except ValueError as e:
+                print("Error parsing connection response.\n" + e.value + "\n" + r.text)
                 exit()
         else:
-            print("Invalid response code \
-                " + str(r.status_code) + "\n" + r.text)
+            print("Invalid response code " + str(r.status_code) + "\n" + r.text)
             exit()
         r.close()
         return (upl_url, upl_extra_info)
@@ -68,6 +66,8 @@ class SendSpace(object):
         if self.proxy:
             r = requests.post(upl_url, data=post_params,
                               files=files, proxies=proxies)
+            # TODO:// FIX MaxRetryError, ConnectionError (Caused by ProxyError('Cannot connect to proxy.', BrokenPipeError(32, 'Broken pipe')))
+
         else:
             r = requests.post(upl_url, data=post_params, files=files)
 
@@ -76,11 +76,10 @@ class SendSpace(object):
             parsed_upl_r = self.parseXML(r.text)
             # try to parse the response
             try:
-                download_url = parsed_upl_r.download_url.string
+                download_url = parsed_upl_r.download_url.string[-6:]
                 delete_url = parsed_upl_r.delete_url.string
-            except Exception as e:
-                print("Error parsing URLs from response.\
-                    \n" + e.value + "\n" + r.text)
+            except ValueError as e:
+                print("Error parsing URLs from response.\n" + e.value + "\n" + r.text)
                 exit()
         else:
             print("Invalid response code " + r.status_code + "\n" + r.text)
@@ -90,12 +89,13 @@ class SendSpace(object):
 
     # Retrieve the direct download URL from the download URL
     def downloadImage(self, file_id):
+        # check if using full url or partial
+        url = "https://www.sendspace.com/file/{}".format(file_id) if len(file_id) == 6 else file_id
         if self.proxy:
-            r = requests.get(file_id, proxies=proxies)
+            r = requests.get(url, proxies=proxies)
         else:
-            r = requests.get(file_id)
-        dd_url = BeautifulSoup(r.text, "lxml").find(
-            "a", {"id": "download_button"})['href']
+            r = requests.get(url)
+        dd_url = BeautifulSoup(r.text, "lxml").find("a", {"id": "download_button"})['href']
         r.close()
         return dd_url
 

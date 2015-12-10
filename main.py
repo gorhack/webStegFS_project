@@ -8,6 +8,7 @@ import subprocess
 import sys
 # import readline
 import shlex
+import fs
 from Image_Manipulation import stegByteStream
 from Web_Connection.API_Keys import config
 from Web_Connection import api_cons
@@ -20,11 +21,13 @@ class Console(cmd.Cmd, object):
         self.preprompt = "covertFS: "
         self.folder = "/"
         self.prompt = self.preprompt + self.folder + "$ "
-        self.intro = "Welcome to Covert File System's command line interface." 
+        self.intro = "Welcome to Covert File System's command line interface."
         self.proxy = True
+        self.max_message_length = 136
+        self.url_identifier = "URLLIB->"
 
         self.sendSpace = api_cons.SendSpace(config.sendSpaceKey, self.proxy)
-        self.fs = fsClass.CovertFilesystem() 
+        self.fs = fsClass.CovertFilesystem()
         if len(sys.argv) > 1:  # has URL
             self.loadfs(url=sys.argv[1])
             self.folder = self.fs.current_dir
@@ -32,14 +35,17 @@ class Console(cmd.Cmd, object):
     # download a file from the url already in the file, from a fs.loadfs
     def down_and_set_file(self, filename):
         """Download a file. Put it in the filesystem."""
-        conts = self.fs.getcontents(filename).decode()
-        download_url, delete_url = conts.split(',')
+        filepath, fname = fs.path.pathsplit(filename)
+        print(filepath)
+        normpath = fs.path.normpath(filepath)
+        parent_dir = self._get_dir_entry(normpath)
+        file_object = parent_dir.contents[fname]
+        downlink = file_object.downlink
         try:
-            msg = stegByteStream.Steg(self.proxy).decode(
-                self.sendSpace.downloadImage(download_url))
+            msg = stegByteStream.Steg(self.proxy).decodeImageFromURL(
+                self.sendSpace.downloadImage(downlink))
         except:
-            print("A file in the system is corrupt, the file is not accessible. \
-                File is not longer in FS")
+            print("A file in the system is corrupt, the file is not accessible. File is not longer in FS")
             return False
         self.fs.setcontents(filename, msg+'\r'+download_url+','+delete_url)
         return True
@@ -53,7 +59,8 @@ class Console(cmd.Cmd, object):
             self.url = url
         try:
             self.fs = fsClass.CovertFilesystem()
-            self.fs.loadfs(stegByteStream.Steg(self.proxy).decode(
+            print('about to load')
+            self.fs.loadfs(stegByteStream.Steg(self.proxy).decodeImageFromURL(
                 self.sendSpace.downloadImage(self.url)))
             for f in self.fs.walkfiles():
                 # fs is set up
@@ -85,8 +92,7 @@ class Console(cmd.Cmd, object):
             print("Use: loadfs [url]")
 
     def do_newfs(self, args):
-        """Create a covert file system, return the URL of the old fs.\
-        \nUse: newfs"""
+        """Create a covert file system, return the URL of the old fs.\nUse: newfs"""
         print("New file system created. Old file system located at ", end='')
         old_url = self.do_uploadfs(None)
         self.fs = fsClass.CovertFilesystem()
@@ -94,8 +100,28 @@ class Console(cmd.Cmd, object):
         self.prompt = self.preprompt + self.folder + "$ "
 
     def do_encodeimage(self, msg):
-        """Encode a message to an image and upload to social media.\
-        \nReturns the url.\nUse: encodeimage [message]"""
+        """Encode a message to an image and upload to social media.\nReturns the url.\nUse: encodeimage [message]"""
+        count = 0
+        chunks = [msg[i:i+self.max_message_length] for i in range(0, len(msg), self.max_message_length)]
+        total = len(chunks)
+        append_url = ' ' + str(total)
+        while (len(chunks) > 0):
+            count += 1
+            print("encoding image {}/{}".format(count, total))  # TODO:// log, not print
+            try:
+                chunk = chunks.pop()
+                img = stegByteStream.Steg(self.proxy).encode(chunk + append_url)
+                (download_url, delete_url) = self.sendSpace.upload(img)
+                img.close()
+                append_url = self.url_identifier + download_url + ' ' + str(total)
+            except Exception as e:
+                print("Unable to access online resources " + e)
+                return 0
+        print(append_url[:-(len(str(total)) + 1)])
+        count = 0
+        return 0
+
+    def do_createdownloadlink(self, url):
         try:
             img = stegByteStream.Steg(self.proxy).encode(msg)
             (download_url, delete_url) = self.sendSpace.upload(img)
@@ -106,14 +132,40 @@ class Console(cmd.Cmd, object):
         print("URL: " + download_url)
 
     def do_decodeimage(self, url):
-        """Decode the message in an image.\nReturns the message in plain text.\
-        \ndecodeimage [download url]"""
+        """Decode the message in an image.\nReturns the message in plain text.\ndecodeimage [download url]"""
+        msg = ''
+        next_url = url
+        id_length = len(self.url_identifier) + 6
+        count = 0
+        total = 0
         try:
-            msg = stegByteStream.Steg(self.proxy).decode(
-                self.sendSpace.downloadImage(url))
-            print("Decoded message: " + msg)
-        except:
-            print("Unable to access online resources, or the given URL is wrong")
+            msg += stegByteStream.Steg(
+                          self.proxy).decodeImageFromURL(
+                          self.sendSpace.downloadImage(url))
+            total = msg[-(len(msg) - (msg.rfind(' ') + 1)):]
+            if total == '1':
+                print("Decoded message: " + msg[:-2])
+                return 0
+            len_total = len(total) + 1
+            offset = id_length + len_total
+            while(next_url != "*NO URL*"):
+                count += 1
+                print("decoding image {}/{}".format(count, str(total)))
+
+                if (msg[-offset:-(6 + len_total)] == self.url_identifier):
+                    next_url = msg[-(6 + len_total):-len_total]
+                    msg = msg[:-(offset)]
+                    msg += stegByteStream.Steg(
+                          self.proxy).decodeImageFromURL(
+                          self.sendSpace.downloadImage(next_url))
+                else:
+                    next_url = "*NO URL*"
+
+            print("Decoded message: " + msg[:-len_total])
+            return 0
+        except Exception as e:
+            print("Unable to access online resources, or the given URL is wrong " + str(e))
+            return 0
 
     def do_ls(self, args):
             """List items in directory\nUse: ls [path]*"""
@@ -151,30 +203,34 @@ class Console(cmd.Cmd, object):
     def uploadfile(self, contents):
         """Helper function to upload file, return the download url."""
         img = stegByteStream.Steg(self.proxy).encode(contents)
-        (download_url, delete_url) = self.sendSpace.upload(img)
+        (downlink, delete_url) = self.sendSpace.upload(img)
         img.close()
-        contents += '\r' + download_url + ',' + delete_url
-        return contents
+        return contents, downlink
         
 
     def addfiletofs(self, path, contents):
         """Helper function to add a file to the fs."""
-        upload_contents = self.uploadfile(contents).encode('utf-8')
-        return self.fs.addfile(path, upload_contents)
+        upload_contents, downlink = self.uploadfile(contents)
+        self.fs.addfile(path, upload_contents.encode('utf-8'))
+        filepath, fname = fs.path.pathsplit(path)
+        normpath = fs.path.normpath(filepath)
+        parent_dir = self.fs._get_dir_entry(normpath)
+        file_object = parent_dir.contents[fname]
+        file_object.downlink = downlink
+        parent_dir.contents[fname] = file_object
 
     def do_upload(self, args):
-        """Upload a local file to the covert file system.\
-        \nUse: upload [local path] [covert path]"""
+        """Upload a local file to the covert file system.\nUse: upload [local path] [covert path]"""
         out = None
         a = args.split()
         if len(a) > 2 or len(a) < 1:
             print("Use: upload [local path] [covert path]")
             return
         local_path = a[0]
-        if len(a) == 1:
-            covert_path = a[0]
-        else:
+        covert_path = a[0]
+        if len(a) > 2:
             covert_path = a[1]
+        covert_path, node = self.fs.sanitize_path(covert_path)
         try:
             fileCont = subprocess.check_output(
                 ["cat " + local_path],
@@ -183,12 +239,13 @@ class Console(cmd.Cmd, object):
         except:
             print("{} is not in current OS directory".format(local_path))
             return
+        out = self.addfiletofs(covert_path, fileCont.decode())
         try:
-            out = self.addfiletofs(covert_path, fileCont.decode())
+            #out = self.addfiletofs(covert_path, fileCont.decode())
             if type(out) == str:
                 print(out)
         except:
-            print("File too large. Working on a system to break up files")
+            print("Parent directory does not exist in covert FS")
 
     def san_file(self, file_contents):
         """Sanitize file before 1)viewing contents or 2)putting on host OS"""
@@ -196,8 +253,7 @@ class Console(cmd.Cmd, object):
         return contents
 
     def do_download(self, args):
-        """Download a covert file to the local file system.\
-        \nUse: download [covert path] [local path]"""
+        """Download a covert file to the local file system.\nUse: download [covert path] [local path]"""
         a = args.split()
         if len(a) != 2:  # local path file
             print("Use: download [covert path] [local path]")
@@ -207,7 +263,7 @@ class Console(cmd.Cmd, object):
             local_path = a[1]
             try:
                 subprocess.check_output(
-                    ["ls " + local_path.rsplit('/', 1)[0]], 
+                    ["ls " + local_path.rsplit('/', 1)[0]],
                     shell=True
                 )
             except:
@@ -224,8 +280,7 @@ class Console(cmd.Cmd, object):
         # fs.addFile(local_path, covert_path)
 
     def do_cat(self, args):
-        """View the contents of a file in the fileSystem\
-        \nUse: cat [covert path] """
+        """cat in Development.\nView the contents of a file in the fileSystem.\nUse: cat [covert path] """
         a = args.split()
         if len(a) != 1:  # local path file
             print("Use: cat [covert path]")
@@ -240,8 +295,7 @@ class Console(cmd.Cmd, object):
             print(self.san_file(covert_contents))
 
     def do_rm(self, args):
-        """Remove a file from the covert file system.\
-        \nUse: rm [path]*"""
+        """rm in Development.\nRemove a file from the covert file system.\nUse: rm [path]*"""
         a = args.split()
         if len(a) != 1:
             print("Use: rm [path]")
@@ -251,8 +305,7 @@ class Console(cmd.Cmd, object):
             print(out)
 
     def do_mkfile(self, args):
-        """Add a text file with a message to the file system.\
-        \nUse: mkfile [path] [message]"""
+        """mkfile in Development.\nAdd a text file with a message to the file system.\nUse: mkfile [path] [message]"""
         a = args.split()
         if len(a) < 2:
             print("Use: mkfile [path] [message]")
@@ -266,8 +319,7 @@ class Console(cmd.Cmd, object):
             print(out)
 
     def do_mkdir(self, args):
-        """Make a folder at the given path.\
-        \nUse: mkdir [name]"""
+        """mkdir in Development.\nMake a folder at the given path.\nUse: mkdir [name]"""
         a = args.split()
         if len(a) != 1:
             print("Use: mkdir [name]")
@@ -277,8 +329,7 @@ class Console(cmd.Cmd, object):
             print(out)
 
     def do_rmdir(self, args):
-        """Remove a folder in the current directory.\
-        \nUse: rmdir [name]"""
+        """rmdir in Development.\nRemove a folder in the current directory.\nUse: rmdir [name]"""
         a = args.split()
         if len(a) != 1 and len(a) != 2:
             print("Use: rmdir [name] [-f]*")
