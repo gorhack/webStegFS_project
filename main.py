@@ -44,7 +44,7 @@ class Console(cmd.Cmd, object):
         self.folder = "/"
         self.prompt = self.preprompt + self.folder + "$ "
         self.intro = "Welcome to a Covert File System (v{}).".format(self.version)
-        self.proxy = False
+        self.proxy = True
 
         if self.api == "sendspace":  # set defaults for sendspace API
             """
@@ -140,35 +140,33 @@ class Console(cmd.Cmd, object):
         Encode a message to an image and upload to social media.\n
         Returns the url.\n
         Use: encodeimage [message]"""
-        if self.test:
-            download_url, delete_url = ('foo.url', 'bar.url')
-        else:
-            count = 0
-            # determine how many times we will break up the image
-            chunks = [msg[i:i+self.max_message_length] for i in range(0, len(msg), self.max_message_length)]
-            total = len(chunks)
-            # apend the number of total images for status update
-            append_url = ' ' + str(total)
-            while (len(chunks) > 0):
-                count += 1
-                # TODO:// log, not print
-                print("encoding image {}/{}".format(count, total))
-                try:
-                    chunk = chunks.pop()  # encode starting with the last image
-                    # encode the image and append the data to the URL
-                    img = stegByteStream.Steg(self.proxy).encode(chunk +
-                                                                 append_url)
-                    # upload the image
-                    if self.api == 'sendspace':
-                        (download_url, delete_url) = self.sendSpace.upload(img)
-                        img.close()  # close the image
-                        # set the append url to contain the current image's
-                        # download URL. This allows the images to be
-                        # downloaded as a linked list.
-                        append_url = self.url_identifier + download_url + ' ' + str(total)
-                except Exception as e:
-                    print("Unable to access online resources " + str(e))
-                    return 0
+        
+        count = 0
+        # determine how many times we will break up the image
+        chunks = [msg[i:i+self.max_message_length] for i in range(0, len(msg), self.max_message_length)]
+        total = len(chunks)
+        # apend the number of total images for status update
+        append_url = ' ' + str(total)
+        while (len(chunks) > 0):
+            count += 1
+            # TODO:// log, not print
+            print("encoding image {}/{}".format(count, total))
+            try:
+                chunk = chunks.pop()  # encode starting with the last image
+                # encode the image and append the data to the URL
+                img = stegByteStream.Steg(self.proxy).encode(chunk +
+                                                                append_url)
+                # upload the image
+                if self.api == 'sendspace':
+                    (download_url, delete_url) = self.sendSpace.upload(img)
+                    img.close()  # close the image
+                    # set the append url to contain the current image's
+                    # download URL. This allows the images to be
+                    # downloaded as a linked list.
+                    append_url = self.url_identifier + download_url + ' ' + str(total)
+            except Exception as e:
+                print("Unable to access online resources " + str(e))
+                return 0
         # print the last images download URL
         print(append_url[:-(len(str(total)) + 1)])
         count = 0
