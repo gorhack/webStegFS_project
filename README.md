@@ -46,7 +46,16 @@ Sprint broken into four sub-goals
   - Enforce restrictions on arguments in encode/decode
 
 ###Sprint 3: Beta release
-  Basic stand-alone application to encode/decode a local covert file-system that is able to store, open, and delete files from the covert file-system. Command line program will work similar to a unix based directory system. Using these commands will require breaking the file structure across multiple encoded images. Everything is seamless to the user who only needs to keep track of the /root image URL and then navigate the file system with ease.
+Basic stand-alone application to encode/decode a local covert file-system that is able to store, open, and delete files from the covert file-system. Command line program will work similar to a unix based directory system. Using these commands will require breaking the file structure across multiple encoded images. Everything is seamless to the user who only needs to keep track of the /root image URL and then navigate the file system with ease.
+
+###Sprint 4: Publication start and alpha release
+Sprint broken down into 5 sub-goals:
+
+1. Basic draft of paper for publication using LaTEX.
+2. Create a backlog of things required to implement covertFS into a live operating system such as Tails.
+3. Publish documentation using apidocs.
+4. Create a FUSE module for covertFS.
+5. Change steg technique to allow storage of larger files with dynamic sizes.
 
 ##Usage:
   - `$ python3 main.py [url of folder/root]`<sup>[*](#option)</sup>
