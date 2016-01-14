@@ -53,7 +53,7 @@ Sprint broken into four sub-goals
 
 3. Begin to add API connection and Encode/Decoder into Application.
 
-- ``$ python3 main.py [url]``[1]_ // url can be the full url path or the file id (6 character ending, i.e xvdmcn)
+- ``$ python3 main.py [url]`` [1]_ // url can be the full url path or the file id (6 character ending, i.e xvdmcn)
 - ``covertFS$ [command]``
 
 4. Functional Design Documents
