@@ -165,7 +165,7 @@ class Steg(object):
         This method takes an image as a BytesIO object.
         This method returns a message as a string.
         """
-        if img is None:
+        if img is None:  # 
             raise FileNotFoundError("Could not load image...image None")
 
         def bytes_from_bits(bits):
