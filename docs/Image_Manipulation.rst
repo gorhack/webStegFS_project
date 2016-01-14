@@ -1,19 +1,18 @@
 Image_Manipulation package
-==========================
+**************************
+
 
 Submodules
-----------
+==========
 
-Image_Manipulation.lsbsteg module
----------------------------------
+stegByteStream module
+---------------------
 
-.. automodule:: Image_Manipulation.lsbsteg
-    :members:
-    :undoc-members:
-    :show-inheritance:
+Least-significant bit stegenographic technique based on Adrian-George Bostan's implementation on `GitHub <https://github.com/adrg/lsbsteg/blob/master/lsbsteg.py>`_. This technique embeds text messages into images using the Least Significant Bit steganographic algorithm.
 
-Image_Manipulation.stegByteStream module
-----------------------------------------
+The basic idea of the algorithm is to take each individual bit of the message and set it as the least significant bit of each component of each pixel of the image. Usually, a pixel has Red, Green, Blue components and sometimes an Alpha component. Because the values of these components change very little if the least significant bit is changed, the color difference is not particularly noticeable, if at all.
+
+
 
 .. automodule:: Image_Manipulation.stegByteStream
     :members:
@@ -21,10 +20,14 @@ Image_Manipulation.stegByteStream module
     :show-inheritance:
 
 
-Module contents
+
+genImage module
 ---------------
 
-.. automodule:: Image_Manipulation
+The `genImage` module returns an image on request as a `BytesIO` object.
+
+
+.. automodule:: Image_Manipulation.genImage
     :members:
     :undoc-members:
     :show-inheritance:
