@@ -1,4 +1,5 @@
 from fs.memoryfs import MemoryFS
+from fs.memoryfs import MemoryFile
 import fs.errors
 """@package fsClass
 
@@ -12,26 +13,31 @@ writing any FS information to disk. This
 allows for plausible deniability.
 """
 
+class CovertFile(MemoryFile):
+
+    def __init__(self, path, memory_fs, mem_file, mode, lock):
+        super(CovertFile, self).__init__(path, memory_fs, mem_file, mode, lock)
+        self.downlink = None
 
 class CovertFilesystem(MemoryFS):
     """
     The CovertFilesystem class is the FS object used in main.py.
-    It is a subclass of MemoryFS, and it has functions within
-    it that utilize (but do not extend) functions from the
+    It is a subclass of MemoryFS, and it has methods within
+    it that utilize (but do not extend) methods from the
     superclass.
     """
     def __init__(self, url=None):
         """
         The constructor. Extends the superclass constructor.
         """
-        super(CovertFilesystem, self).__init__()
+        super(CovertFilesystem, self).__init__(file_factory = CovertFile)
         self.url = url
         self.current_dir = '/'
 
     def sanitize_path(self, path=None):
         """
-        This function takes a user-input path and makes it
-        function-readable, by adding the current path to the
+        This method takes a user-input path and makes it
+        method-readable, by adding the current path to the
         front (if the desired path doesn't start with /) or
         returning the root path if no path is given.
         """
@@ -64,17 +70,27 @@ class CovertFilesystem(MemoryFS):
         makes necessary directories, and creates necessary files
         (empty for now) that are then loaded by main.py.
         """
+        print(fsstring)
         for fol in fsstring.split("\n")[:-1]:
             folderconents = fol.split(' ')
-            curpath = folderconents[0]
+            curpath = foldercontents[0]
             if curpath != '/':
                 self.makedir(curpath)
-            for filestring in folderconents[1:]:
+            print(curpath)
+            for filestring in foldercontents[1:]:
                 fileinfo = filestring.split(',')
                 filename = fileinfo[0]
                 downlink = fileinfo[1]
-                dellink = fileinfo[2]
-                self.setcontents(curpath + filename, downlink + ',' + dellink)
+                self.setcontents(curpath + filename, '')
+                print('wtf')
+                print(curpath)
+                normpath = fs.path.normpath(curpath)
+                print(normpath)
+                parent_dir = self._get_dir_entry(normpath)
+                file_object = parent_dir.contents[filename]
+                file_object.downlink = downlink
+                print(file_object.downlink)
+                parent_dir.contents[filename] = file_object
 
     def ls(self, path=None):
         """
@@ -94,7 +110,7 @@ class CovertFilesystem(MemoryFS):
         """
         Changes current directory. Superclass has no concept of
         current directory (all calls are made from root dir), so
-        this function is purely local.
+        this method is purely local.
         Error if given path does not exist, or is a file.
         """
         if path == '/':
@@ -203,9 +219,11 @@ class CovertFilesystem(MemoryFS):
             if directory[-1] != '/':
                 save_string += '/'
             for f in files:
-                conts = self.getcontents(directory + '/' + f).decode().rsplit('\r', 1)
-                # self.setcontents(directory + '/' + f, data = conts[0])
-                links = conts[1].split(',')
-                save_string += ' ' + f + ',' + links[0] + ',' + links[1]
+                normpath = fs.path.normpath(directory)
+                parent_dir = self._get_dir_entry(normpath)
+                file_object = parent_dir.contents[f]
+                downlink = file_object.downlink
+                save_string += ' ' + f + ',' + downlink
             save_string += '\n'
+        print(save_string)
         return save_string

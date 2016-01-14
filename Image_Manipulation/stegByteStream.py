@@ -165,7 +165,7 @@ class Steg(object):
         This method takes an image as a BytesIO object.
         This method returns a message as a string.
         """
-        if img is None:  # 
+        if img is None:
             raise FileNotFoundError("Could not load image...image None")
 
         def bytes_from_bits(bits):
@@ -241,9 +241,76 @@ def testSteg(testNum, url, newImageName, message, predicted):
         print("TEST " + str(testNum) + " PASSED")
         return 1
 
+    r = requests.get('http://thecatapi.com/api/images/get?format=src&type=png')
+    if r.status_code == requests.codes.ok:
+      image_name = BytesIO(r.content)
     else:
-        print("TEST " + str(testNum) + " FAILED: " + predicted + " does not equal '" + actual + "'")
-        return -1
+      image_name = None
+
+    if image_name == None:
+      raise Exception("Failed to assign the image. Error with retrieving the image.")
+
+    def set_bit(target, index, value):
+      mask = 1 << index
+      target &= ~mask
+      return target | mask if value else target
+    
+    def bits_from_int(i, width=1):
+      bits = bin(i)[2:].zfill(width)
+      return [int(b) for b in bits]  
+
+    def embed_message(bits, img):
+      pixels = img.load()
+      width, height = img.size
+      pixel_comps = len(pixels[0, 0])
+
+      padding = []
+      if self.SIZE_FIELD_LEN % pixel_comps != 0:
+        padding = (pixel_comps - self.SIZE_FIELD_LEN % pixel_comps) * [0]
+
+      bits = bits_from_int(len(bits), self.SIZE_FIELD_LEN) + padding + bits
+      if len(bits) > width * height * pixel_comps * 0.1:
+        raise Exception('The message you are trying to embed is too long')
+
+      bits = iter(bits)
+      for x in range(width):
+        for y in range(height):
+          pixel = list(pixels[x, y])
+          for i, b in enumerate(pixel):
+            bit = next(bits, None)
+            if bit is None:
+              pixels[x, y] = tuple(pixel)
+              return
+            pixel[i] = set_bit(b, 0, bit)
+          pixels[x, y] = tuple(pixel)
+
+    def embed(msg, image):
+      bits = bits_from_str(msg)
+
+      embed_message(bits, image)
+      image.save(output_image, format="PNG")
+
+    def bits_from_bytes(bytes):
+      bits = []
+      for b in bytes:
+        bits.extend([((b >> i) & 1) for i in range(7, -1, -1)])
+      return bits
+
+    def bits_from_str(s):
+      return bits_from_bytes(s.encode('utf-8')) 
+
+    image = Image.open(image_name)
+    embed(msg, image)
+    image.close()
+    image_name.close()
+    r.close()
+    return output_image # returns image as BytesIO object
+
+    def decode(self, url):
+        if self.proxy:
+            r = requests.get(url, proxies = proxies)
+        else:
+            r = requests.get(url)
 
 # if __name__ == '__main__':
 #     url1 = "http://thecatapi.com/api/images/get?format=src&type=png"
