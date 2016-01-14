@@ -41,6 +41,7 @@ Sprint broken into three sub-goals:
   - ``$ python3 Web_Connection/api_cons.py``
   - returns the download url for the uploaded random cat image (stores the delete URL as well)
 
+
 Sprint 2: Covert Mapping Structure
 ++++++++++++++++++++++++++++++++++
 Sprint broken into four sub-goals
@@ -53,7 +54,7 @@ Sprint broken into four sub-goals
 
 3. Begin to add API connection and Encode/Decoder into Application.
 
-  - ``$ python3 main.py [url]`` [1]_ // url can be the full url path or the file id (6 character ending, i.e xvdmcn)
+  - ``$ python3 main.py [url]`` [1]_ url can be the full url path or the file id (6 character ending, i.e xvdmcn)
   - ``covertFS$ [command]``
 
 4. Functional Design Documents
