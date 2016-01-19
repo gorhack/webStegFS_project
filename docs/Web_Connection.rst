@@ -20,7 +20,8 @@ parameters.
 Web_Connection.proxy_list module
 --------------------------------
 
-The list of possible https and http proxies to use with `sendspace`.
+The list of possible https and http proxies to use with `sendspace`. Proxies are necessary on the DREN at USMA.
+The DREN blocks many file-sharing websites, such as `sendspace`.
 
 .. automodule:: Web_Connection.proxy_list
     :members:
