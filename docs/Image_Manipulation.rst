@@ -20,7 +20,6 @@ The basic idea of the algorithm is to take each individual bit of the message an
     :show-inheritance:
 
 
-
 genImage module
 ---------------
 

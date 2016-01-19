@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 from PIL import Image
 from io import BytesIO
 import requests
