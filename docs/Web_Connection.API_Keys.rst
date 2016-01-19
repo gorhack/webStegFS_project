@@ -20,3 +20,12 @@ Module contents
     :members:
     :undoc-members:
     :show-inheritance:
+
+Sub-packages
+===========
+
+example of how to do sub-packages... not used
+
+.. toctree::
+
+    Web_Connection.API_Keys

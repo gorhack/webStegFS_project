@@ -11,9 +11,6 @@ except:
 """@package api_cons
 
 Documentation for the api_cons module.
-The api_cons module creates an anonymous connection to a given social media
-file hosting website and provides connection, uploadImage, and downloadImage
-parameters.
 """
 
 proxies = proxy_list.proxies

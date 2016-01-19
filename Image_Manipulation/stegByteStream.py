@@ -4,6 +4,11 @@ import requests
 from Web_Connection import proxy_list
 from Image_Manipulation import genImage
 
+"""@package stegByteStream
+
+Documentation for the stegByteStream module.
+"""
+
 proxies = proxy_list.proxies
 
 
@@ -22,7 +27,7 @@ class Steg(object):
         technique to encode a message into an image.
         This method takes a message as a string.
         This method returns an image as a BytesIO object.
-        
+
         """
         def set_bit(target, index, value):
             """
@@ -32,11 +37,11 @@ class Steg(object):
             """
             mask = 1 << index  # shift 1 to the left by index number of bits
             target &= ~mask  # decrement the target by the value of mask
-            return target | mask if value else target  #perform bit wise or of target and mask  
+            return target | mask if value else target  # perform bit wise or of target and mask
 
         def bits_from_int(i, width=1):
             """
-            The bits_from_int method turns an integer into a list of bits values. The width parameter 
+            The bits_from_int method turns an integer into a list of bits values. The width parameter
             determines how many bits with a value of zero to add to the left side of the bit value.
             This function takes an integer and a width as an integer.
             This function returns a list of bit values.
@@ -82,7 +87,7 @@ class Steg(object):
             THis function returns a list of bits.
             """
             bits = []  # initialize list of bits
-            for b in bytes:  # iterate over 
+            for b in bytes:  # iterate over
                 bits.extend([((b >> i) & 1) for i in range(7, -1, -1)])
             return bits
 
@@ -110,23 +115,23 @@ class Steg(object):
             input_image.save(output_image, format="PNG")  # save the resulting input image as the output image in a .png format
             input_image.close()  # close the input image
             if self.checkImageIntegrity(msg, output_image) is False:  # check is the message was encoded properly
-                print("Failed to verify image integrity...trying again.")  #TODO:// log  # if the image was not encoded properly, print this line
+                print("Failed to verify image integrity...trying again.")  # TODO:// log  # if the image was not encoded properly, print this line
                 return prepareNewImage()  # try to encode the message again with a new image
             else:  # if the message was properly encoded into the image
-                return output_image # return the output image
+                return output_image  # return the output image
 
         if type(msg) is not str:  # if the message is not string
             raise TypeError("The message being encoded needs to be a string")  # raise error stating that the message needs to be a string
 
         def prepareNewImage():
             """
-            The prepareNewImage function retrieves an image from the Cat API, and embeds the 
+            The prepareNewImage function retrieves an image from the Cat API, and embeds the
             message into that image.
             This function does not take any paramters.
-            This function returns an image as a BytesIO object. 
+            This function returns an image as a BytesIO object.
             """
             image = Image.open(genImage.genCatImage())  # retrieve image from Cat API
-            return embed(msg, image, BytesIO()) # embed the message into the cat image, save the result to the BytesIO() object, and return that object.
+            return embed(msg, image, BytesIO())  # embed the message into the cat image, save the result to the BytesIO() object, and return that object.
 
         return prepareNewImage()  # returns image as BytesIO object
 
@@ -134,7 +139,7 @@ class Steg(object):
         """
         The checkImageIntegrity method checks to see if a message has been properly encoded into an image.
         This method takes a message as string, and an image as a BytesIO object.
-        This method returns a boolean. 
+        This method returns a boolean.
         """
         if msg == self.decode(img):  # if the message is the same as a message retrieved from a decoded image
             return True  # return true
@@ -205,7 +210,7 @@ class Steg(object):
 
         def extract(image):
             """
-            The extract function finds a message inside an image. The message is checked and cleaned of any 
+            The extract function finds a message inside an image. The message is checked and cleaned of any
             errors that might have occured during the decoding.
             This function takes an image object.
             This function returns a message as a string.
@@ -243,72 +248,72 @@ def testSteg(testNum, url, newImageName, message, predicted):
 
     r = requests.get('http://thecatapi.com/api/images/get?format=src&type=png')
     if r.status_code == requests.codes.ok:
-      image_name = BytesIO(r.content)
+        image_name = BytesIO(r.content)
     else:
-      image_name = None
+        image_name = None
 
-    if image_name == None:
-      raise Exception("Failed to assign the image. Error with retrieving the image.")
+    if image_name is None:
+        raise Exception("Failed to assign the image. Error with retrieving the image.")
 
     def set_bit(target, index, value):
-      mask = 1 << index
-      target &= ~mask
-      return target | mask if value else target
-    
+        mask = 1 << index
+        target &= ~mask
+        return target | mask if value else target
+
     def bits_from_int(i, width=1):
-      bits = bin(i)[2:].zfill(width)
-      return [int(b) for b in bits]  
+        bits = bin(i)[2:].zfill(width)
+        return [int(b) for b in bits]
 
     def embed_message(bits, img):
-      pixels = img.load()
-      width, height = img.size
-      pixel_comps = len(pixels[0, 0])
+        pixels = img.load()
+        width, height = img.size
+        pixel_comps = len(pixels[0, 0])
 
-      padding = []
-      if self.SIZE_FIELD_LEN % pixel_comps != 0:
-        padding = (pixel_comps - self.SIZE_FIELD_LEN % pixel_comps) * [0]
+        padding = []
+        if self.SIZE_FIELD_LEN % pixel_comps != 0:
+            padding = (pixel_comps - self.SIZE_FIELD_LEN % pixel_comps) * [0]
 
-      bits = bits_from_int(len(bits), self.SIZE_FIELD_LEN) + padding + bits
-      if len(bits) > width * height * pixel_comps * 0.1:
-        raise Exception('The message you are trying to embed is too long')
+        bits = bits_from_int(len(bits), self.SIZE_FIELD_LEN) + padding + bits
+        if len(bits) > width * height * pixel_comps * 0.1:
+            raise Exception('The message you are trying to embed is too long')
 
-      bits = iter(bits)
-      for x in range(width):
-        for y in range(height):
-          pixel = list(pixels[x, y])
-          for i, b in enumerate(pixel):
-            bit = next(bits, None)
-            if bit is None:
-              pixels[x, y] = tuple(pixel)
-              return
-            pixel[i] = set_bit(b, 0, bit)
-          pixels[x, y] = tuple(pixel)
+        bits = iter(bits)
+        for x in range(width):
+            for y in range(height):
+                pixel = list(pixels[x, y])
+                for i, b in enumerate(pixel):
+                    bit = next(bits, None)
+                    if bit is None:
+                        pixels[x, y] = tuple(pixel)
+                        return
+                    pixel[i] = set_bit(b, 0, bit)
+                pixels[x, y] = tuple(pixel)
 
     def embed(msg, image):
-      bits = bits_from_str(msg)
+        bits = bits_from_str(msg)
 
-      embed_message(bits, image)
-      image.save(output_image, format="PNG")
+        embed_message(bits, image)
+        image.save(output_image, format="PNG")
 
     def bits_from_bytes(bytes):
-      bits = []
-      for b in bytes:
-        bits.extend([((b >> i) & 1) for i in range(7, -1, -1)])
-      return bits
+        bits = []
+        for b in bytes:
+            bits.extend([((b >> i) & 1) for i in range(7, -1, -1)])
+        return bits
 
     def bits_from_str(s):
-      return bits_from_bytes(s.encode('utf-8')) 
+        return bits_from_bytes(s.encode('utf-8'))
 
     image = Image.open(image_name)
     embed(msg, image)
     image.close()
     image_name.close()
     r.close()
-    return output_image # returns image as BytesIO object
+    return output_image  # returns image as BytesIO object
 
     def decode(self, url):
         if self.proxy:
-            r = requests.get(url, proxies = proxies)
+            r = requests.get(url, proxies=proxies)
         else:
             r = requests.get(url)
 
