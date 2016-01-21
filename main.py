@@ -6,10 +6,11 @@ import subprocess
 import sys
 import shlex
 import fs
-from Image_Manipulation import stegByteStream
+# from Image_Manipulation import stegByteStream
 from Web_Connection.API_Keys import config
 from Web_Connection import api_cons
 from File_System import fsClass
+from Image_Manipulation import steg
 
 """@package api_cons
 
@@ -69,7 +70,7 @@ class Console(cmd.Cmd, object):
         file_object = parent_dir.contents[fname]
         downlink = file_object.downlink
         try:
-            msg = stegByteStream.Steg(self.proxy).decodeImageFromURL(
+            msg = steg.Steg(self.proxy).decode(
                 self.sendSpace.downloadImage(downlink))
 
         except:
@@ -88,7 +89,7 @@ class Console(cmd.Cmd, object):
         try:
             self.fs = fsClass.CovertFilesystem()
             print('about to load')
-            self.fs.loadfs(stegByteStream.Steg(self.proxy).decodeImageFromURL(
+            self.fs.loadfs(steg.Steg(self.proxy).decode(
                 self.sendSpace.downloadImage(self.url)))
             for f in self.fs.walkfiles():
                 # fs is set up
@@ -141,7 +142,39 @@ class Console(cmd.Cmd, object):
         Returns the url.\n
         Use: encodeimage [message]"""
         
+        # count = 0
+        # # determine how many times we will break up the image
+        # chunks = [msg[i:i+self.max_message_length] for i in range(0, len(msg), self.max_message_length)]
+        # total = len(chunks)
+        # # apend the number of total images for status update
+        # append_url = ' ' + str(total)
+        # while (len(chunks) > 0):
+        #     count += 1
+        #     # TODO:// log, not print
+        #     print("encoding image {}/{}".format(count, total))
+        #     try:
+        #         chunk = chunks.pop()  # encode starting with the last image
+        #         # encode the image and append the data to the URL
+        #         img = steg.Steg(self.proxy).encode(chunk +
+        #                                                     append_url)
+        #         # upload the image
+        #         if self.api == 'sendspace':
+        #             (download_url, delete_url) = self.sendSpace.upload(img)
+        #             img.close()  # close the image
+        #             # set the append url to contain the current image's
+        #             # download URL. This allows the images to be
+        #             # downloaded as a linked list.
+        #             append_url = self.url_identifier + download_url + ' ' + str(total)
+        #     except Exception as e:
+        #         print("Unable to access online resources " + str(e))
+        #         return 0
+        # # print the last images download URL
+        # print(append_url[:-(len(str(total)) + 1)])
+        # count = 0
+        # return 0
         count = 0
+
+        #FOR TESTING
         # determine how many times we will break up the image
         chunks = [msg[i:i+self.max_message_length] for i in range(0, len(msg), self.max_message_length)]
         total = len(chunks)
@@ -151,26 +184,26 @@ class Console(cmd.Cmd, object):
             count += 1
             # TODO:// log, not print
             print("encoding image {}/{}".format(count, total))
-            try:
-                chunk = chunks.pop()  # encode starting with the last image
-                # encode the image and append the data to the URL
-                img = stegByteStream.Steg(self.proxy).encode(chunk +
-                                                                append_url)
-                # upload the image
-                if self.api == 'sendspace':
-                    (download_url, delete_url) = self.sendSpace.upload(img)
-                    img.close()  # close the image
-                    # set the append url to contain the current image's
-                    # download URL. This allows the images to be
-                    # downloaded as a linked list.
-                    append_url = self.url_identifier + download_url + ' ' + str(total)
-            except Exception as e:
-                print("Unable to access online resources " + str(e))
-                return 0
+
+            chunk = chunks.pop()  # encode starting with the last image
+            # encode the image and append the data to the URL
+            img = steg.Steg(self.proxy).encode(chunk +
+                                                        append_url)
+            # upload the image
+            if self.api == 'sendspace':
+                (download_url, delete_url) = self.sendSpace.upload(img)
+                img.close()  # close the image
+                # set the append url to contain the current image's
+                # download URL. This allows the images to be
+                # downloaded as a linked list.
+                append_url = self.url_identifier + download_url + ' ' + str(total)
+
         # print the last images download URL
         print(append_url[:-(len(str(total)) + 1)])
+        print("url: " + append_url)
         count = 0
         return 0
+        #END TESTING
 
     def do_createdownloadlink(self, url):
         """
@@ -196,8 +229,8 @@ class Console(cmd.Cmd, object):
         total = 0
         try:
             if self.api == 'sendspace':
-                msg += stegByteStream.Steg(
-                          self.proxy).decodeImageFromURL(
+                msg += steg.Steg(
+                          self.proxy).decode(
                           self.sendSpace.downloadImage(url))
             # determine how many total images the current image contains
             total = msg[-(len(msg) - (msg.rfind(' ') + 1)):]
@@ -215,8 +248,8 @@ class Console(cmd.Cmd, object):
                     next_url = msg[-(6 + len_total):-len_total]
                     msg = msg[:-(offset)]
                     if self.api == 'sendspace':
-                        msg += stegByteStream.Steg(
-                              self.proxy).decodeImageFromURL(
+                        msg += steg.Steg(
+                              self.proxy).decode(
                               self.sendSpace.downloadImage(next_url))
                 else:
                     next_url = "*NO URL*"
@@ -265,7 +298,7 @@ class Console(cmd.Cmd, object):
 
     def uploadfile(self, contents):
         """Helper function to upload file, return the download url."""
-        img = stegByteStream.Steg(self.proxy).encode(contents)
+        img = steg.Steg(self.proxy).encode(contents)
         (downlink, delete_url) = self.sendSpace.upload(img)
         img.close()
         return contents, downlink
