@@ -1,3 +1,4 @@
+import requests
 from PIL import Image
 from Web_Connection import proxy_list
 from Image_Manipulation import genImage
@@ -92,7 +93,8 @@ class Steg(object):
 		bluePix = fixedTup[2][2]
 		return int(redPix + greenPix + bluePix)
 
-	def decodeImage(self, img):
+	def decodeImage(self, bytes):
+		img = Image.open(bytes)
 		pix = img.load()
 		width, height = img.size
 		decodedMsg = ""
@@ -103,6 +105,7 @@ class Steg(object):
 				if len(decodedMsg) >= 6:
 					end = decodedMsg[-6:-1] + decodedMsg[-1]
 					if end == "ENDMSG":
+						img.close()
 						return decodedMsg[:len(decodedMsg) - 6]
 
 	def decode(self, url):
@@ -118,7 +121,7 @@ class Steg(object):
 			r = requests.get(url)  # open the url without proxies
 
 		if r.status_code == requests.codes.ok:  # if the url was successfully opened
-			return self.decode(BytesIO(r.content))  # decode the image found in the url
+			return self.decodeImage(BytesIO(r.content))  # decode the image found in the url
 		else:  # if the url was not successfully opened
 			raise FileNotFoundError("Could not retrieve image at {}.".format(url))  # raise an exception that shows the faulty url
 
