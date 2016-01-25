@@ -4,8 +4,6 @@
 Welcome to CovertFS!
 ********************
 
-Covert File System is a web-based application that allows users to covertly share files through social media sites while maintaining plausible deniability for both the user(s) and the social media site.
-
 Index
 =====
 
@@ -13,59 +11,11 @@ Index
 - :ref:`modindex`
 - :ref:`search`
 
-Source Documentation
-====================
-
-.. toctree::
-   :maxdepth: 1
-
-   main
-   File_System
-   Image_Manipulation
-   Web_Connection
-
-Setup
-=====
-
-- Clone the project from GitHub ``git clone https://github.com/gorhack/covertFS.git``
-
-Covert File System is written exclusively in Python 3 due to the vast modules and libraries that support our goals. Currently `covertFS` only supports using `sendspace` for upload on the web.
-
-- Dependencies:
-    - python3, pip3 ``$ pip3 install -r utls/requirements.txt``
-    - Get a sendspace API key `here <https://www.sendspace.com/dev_apikeys.html>`_.
-    - Copy your sendspace API key and create a file in /Web_Connection/API_Keys/ containing ``sendSpaceKey='API KEY GOES HERE'``
-
-Usage
-=====
-
-- ``$ python3 main.py [url of folder/root]`` [1]_
-- ``covertFS$ [command]`` basic application usage.
-
-Documented Commands:
-
-- ``newfs`` uploads the old fs and returns the url. loads a new covert file system.
-- ``loadfs [url]`` load a covert file system
-- ``ls [path]`` [1]_ list directory contents
-- ``cd [path]`` change directory in the covert file system to the path
-- ``cat [file]`` concatenate and print files
-- ``upload [local path] [covert path]`` upload a file to the covert file system
-- ``rm [path]`` remove a file from the covert file system
-- ``mkfile [name] [text] [path]`` create a text file in the covert file system at the path
-- ``mkdir [path]`` make directories in the covert file system at the given path
-- ``rmdir [path]`` remove directories in the covert file system at the given path
-- ``download [covert path] [local path]`` download a file on the covert file system to disk
-- ``uploadfs [url]`` save the covert file system, returns URL to the root image. To load the same file system this URL must be retained.
-- ``encodeimage [msg]`` encode an image with a message, returns the URL to the image
-- ``decodeimage [msg]`` decode an image, returns the message
-- ``hist`` show the history of previous commands
-- ``shell [cmd]`` run shell commands
-- ``help [cmd]`` [1]_ show list of commands or documentation for a specific command
-- ``exit`` exit the covert file system
-- ``proxy / noproxy`` turns the built in proxy on/off respectively
 
 About the Project
 =================
+
+Covert File System is a web-based application that allows users to covertly share files through social media sites while maintaining plausible deniability for both the user(s) and the social media site.
 
 We created this project for a Capstone class for Computer Science at the United States Military Academy, West Point. This project was broken up into the following sprints over the course of one year.
 
@@ -127,5 +77,57 @@ Sprint broken down into 5 sub-goals:
 3. Publish documentation using apidocs.
 4. Create a FUSE module for covertFS.
 5. Change steg technique to allow storage of larger files with dynamic sizes.
+
+
+Setup
+=====
+
+- Clone the project from GitHub ``git clone https://github.com/gorhack/covertFS.git``
+
+Covert File System is written exclusively in Python 3 due to the vast modules and libraries that support our goals. Currently `covertFS` only supports using `sendspace` for upload on the web.
+
+- Dependencies:
+    - python3, pip3 ``$ pip3 install -r utls/requirements.txt``
+    - Get a sendspace API key `here <https://www.sendspace.com/dev_apikeys.html>`_.
+    - Copy your sendspace API key and create a file in /Web_Connection/API_Keys/ containing ``sendSpaceKey='API KEY GOES HERE'``
+
+Usage
+=====
+
+- ``$ python3 main.py [url of folder/root]`` [1]_
+- ``covertFS$ [command]`` basic application usage.
+
+Documented Commands:
+
+- ``newfs`` uploads the old fs and returns the url. loads a new covert file system.
+- ``loadfs [url]`` load a covert file system
+- ``ls [path]`` [1]_ list directory contents
+- ``cd [path]`` change directory in the covert file system to the path
+- ``cat [file]`` concatenate and print files
+- ``upload [local path] [covert path]`` upload a file to the covert file system
+- ``rm [path]`` remove a file from the covert file system
+- ``mkfile [name] [text] [path]`` create a text file in the covert file system at the path
+- ``mkdir [path]`` make directories in the covert file system at the given path
+- ``rmdir [path]`` remove directories in the covert file system at the given path
+- ``download [covert path] [local path]`` download a file on the covert file system to disk
+- ``uploadfs [url]`` save the covert file system, returns URL to the root image. To load the same file system this URL must be retained.
+- ``encodeimage [msg]`` encode an image with a message, returns the URL to the image
+- ``decodeimage [msg]`` decode an image, returns the message
+- ``hist`` show the history of previous commands
+- ``shell [cmd]`` run shell commands
+- ``help [cmd]`` [1]_ show list of commands or documentation for a specific command
+- ``exit`` exit the covert file system
+- ``proxy / noproxy`` turns the built in proxy on/off respectively
+
+Source Documentation
+====================
+
+.. toctree::
+   :maxdepth: 1
+
+   main
+   File_System
+   Image_Manipulation
+   Web_Connection
 
 .. [1] Optional parameter
