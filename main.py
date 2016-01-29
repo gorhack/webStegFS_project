@@ -5,11 +5,14 @@ import cmd
 import subprocess
 import sys
 import shlex
-import fs
+#import fs
 from Image_Manipulation import stegByteStream
 from Web_Connection.API_Keys import config
 from Web_Connection import api_cons
-from File_System import fsClass
+import sys, time
+sys.path.insert(0,'./File_System')
+from File_System import covertfs
+from File_System.fs import path
 
 """@package api_cons
 
@@ -45,6 +48,8 @@ class Console(cmd.Cmd, object):
         self.prompt = self.preprompt + self.folder + "$ "
         self.intro = "Welcome to a Covert File System (v{}).".format(self.version)
         self.proxy = True
+        self.mp = None
+        self.f = None
 
         if self.api == "sendspace":  # set defaults for sendspace API
             """
@@ -55,27 +60,23 @@ class Console(cmd.Cmd, object):
             self.url = None
 
 
-        self.fs = fsClass.CovertFilesystem()
+        self.fs = covertfs.CovertFS()
         if len(sys.argv) > 1:  # has URL parameter
             self.loadfs(url=sys.argv[1])
             self.folder = self.fs.current_dir
 
     def down_and_set_file(self, filename):
         """Download a file. Put it in the filesystem."""
-        filepath, fname = fs.path.pathsplit(filename)
-        print(filepath)
-        normpath = fs.path.normpath(filepath)
-        parent_dir = self._get_dir_entry(normpath)
-        file_object = parent_dir.contents[fname]
-        downlink = file_object.downlink
+        downlink = self.fs._get_dir_entry(filename).downlink
         try:
+            if len(downlink) == 6:  # has short URL
+                downlink = "https://www.sendspace.com/file/" + downlink
             msg = stegByteStream.Steg(self.proxy).decodeImageFromURL(
                 self.sendSpace.downloadImage(downlink))
-
         except:
             print("A file in the system is corrupt, the file is not accessible. File is not longer in FS")
             return False
-        self.fs.setcontents(filename, msg+'\r'+download_url+','+delete_url)
+        self.fs.setcontents(filename, msg)
         return True
 
     # Load a file system
@@ -86,8 +87,7 @@ class Console(cmd.Cmd, object):
         else:  # has long URL
             self.url = url
         try:
-            self.fs = fsClass.CovertFilesystem()
-            print('about to load')
+            self.fs = covertfs.CovertFS()
             self.fs.loadfs(stegByteStream.Steg(self.proxy).decodeImageFromURL(
                 self.sendSpace.downloadImage(self.url)))
             for f in self.fs.walkfiles():
@@ -101,6 +101,29 @@ class Console(cmd.Cmd, object):
             print("Loaded Covert File System")
         except:
             print("Invalid url given")
+
+    def open_window(self):
+        time.sleep(1)
+        subprocess.call(['gnome-terminal', '--working-directory=' + os.getcwd()+ '/'+ self.mp, '--window'])
+
+    def do_mount(self, args):
+        args = args.split()
+        debug = False
+        if 'debug=True' in args:
+            debug = True
+        import memfuse
+        self.f = memfuse.MemFS(self.fs)
+        self.mp = 'covertMount'
+        newDir = False
+        if not os.path.exists(self.mp):
+            os.makedirs(self.mp)
+            newDir = True
+        from threading import Thread
+        t=Thread(target = self.open_window)
+        t.start()
+        memfuse.mount(self.f,self.mp)
+        if newDir:
+            os.rmdir(self.mp)
 
     def do_noproxy(self, args):
         """Turns off the built-in proxy.\n
@@ -131,7 +154,7 @@ class Console(cmd.Cmd, object):
         """
         print("New file system created. Old file system located at ", end='')
         old_url = self.do_uploadfs(None)
-        self.fs = fsClass.CovertFilesystem()
+        self.fs = covertfs.CovertFS()
         self.folder = self.fs.current_dir
         self.prompt = self.preprompt + self.folder + "$ "
 
@@ -260,6 +283,10 @@ class Console(cmd.Cmd, object):
 
     def do_uploadfs(self, args):
         """Upload covert fileSystem to the web"""
+        for f in self.fs.walkfiles():
+            entry = self.fs._dir_entry(f)
+            if entry.downlink == None:
+                entry.downlink = self.uploadfile(self.fs.getcontents(f).decode())[1]
         if self.api == 'sendspace':
             return self.do_encodeimage(self.fs.save())
 
@@ -271,17 +298,13 @@ class Console(cmd.Cmd, object):
         return contents, downlink
         
 
-    def addfiletofs(self, path, contents):
+    def addfiletofs(self, fspath, contents):
         """Helper function to add a file to the fs."""
         upload_contents, downlink = self.uploadfile(contents)
-        self.fs.addfile(path, upload_contents.encode('utf-8'))
-        filepath, fname = fs.path.pathsplit(path)
-        normpath = fs.path.normpath(filepath)
-        parent_dir = self.fs._get_dir_entry(normpath)
-        file_object = parent_dir.contents[fname]
-        file_object.downlink = downlink
-        parent_dir.contents[fname] = file_object
-
+        self.fs.addfile(fspath, upload_contents.encode('utf-8'))
+        entry = self.fs._dir_entry(self.fs.current_dir+fspath)
+        entry.downlink = downlink
+        
 
     def do_upload(self, args):
         """Upload a local file to the covert file system.\n
@@ -384,11 +407,11 @@ class Console(cmd.Cmd, object):
         if len(a) < 2:
             print("Use: mkfile [path] [message]")
             return
-        try:
-            out = self.addfiletofs(a[0], ' '.join(a[1:]))
-        except:
-            print("File too large. Working on a system to break up files")
-            return
+        #try:
+        out = self.addfiletofs(a[0], ' '.join(a[1:]))
+        #except:
+        #    print("File too large. Working on a system to break up files")
+        #    return
         if type(out) == str:
             print(out)
 
