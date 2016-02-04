@@ -13,6 +13,7 @@ Covert FS is written exclusively in Python 3 due to the vast modules and librari
 - Dependencies:
 
   - python3, pip3 ``$ pip3 install -r utls/requirements.txt``
+  - On MacOSX install `FUSE <https://osxfuse.github.io>`_
   - Get a sendspace API key `here <https://www.sendspace.com/dev_apikeys.html>`_
   - Copy your sendspace API key and create a file in /Web_Connection/API_Keys/ containing ``sendSpaceKey='API KEY GOES HERE'``
 
