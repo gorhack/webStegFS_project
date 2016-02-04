@@ -3,6 +3,7 @@ from PIL import Image
 from Web_Connection import proxy_list
 from Image_Manipulation import genImage
 from io import BytesIO
+import binascii
 
 """@package steg
 
@@ -11,6 +12,7 @@ Documentation for the steg module.
 
 proxies = proxy_list.proxies
 
+# python read file as bits
 class Steg(object):
 
 	def __init__(self, proxy):
@@ -29,8 +31,15 @@ class Steg(object):
 		else:
 			raise Exception("Unexpected ASCII character: " + value)
 
+	def cleanBit(self, b):
+		bit = b
+		if len(bit) < 10:
+			zeros = (10 - len(bit)) * "0"
+			bit = bit + zeros
+		return bit[2:]
 
 	def encodeImage(self, img, msg, output):
+		print("MSG: " + msg)
 		tagged = msg + "ENDMSG"  # add end tag to message to aid in decoding the image
 		
 		width, height = img.size  # get the width and height of the image
@@ -76,9 +85,45 @@ class Steg(object):
 		img.close()
 		return output
 
-	def encode(self, msg):
-		img = Image.open(genImage.genCatImage())  # retrieve image from Cat API
+	def encode(self, msg, img):
 		return self.encodeImage(img, msg, BytesIO())
+
+	def checkMessage(self, msg, img):
+		tagged = msg + "ENDMSG"
+		width, height = img.size
+		size  = width * height
+		if len(tagged) <= size:
+			return (msg, "")
+		else:
+			msgLen = size - 15
+			m = tagged[:msgLen]
+			rest = tagged[msgLen:]
+			return (m, rest)
+
+	def encodeBits(self, msg):
+		# if type(msg) is str:
+		# 	img = Image.open(genImage.genCatImage())
+		# 	return (self.encode(msg, img), "")
+		f = open(msg, 'rb')
+		msgBits = ""
+		for line in f:
+			print(line)
+			for byte in line:
+				print(byte)
+				bits = bin(byte)
+				bits = self.cleanBit(bits)
+				msgBits += bits
+		f.close()
+		img = Image.open(genImage.genCatImage())  # retrieve image from Cat API
+		(m, rest) = self.checkMessage(msgBits, img)
+		return (self.encode(m, img), rest)
+
+	def encodeWithTag(self, msg, url):
+		# find the point in the message where you need to add the url
+		img = Image.open(genImage.genCatImage())
+		tagged = msg + url
+		(m, rest) = self.checkMessage(tagged, img)
+		return (self.encode(m, img), rest)		
 
 	def cleanPix(self, pix):
 		redPix = self.cleanVal(str(pix[0]))
@@ -93,7 +138,12 @@ class Steg(object):
 		bluePix = fixedTup[2][2]
 		return int(redPix + greenPix + bluePix)
 
+	def decodeBits(self, msg):
+		# return bin(int(msg))
+		return msg
+
 	def decodeImage(self, bytes):
+		gotobits = True
 		img = Image.open(bytes)
 		pix = img.load()
 		width, height = img.size
@@ -103,10 +153,14 @@ class Steg(object):
 				decodedAscii = self.decodePixel(pix[x,y])
 				decodedMsg += chr(decodedAscii)
 				if len(decodedMsg) >= 6:
-					end = decodedMsg[-6:-1] + decodedMsg[-1]
+					end = decodedMsg[-6:]
 					if end == "ENDMSG":
 						img.close()
-						return decodedMsg[:len(decodedMsg) - 6]
+						if gotobits is True:
+							return self.decodeBits(decodedMsg[:len(decodedMsg) - 6])
+						else:
+							return decodedMsg[:len(decodedMsg) - 6]
+
 
 	def decode(self, url):
 		"""

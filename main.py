@@ -12,6 +12,8 @@ from Web_Connection import api_cons
 from File_System import fsClass
 from Image_Manipulation import steg
 
+import binascii
+
 """@package api_cons
 
 Documentation for the api_cons module.
@@ -141,68 +143,29 @@ class Console(cmd.Cmd, object):
         Encode a message to an image and upload to social media.\n
         Returns the url.\n
         Use: encodeimage [message]"""
-        
-        # count = 0
-        # # determine how many times we will break up the image
-        # chunks = [msg[i:i+self.max_message_length] for i in range(0, len(msg), self.max_message_length)]
-        # total = len(chunks)
-        # # apend the number of total images for status update
-        # append_url = ' ' + str(total)
-        # while (len(chunks) > 0):
-        #     count += 1
-        #     # TODO:// log, not print
-        #     print("encoding image {}/{}".format(count, total))
-        #     try:
-        #         chunk = chunks.pop()  # encode starting with the last image
-        #         # encode the image and append the data to the URL
-        #         img = steg.Steg(self.proxy).encode(chunk +
-        #                                                     append_url)
-        #         # upload the image
-        #         if self.api == 'sendspace':
-        #             (download_url, delete_url) = self.sendSpace.upload(img)
-        #             img.close()  # close the image
-        #             # set the append url to contain the current image's
-        #             # download URL. This allows the images to be
-        #             # downloaded as a linked list.
-        #             append_url = self.url_identifier + download_url + ' ' + str(total)
-        #     except Exception as e:
-        #         print("Unable to access online resources " + str(e))
-        #         return 0
-        # # print the last images download URL
-        # print(append_url[:-(len(str(total)) + 1)])
-        # count = 0
-        # return 0
-        count = 0
-
-        #FOR TESTING
-        # determine how many times we will break up the image
-        chunks = [msg[i:i+self.max_message_length] for i in range(0, len(msg), self.max_message_length)]
-        total = len(chunks)
-        # apend the number of total images for status update
-        append_url = ' ' + str(total)
-        while (len(chunks) > 0):
-            count += 1
-            # TODO:// log, not print
-            print("encoding image {}/{}".format(count, total))
-
-            chunk = chunks.pop()  # encode starting with the last image
-            # encode the image and append the data to the URL
-            img = steg.Steg(self.proxy).encode(chunk + append_url)
-            # upload the image
+        (img, r) = steg.Steg(self.proxy).encodeBits(msg)
+        if len(r) == 0:
+            print("in if statement")
             if self.api == 'sendspace':
-                (download_url, delete_url) = self.sendSpace.upload(img)
-                img.close()  # close the image
-                # set the append url to contain the current image's
-                # download URL. This allows the images to be
-                # downloaded as a linked list.
-                append_url = self.url_identifier + download_url + ' ' + str(total)
-
-        # print the last images download URL
-        print(append_url[:-(len(str(total)) + 1)])
-        print("url: " + append_url)
-        count = 0
-        return 0
-        #END TESTING
+                    (download_url, delete_url) = self.sendSpace.upload(img)
+                    img.close()
+                    print("Download URL: " + download_url)
+        else:
+            print("in else statement")
+            download_url = ""
+            (img, rest) = steg.Steg(self.proxy).encodeBits(msg)
+            (download, delete) = self.sendSpace.upload(img)
+            download_url = download
+            m = rest
+            print(len(m))
+            print(m)
+            while len(m) > 0:
+                (img, next) = steg.Steg(self.proxy).encodeWithTag(msg, download_url)
+                (download, delete) = self.sendSpace.upload(img)
+                download_url = download
+                m = next
+            print("Download URL: " + download_url)
+            return 0
 
     def do_createdownloadlink(self, url):
         """
@@ -221,40 +184,45 @@ class Console(cmd.Cmd, object):
         """Decode the message in an image.\n
         Returns the message in plain text.\n
         decodeimage [download url]"""
-        msg = ''
-        next_url = url
-        id_length = len(self.url_identifier) + 6
-        count = 0
-        total = 0
-        #try:
-        if self.api == 'sendspace':
-            msg += steg.Steg(
-                      self.proxy).decode(
-                      self.sendSpace.downloadImage(url))
-        # determine how many total images the current image contains
-        total = msg[-(len(msg) - (msg.rfind(' ') + 1)):]
-        if total == '1':
-            # only 1 image total, safe to print message
-            print("Decoded message: " + msg[:-2])  # strip ' 1'
-            return 0
-        len_total = len(total) + 1  # add 1 for space
-        offset = id_length + len_total
-        while(next_url != "*NO URL*"):  # arbitrary stop decoding
-            count += 1  # track current image number to decode
-            print("decoding image {}/{}".format(count, str(total)))
+        msg = steg.Steg(self.proxy).decode(self.sendSpace.downloadImage(url))
+        # print(msg + " is msg")
+        n = int(msg, 2)
+        n.to_bytes((n.bit_length() + 7) // 8, 'big')
+        print(msg)
+        # msg = ''
+        # next_url = url
+        # id_length = len(self.url_identifier) + 6
+        # count = 0
+        # total = 0
+        # #try:
+        # if self.api == 'sendspace':
+        #     msg += steg.Steg(
+        #               self.proxy).decode(
+        #               self.sendSpace.downloadImage(url))
+        # # determine how many total images the current image contains
+        # total = msg[-(len(msg) - (msg.rfind(' ') + 1)):]
+        # if total == '1':
+        #     # only 1 image total, safe to print message
+        #     print("Decoded message: " + msg[:-2])  # strip ' 1'
+        #     return 0
+        # len_total = len(total) + 1  # add 1 for space
+        # offset = id_length + len_total
+        # while(next_url != "*NO URL*"):  # arbitrary stop decoding
+        #     count += 1  # track current image number to decode
+        #     print("decoding image {}/{}".format(count, str(total)))
 
-            if (msg[-offset:-(6 + len_total)] == self.url_identifier):
-                next_url = msg[-(6 + len_total):-len_total]
-                msg = msg[:-(offset)]
-                if self.api == 'sendspace':
-                    msg += steg.Steg(
-                          self.proxy).decode(
-                          self.sendSpace.downloadImage(next_url))
-            else:
-                next_url = "*NO URL*"
+        #     if (msg[-offset:-(6 + len_total)] == self.url_identifier):
+        #         next_url = msg[-(6 + len_total):-len_total]
+        #         msg = msg[:-(offset)]
+        #         if self.api == 'sendspace':
+        #             msg += steg.Steg(
+        #                   self.proxy).decode(
+        #                   self.sendSpace.downloadImage(next_url))
+        #     else:
+        #         next_url = "*NO URL*"
 
-        print("Decoded message: " + msg[:-len_total])
-        return 0
+        # print("Decoded message: " + msg[:-len_total])
+        # return 0
         # except Exception as e:
         #     print("Unable to access online resources, or the given URL is wrong " + str(e))
         #     return 0
