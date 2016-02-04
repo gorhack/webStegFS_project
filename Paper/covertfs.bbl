@@ -1,0 +1,32 @@
+\begin{thebibliography}{1}
+
+\bibitem{Baliga2007}
+Arati Baliga, Joe Kilian, and Liviu Iftode.
+\newblock {A web based covert file system}.
+\newblock {\em HotOS}, 2007.
+
+\bibitem{Guitton2013}
+Clement Guitton.
+\newblock {A review of the available content on Tor hidden services: The case
+  against further development}.
+\newblock {\em Computers in Human Behavior}, 29(6):2805--2815, 2013.
+
+\bibitem{Johnson2008}
+Deborah~G. Johnson.
+\newblock {Computing ethicsComputer experts}.
+\newblock {\em Communications of the ACM}, 51(10):24, 2008.
+
+\bibitem{Morkevicius2013}
+Nerijus Morkevi{\v{c}}ius, Grigas Petraitis, Algimantas Ven{\v{c}}kauskas, and
+  Jonas {\v{C}}eponis.
+\newblock {Covert channel for cluster-based file systems using multiple cover
+  files}.
+\newblock {\em Information Technology and Control}, 42(3):260--267, 2013.
+
+\bibitem{Tan2003}
+Kian-lee Tan.
+\newblock {StegFS : A Steganographic File System Laboratories for Information
+  Technology Department of Computer Science}.
+\newblock i:657--667, 2003.
+
+\end{thebibliography}
