@@ -2,15 +2,6 @@ from fs.memoryfs import MemoryFS
 from fs.memoryfs import MemoryFile
 import fs.errors
 """@package fsClass
-
-Documentation for the fsClass module.
-The fsClass module extends the pyfilesystem
-package, using the MemoryFS filesystem.
-The MemoryFS filesyste stores all directory
-and file info in main memory, to allow for
-instantaneous file access as well as to avoid
-writing any FS information to disk. This
-allows for plausible deniability.
 """
 
 class CovertFile(MemoryFile):

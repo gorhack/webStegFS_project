@@ -11,9 +11,6 @@ except:
 """@package api_cons
 
 Documentation for the api_cons module.
-The api_cons module creates an anonymous connection to a given social media
-file hosting website and provides connection, uploadImage, and downloadImage
-parameters.
 """
 
 proxies = proxy_list.proxies
@@ -24,7 +21,7 @@ class SendSpace(object):
     The SendSpace class is creates a connection to the SendSpace file
     sharing website.
     """
-    sendspace_url = 'http://api.sendspace.com/rest/'  # REST API url (v1.0)
+    sendspace_url = 'http://api.sendspace.com/rest/'  # REST API url (v1.1)
 
     def __init__(self, key, proxy):
         """
@@ -40,13 +37,16 @@ class SendSpace(object):
         This method returns the download and delete urls as a tuple.
         """
         # create a connection to sendspace
-        (upl_url, upl_extra_info) = self.connect()
+        (upl_url, upl_max_size, upl_id, upl_extra_info) = self.connect()
         # return the (download_url, delete_url) of the image
-        return self.uploadImage(upl_url, upl_extra_info, img)
+        return self.uploadImage(upl_url, upl_max_size,
+                                upl_id, upl_extra_info, img)
 
     def connect(self):
         """
         The connect method creates an anonymous connection to SendSpace.
+        The connection uses the sendspace API (1.1) and does not require
+        authentication or login.
         This method requires no parameters.
         This method returns the URL and the extra info needed for uploading an
         image to SendSpace.
@@ -55,7 +55,7 @@ class SendSpace(object):
         connect_params = {
             'method': 'anonymous.uploadGetInfo',
             'api_key': self.api_key,
-            'api_version': 1.0}
+            'api_version': 1.1}
 
         # get request to get info for anonymous upload
         if self.proxy:
@@ -70,13 +70,18 @@ class SendSpace(object):
             # try to parse the response
             try:
                 upl_url = parsed_con_r.result.upload["url"]
+                upl_max_size = parsed_con_r.result.upload["max_file_size"]
+                upl_id = parsed_con_r.result.upload["upload_identifier"]
                 upl_extra_info = parsed_con_r.result.upload["extra_info"]
-            except ValueError as e:  # catch erros if response cannot be parsed
-                print("Error parsing connection response.\n" + e.value + "\n" + r.text)
+            except ValueError as e:
+                # catch errors if response cannot be parsed
+                print("Error parsing connection response.\n" +
+                      e.value + "\n" + r.text)
         else:
-            print("Invalid response code " + str(r.status_code) + "\n" + r.text)
+            print("Invalid response code " + str(r.status_code) +
+                  "\n" + r.text)
         r.close()
-        return (upl_url, upl_extra_info)
+        return (upl_url, upl_max_size, upl_id, upl_extra_info)
 
     # Parse response as xml
     def parseXML(self, xml):
@@ -85,7 +90,7 @@ class SendSpace(object):
         """
         return BeautifulSoup(xml, "xml")
 
-    def uploadImage(self, upl_url, upl_extra_info, img):
+    def uploadImage(self, upl_url, max_size, upl_id, upl_extra_info, img):
         """
         The uploadImage method sends an image file for upload to SendSpace.
         This method requires the upload url and extra info from the SendSpace
@@ -94,7 +99,11 @@ class SendSpace(object):
         as a tuple.
         """
         # parameters for anonymous image upload
-        post_params = {'extra_info': upl_extra_info}
+        post_params = {
+                        'MAX_FILE_SIZE': max_size,
+                        'UPLOAD_IDENTIFIER': upl_id,
+                        'extra_info': upl_extra_info
+                        }
         # convert the BytesIO img object to a viable file parameter
         files = {'userfile': img.getvalue()}
         # POST request with the parameters for upload to SendSpace
