@@ -2,10 +2,9 @@ covertFS
 ========
 
 .. toctree::
-   :maxdepth: 4
+   :maxdepth: 1
 
    Image_Manipulation
    Web_Connection
-   fsClass
-   fsClassOld
+   File_System
    main
