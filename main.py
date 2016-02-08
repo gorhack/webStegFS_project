@@ -145,14 +145,11 @@ class Console(cmd.Cmd, object):
         Use: encodeimage [message]"""
         (img, r) = steg.Steg(self.proxy).encodeAll(msg)
         if len(r) == 0:
-            print("in if statement")
-            print("Msg length: " + str(len(msg)))
             if self.api == 'sendspace':
                     (download_url, delete_url) = self.sendSpace.upload(img)
                     img.close()
                     print("Download URL: " + download_url)
         else:
-            print("in else statement")
             download_url = ""
             (img, rest) = steg.Steg(self.proxy).encodeAll(msg)
             (download, delete) = self.sendSpace.upload(img)
@@ -185,8 +182,7 @@ class Console(cmd.Cmd, object):
         Returns the message in plain text.\n
         decodeimage [download url]"""
         msg = steg.Steg(self.proxy).decode(self.sendSpace.downloadImage(url))
-        print(msg + " is msg")
-        print("Returned length: " + str(len(msg)))
+        print(msg)
         # msg = ''
         # next_url = url
         # id_length = len(self.url_identifier) + 6

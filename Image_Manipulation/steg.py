@@ -105,7 +105,6 @@ class Steg(object):
 		# 	return (self.encode(msg, img), "")
 		f = open(msg, 'r')
 		msgLines = f.readlines()[0]
-		print("Original Length: " + str(len(msgLines)))
 		# for line in f:
 		# 	print(line)
 		# 	for byte in line:
