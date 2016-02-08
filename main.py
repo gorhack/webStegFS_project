@@ -143,9 +143,10 @@ class Console(cmd.Cmd, object):
         Encode a message to an image and upload to social media.\n
         Returns the url.\n
         Use: encodeimage [message]"""
-        (img, r) = steg.Steg(self.proxy).encodeBits(msg)
+        (img, r) = steg.Steg(self.proxy).encodeAll(msg)
         if len(r) == 0:
             print("in if statement")
+            print("Msg length: " + str(len(msg)))
             if self.api == 'sendspace':
                     (download_url, delete_url) = self.sendSpace.upload(img)
                     img.close()
@@ -153,18 +154,17 @@ class Console(cmd.Cmd, object):
         else:
             print("in else statement")
             download_url = ""
-            (img, rest) = steg.Steg(self.proxy).encodeBits(msg)
+            (img, rest) = steg.Steg(self.proxy).encodeAll(msg)
             (download, delete) = self.sendSpace.upload(img)
+            first_download = download
             download_url = download
             m = rest
-            print(len(m))
-            print(m)
             while len(m) > 0:
-                (img, next) = steg.Steg(self.proxy).encodeWithTag(msg, download_url)
+                (img, next) = steg.Steg(self.proxy).encodeWithTag(m, download_url)
                 (download, delete) = self.sendSpace.upload(img)
                 download_url = download
                 m = next
-            print("Download URL: " + download_url)
+            print("Download URL: " + first_download)
             return 0
 
     def do_createdownloadlink(self, url):
@@ -185,10 +185,8 @@ class Console(cmd.Cmd, object):
         Returns the message in plain text.\n
         decodeimage [download url]"""
         msg = steg.Steg(self.proxy).decode(self.sendSpace.downloadImage(url))
-        # print(msg + " is msg")
-        n = int(msg, 2)
-        n.to_bytes((n.bit_length() + 7) // 8, 'big')
-        print(msg)
+        print(msg + " is msg")
+        print("Returned length: " + str(len(msg)))
         # msg = ''
         # next_url = url
         # id_length = len(self.url_identifier) + 6

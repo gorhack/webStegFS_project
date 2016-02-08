@@ -39,7 +39,6 @@ class Steg(object):
 		return bit[2:]
 
 	def encodeImage(self, img, msg, output):
-		print("MSG: " + msg)
 		tagged = msg + "ENDMSG"  # add end tag to message to aid in decoding the image
 		
 		width, height = img.size  # get the width and height of the image
@@ -100,30 +99,32 @@ class Steg(object):
 			rest = tagged[msgLen:]
 			return (m, rest)
 
-	def encodeBits(self, msg):
+	def encodeAll(self, msg):
 		# if type(msg) is str:
 		# 	img = Image.open(genImage.genCatImage())
 		# 	return (self.encode(msg, img), "")
-		f = open(msg, 'rb')
-		msgBits = ""
-		for line in f:
-			print(line)
-			for byte in line:
-				print(byte)
-				bits = bin(byte)
-				bits = self.cleanBit(bits)
-				msgBits += bits
+		f = open(msg, 'r')
+		msgLines = f.readlines()[0]
+		print("Original Length: " + str(len(msgLines)))
+		# for line in f:
+		# 	print(line)
+		# 	for byte in line:
+		# 		print(byte)
+		# 		bits = bin(byte)
+		# 		bits = self.cleanBit(bits)
+		# 		msgBits += bits
 		f.close()
 		img = Image.open(genImage.genCatImage())  # retrieve image from Cat API
-		(m, rest) = self.checkMessage(msgBits, img)
+		(m, rest) = self.checkMessage(msgLines, img)
 		return (self.encode(m, img), rest)
 
 	def encodeWithTag(self, msg, url):
 		# find the point in the message where you need to add the url
 		img = Image.open(genImage.genCatImage())
 		tagged = msg + url
-		(m, rest) = self.checkMessage(tagged, img)
-		return (self.encode(m, img), rest)		
+		print("tagged: " + url)
+		(m, rest) = self.checkMessage(msg, img)
+		return (self.encode(m + url, img), rest)		
 
 	def cleanPix(self, pix):
 		redPix = self.cleanVal(str(pix[0]))
