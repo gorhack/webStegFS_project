@@ -1,4 +1,4 @@
-from File_System import memoryfs
+from fs import memoryfs
 import stat
 import fs.path
 import time, os, datetime

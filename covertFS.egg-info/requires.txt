@@ -1,0 +1,6 @@
+requests
+beautifulsoup4
+fs
+lxml
+Pillow
+fusepy
