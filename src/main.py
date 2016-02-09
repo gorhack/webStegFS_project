@@ -9,9 +9,10 @@ from Image_Manipulation import stegByteStream
 from Web_Connection.API_Keys import config
 from Web_Connection import api_cons
 import sys, time
-#sys.path.insert(0,'./File_System')
+sys.path.insert(0,'./File_System')
 from File_System import covertfs
 from File_System.fs import path
+from platform import system
 
 """@package api_cons
 
@@ -58,6 +59,9 @@ class Console(cmd.Cmd, object):
             self.sendSpace = api_cons.SendSpace(config.sendSpaceKey, self.proxy)
             self.url = None
 
+        self.fuse_enabled = False
+        if subprocess.call(['locate','fusermount'], stdout = subprocess.PIPE) == 0:
+            self.fuse_enabled = True
 
         self.fs = covertfs.CovertFS()
         if len(sys.argv) > 1:  # has URL parameter
@@ -103,9 +107,12 @@ class Console(cmd.Cmd, object):
 
     def open_window(self):
         time.sleep(1)
-        #subprocess.call(['gnome-terminal', '--working-directory=' + os.getcwd()+ '/'+ self.mp, '--window'])
+        if system() == 'Linux':
+            subprocess.call(['gnome-terminal', '--working-directory=' + os.getcwd()+ '/'+ self.mp, '--window'])
 
     def do_mount(self, args):
+        if self.fuse_enabled == False:
+            print ("Only able to mount on systems with fuse installed")
         args = args.split()
         debug = False
         if 'debug=True' in args:
@@ -163,56 +170,36 @@ class Console(cmd.Cmd, object):
         Returns the url.\n
         Use: encodeimage [message]"""
 
-        # count = 0
-        # # determine how many times we will break up the image
-        # chunks = [msg[i:i+self.max_message_length] for i in range(0, len(msg), self.max_message_length)]
-        # total = len(chunks)
-        # # apend the number of total images for status update
-        # append_url = ' ' + str(total)
-        # while (len(chunks) > 0):
-        #     count += 1
-        #     # TODO:// log, not print
-        #     print("encoding image {}/{}".format(count, total))
-        #     try:
-        #         chunk = chunks.pop()  # encode starting with the last image
-        #         # encode the image and append the data to the URL
-        #         img = stegByteStream.Steg(self.proxy).encode(chunk +
-        #                                                         append_url)
-        #         # upload the image
-        #         if self.api == 'sendspace':
-        #             (download_url, delete_url) = self.sendSpace.upload(img)
-        #             img.close()  # close the image
-        #             # set the append url to contain the current image's
-        #             # download URL. This allows the images to be
-        #             # downloaded as a linked list.
-        #             append_url = self.url_identifier + download_url + ' ' + str(total)
-        #     except Exception as e:
-        #         print("Unable to access online resources " + str(e))
-        #         return 0
-        # # print the last images download URL
-        # print(append_url[:-(len(str(total)) + 1)])
-        # count = 0
-        # return 0
-        (img, r) = steg.Steg(self.proxy).encodeAll(msg)
-        if len(r) == 0:
-            if self.api == 'sendspace':
+        count = 0
+        # determine how many times we will break up the image
+        chunks = [msg[i:i+self.max_message_length] for i in range(0, len(msg), self.max_message_length)]
+        total = len(chunks)
+        # apend the number of total images for status update
+        append_url = ' ' + str(total)
+        while (len(chunks) > 0):
+            count += 1
+            # TODO:// log, not print
+            print("encoding image {}/{}".format(count, total))
+            try:
+                chunk = chunks.pop()  # encode starting with the last image
+                # encode the image and append the data to the URL
+                img = stegByteStream.Steg(self.proxy).encode(chunk +
+                                                                append_url)
+                # upload the image
+                if self.api == 'sendspace':
                     (download_url, delete_url) = self.sendSpace.upload(img)
-                    img.close()
-                    print("Download URL: " + download_url)
-        else:
-            download_url = ""
-            (img, rest) = steg.Steg(self.proxy).encodeAll(msg)
-            (download, delete) = self.sendSpace.upload(img)
-            first_download = download
-            download_url = download
-            m = rest
-            while len(m) > 0:
-                (img, next) = steg.Steg(self.proxy).encodeWithTag(m, download_url)
-                (download, delete) = self.sendSpace.upload(img)
-                download_url = download
-                m = next
-            print("Download URL: " + first_download)
-            return 0
+                    img.close()  # close the image
+                    # set the append url to contain the current image's
+                    # download URL. This allows the images to be
+                    # downloaded as a linked list.
+                    append_url = self.url_identifier + download_url + ' ' + str(total)
+            except Exception as e:
+                print("Unable to access online resources " + str(e))
+                return 0
+        # print the last images download URL
+        print(append_url[:-(len(str(total)) + 1)])
+        count = 0
+        return 0
 
     def do_createdownloadlink(self, url):
         """
@@ -231,45 +218,43 @@ class Console(cmd.Cmd, object):
         """Decode the message in an image.\n
         Returns the message in plain text.\n
         decodeimage [download url]"""
-        msg = steg.Steg(self.proxy).decode(self.sendSpace.downloadImage(url))
-        print(msg)
-        # msg = ''
-        # next_url = url
-        # id_length = len(self.url_identifier) + 6
-        # count = 0
-        # total = 0
-        # try:
-        #     if self.api == 'sendspace':
-        #         msg += stegByteStream.Steg(
-        #                   self.proxy).decodeImageFromURL(
-        #                   self.sendSpace.downloadImage(url))
-        #     # determine how many total images the current image contains
-        #     total = msg[-(len(msg) - (msg.rfind(' ') + 1)):]
-        #     if total == '1':
-        #         # only 1 image total, safe to print message
-        #         print("Decoded message: " + msg[:-2])  # strip ' 1'
-        #         return 0
-        #     len_total = len(total) + 1  # add 1 for space
-        #     offset = id_length + len_total
-        #     while(next_url != "*NO URL*"):  # arbitrary stop decoding
-        #         count += 1  # track current image number to decode
-        #         print("decoding image {}/{}".format(count, str(total)))
+        msg = ''
+        next_url = url
+        id_length = len(self.url_identifier) + 6
+        count = 0
+        total = 0
+        try:
+            if self.api == 'sendspace':
+                msg += stegByteStream.Steg(
+                          self.proxy).decodeImageFromURL(
+                          self.sendSpace.downloadImage(url))
+            # determine how many total images the current image contains
+            total = msg[-(len(msg) - (msg.rfind(' ') + 1)):]
+            if total == '1':
+                # only 1 image total, safe to print message
+                print("Decoded message: " + msg[:-2])  # strip ' 1'
+                return 0
+            len_total = len(total) + 1  # add 1 for space
+            offset = id_length + len_total
+            while(next_url != "*NO URL*"):  # arbitrary stop decoding
+                count += 1  # track current image number to decode
+                print("decoding image {}/{}".format(count, str(total)))
 
-        #         if (msg[-offset:-(6 + len_total)] == self.url_identifier):
-        #             next_url = msg[-(6 + len_total):-len_total]
-        #             msg = msg[:-(offset)]
-        #             if self.api == 'sendspace':
-        #                 msg += stegByteStream.Steg(
-        #                       self.proxy).decodeImageFromURL(
-        #                       self.sendSpace.downloadImage(next_url))
-        #         else:
-        #             next_url = "*NO URL*"
+                if (msg[-offset:-(6 + len_total)] == self.url_identifier):
+                    next_url = msg[-(6 + len_total):-len_total]
+                    msg = msg[:-(offset)]
+                    if self.api == 'sendspace':
+                        msg += stegByteStream.Steg(
+                              self.proxy).decodeImageFromURL(
+                              self.sendSpace.downloadImage(next_url))
+                else:
+                    next_url = "*NO URL*"
 
-        #     print("Decoded message: " + msg[:-len_total])
-        #     return 0
-        # except Exception as e:
-        #     print("Unable to access online resources, or the given URL is wrong " + str(e))
-        #     return 0
+            print("Decoded message: " + msg[:-len_total])
+            return 0
+        except Exception as e:
+            print("Unable to access online resources, or the given URL is wrong " + str(e))
+            return 0
 
     def do_ls(self, args):
             """List items in directory\n
@@ -307,6 +292,7 @@ class Console(cmd.Cmd, object):
         for f in self.fs.walkfiles():
             entry = self.fs._dir_entry(f)
             if entry.downlink == None:
+                print("Uploading ", f)
                 entry.downlink = self.uploadfile(self.fs.getcontents(f).decode())[1]
         if self.api == 'sendspace':
             return self.do_encodeimage(self.fs.save())
@@ -321,6 +307,7 @@ class Console(cmd.Cmd, object):
 
     def addfiletofs(self, fspath, contents):
         """Helper function to add a file to the fs."""
+        print("Uploading ", fspath)
         upload_contents, downlink = self.uploadfile(contents)
         self.fs.addfile(fspath, upload_contents.encode('utf-8'))
         entry = self.fs._dir_entry(self.fs.current_dir+fspath)
@@ -401,7 +388,7 @@ class Console(cmd.Cmd, object):
         else:
             covert_path = a[0]
             try:
-                covert_contents = self.fs.getcontents(covert_path)
+                covert_contents = self.fs.getcontents(self.fs.current_dir + covert_path)
             except:
                 print("Given covert path does not exist")
                 return
@@ -428,11 +415,7 @@ class Console(cmd.Cmd, object):
         if len(a) < 2:
             print("Use: mkfile [path] [message]")
             return
-        #try:
         out = self.addfiletofs(a[0], ' '.join(a[1:]))
-        #except:
-        #    print("File too large. Working on a system to break up files")
-        #    return
         if type(out) == str:
             print(out)
 

@@ -1,4 +1,4 @@
-from fs import memoryfs
+from File_System import memoryfs
 import stat
 import fs.path
 import time, os, datetime
@@ -50,6 +50,7 @@ class CovertFS(memoryfs.MemoryFS):
 ###################################################################
 
     def settimes(self, path, accessed_time=None, modified_time=None):
+        """Sets accessed and modified times of a file or directory after file operations take place"""
         now = time.time()
         if accessed_time is None:
             accessed_time = now
@@ -64,6 +65,7 @@ class CovertFS(memoryfs.MemoryFS):
         return False
 
     def setcreate(self, path, timeIn=None):
+        """Sets the creation time of a file or directory. Used when the filesystem is loaded from online repository"""
         now = time.time()
         if timeIn==None:
             timeIn=now
