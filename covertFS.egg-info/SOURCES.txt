@@ -1,0 +1,7 @@
+README.rst
+setup.py
+covertFS.egg-info/PKG-INFO
+covertFS.egg-info/SOURCES.txt
+covertFS.egg-info/dependency_links.txt
+covertFS.egg-info/requires.txt
+covertFS.egg-info/top_level.txt
