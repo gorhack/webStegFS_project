@@ -1,0 +1,70 @@
+\documentclass[12pt,journal,compsoc]{IEEEtran}
+
+\usepackage[margin=1in]{geometry}
+
+\title{Web-Based CovertFS}
+\author{Ryne~Flores, Kyle~Gorack, David~Hart, Matthew~Sjoholm \\ \IEEEmembership{Department of Electrical Engineering and Computer Science\\ United States Military Academy}}
+\IEEEtitleabstractindextext{
+\begin{abstract}
+This Web-Baseand Covert File System project is our atempt to develop a prototype system that much like the one described in a paper from 2007 that was written by some students of the Computer Science Department of Rutgers University~\cite{Baliga2007}. This system we are attempting to implement not only uses a steganographic technique to hide messages and files within photos that are stored on a public file share site, but also stores the file system heiracrchy within photos as well. This helps to provide plausible deniability to the users and makes this system covert because information is not stored on the users computer. 
+\end{abstract}}
+\date{}
+
+\begin{document}
+\maketitle
+
+\section{Introduction}
+
+\IEEEPARstart{T}{he} main purpose of a web-based covert filesystem is to attempt to develop an envirnonment that allows uses to store and share information with one another in a more discreet and private manner. Technology continues to advance at a rapid pace, and its advancements are making their way into nearly everything we use and wear. 
+
+The majority of people interact with various forms of technology throughout each day. Depending on what type of technology we interact with there may be some type of data collected from our interaction. Also the use of social media is wide spread and it is easier to find various types of information about someone because of this. 
+
+The means to store and share information in a covert manner not only servers multiple purposes, but also has various implications depending on how those means are used. There will be innovations designed with the good intentions, yet there will also usually be clever modifications of those designs for malicious intentions.
+\section{Related Works}
+In this section we will talk about works that are related or similar to this project. Such as \cite{Andersen1993}, \cite{Guitton2013}, \cite{Johnson2008}, \cite{Morkevicius2013}, \cite{Tan2003}
+
+\section{Design Overview}
+
+Going into how we designed our system to work.
+
+\subsection{FUSE}
+
+What FUSE is, what is provides for us, and why we choose it.
+
+\subsection{Mounting the File System}
+
+Subsection that goes more in-depth of our use of FUSE and our file system.
+
+\subsection{Mapping File System Data to Photos}
+
+How is the data stored in our file system, and how it is constructed.
+
+\subsection{Steganography the System Uses}
+
+The steg technique that we used in this covertfs, and how it works. We explain why we decided to use this type of steganography and how this component can be swapped out with an other type of steganography that the user would like to use instead.
+
+\section{Ethics}
+
+Is it ethical? Weighing the good vs the bad uses this system provides. What are the ethics of this system when we are storing our system on a social media or file sharing site (like sendspace)? 
+
+\section{Future Implementation Plans}
+
+The things we would like to add to this covert fs. Thoughts on how to add this into the system, and any advice or tips to the next group that will continue this project.
+
+\subsection{Using the Tails Operating System}
+
+Why we would like to take this path with the covert fs. What the benefits and disadvantages are from doing this. 
+
+\subsection{Encryption and Advanced Steganography Techniques}
+
+Other possible implementations that could be added to make it more secure/covert. Any other steg techniques that may be useful or debating why advanced steg techniques do not need to be used at this point but maybe in the future because of ...reasons.
+
+\section{Conclusion}
+
+\section{Acknowledgments}
+
+The original Web-Based Covert File System Paper~\cite{Baliga2007}.
+\bibliographystyle{plain}
+\bibliography{covertfsrefs}
+
+\end{document}
