@@ -3,15 +3,12 @@
 from PIL import Image
 from io import BytesIO
 import requests
-from Web_Connection import proxy_list
 from Image_Manipulation import genImage
 
 """@package stegByteStream
 
 Documentation for the stegByteStream module.
 """
-
-proxies = proxy_list.proxies
 
 
 class Steg(object):
@@ -156,7 +153,7 @@ class Steg(object):
         This method returns the decoded message as a string.
         """
         if self.proxy:  # if the application is using proxies
-            r = requests.get(url, proxies=proxies)  # open a url using the proxies
+            r = requests.get(url, proxies=self.proxy)  # open a url using the proxies
         else:  # if the application is not using proxies
             r = requests.get(url)  # open the url without proxies
 
@@ -315,7 +312,7 @@ def testSteg(testNum, url, newImageName, message, predicted):
 
     def decode(self, url):
         if self.proxy:
-            r = requests.get(url, proxies=proxies)
+            r = requests.get(url, proxies=self.proxy)
         else:
             r = requests.get(url)
 

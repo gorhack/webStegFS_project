@@ -26,9 +26,9 @@ import six
 from six import PY3
 
 #from fs.mountfs import MountFS
-from fs.path import pathjoin
-from fs.errors import DestinationExistsError, RemoveRootError
-from fs.base import FS
+from .path import pathjoin
+from .errors import DestinationExistsError, RemoveRootError
+from .base import FS
 
 
 def copyfile(src_fs, src_path, dst_fs, dst_path, overwrite=True, chunk_size=64*1024):

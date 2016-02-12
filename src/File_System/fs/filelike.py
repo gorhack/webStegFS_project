@@ -33,7 +33,7 @@ Other useful classes include:
 
 import tempfile as _tempfile
 
-import fs
+#import fs
 
 
 class NotReadableError(IOError):

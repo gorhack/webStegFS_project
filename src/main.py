@@ -1,17 +1,10 @@
 #!/usr/bin/env python3
 
-import os
-import cmd
-import subprocess
-import sys
-import shlex
+import os, cmd, subprocess, sys, shlex, time, argparse
 from Image_Manipulation import stegByteStream
 from Web_Connection.API_Keys import config
 from Web_Connection import api_cons
-import sys, time
-sys.path.insert(0,'./File_System')
 from File_System import covertfs
-from File_System.fs import path
 from platform import system
 
 """@package api_cons
@@ -22,17 +15,24 @@ file hosting website and provides connection, uploadImage, and downloadImage
 parameters.
 """
 
+__version__ = "0.9.1"
+__author__ = "Flores, Gorak, Hart, Sjoholm"
 
 class Console(cmd.Cmd, object):
-    def __init__(self):
+    def __init__(self, online_file_store, steg_class, mountpoint, url, proxy, cmdLoopUsed):
         """
         The Console constructor.
         """
         cmd.Cmd.__init__(self)
-        self.api = "sendspace"  # change settings based on the api
-        self.version = 0.9
+        self.api = online_file_store  # name of API
+        self.steg = steg_class      # name of steg class
+        self.version = __version__
+        self.proxy = proxy
+        self.cmdloopused = cmdLoopUsed
+        self.url=url
+        self.fs = covertfs.CovertFS()
 
-        if self.version == 0.9:  # set basic defaults for version 0.9
+        if self.version == '0.9.1':  # set basic defaults for version 0.9
             """
             Configure the Console for use with the current version
             """
@@ -41,41 +41,62 @@ class Console(cmd.Cmd, object):
             # unique sequence of characters used to determine if another
             # image is decoded in the current image
             self.url_identifier = "URLLIB->"
-            self.proxy = False  # use the built-in proxy
 
+        ###Information for the command prompt###
         self.preprompt = "covertFS: "
         self.folder = "/"
         self.prompt = self.preprompt + self.folder + "$ "
         self.intro = "Welcome to a Covert File System (v{}).".format(self.version)
-        self.proxy = True
-        self.mp = None
-        self.f = None
+        ########################################
 
+        self.storeFactory = None
+        self.factoryClass = None
+
+        ###Online file store information###
         if self.api == "sendspace":  # set defaults for sendspace API
             """
             Configure the Console for use with SendSpace
             """
             self.url_size = 6  # length of download URL returned by sendspace
-            self.sendSpace = api_cons.SendSpace(config.sendSpaceKey, self.proxy)
-            self.url = None
+            self.factoryClass = api_cons.SendSpace
+            self.storeFactory = self.factoryClass(self.proxy)
 
+        elif self.api == "somethingelse": #template for some other api
+            pass
+
+        ###################################
+
+        self.stegFactory = None
+
+        ###Steganography class setup###
+        if self.steg == "LSBsteg":
+            self.stegFactory = stegByteStream.Steg
+
+        elif self.steg == "somethingelse": #template for some other steg class
+            pass
+
+        ###############################
+
+
+        ###FUSE usability information###
         self.fuse_enabled = False
-        if subprocess.call(['locate','fusermount'], stdout = subprocess.PIPE) == 0:
-            self.fuse_enabled = True
-
-        self.fs = covertfs.CovertFS()
-        if len(sys.argv) > 1:  # has URL parameter
-            self.loadfs(url=sys.argv[1])
-            self.folder = self.fs.current_dir
+        try:
+            if subprocess.call(['locate','fusermount'], stdout = subprocess.PIPE) == 0:
+                self.fuse_enabled = True
+                self.mp = mountpoint
+                self.fuseFS = None
+        except:
+            pass #preventing the program from attempting to run on Windows or other monstrosities without FUSE
+        ###############################
 
     def down_and_set_file(self, filename):
         """Download a file. Put it in the filesystem."""
         downlink = self.fs._get_dir_entry(filename).downlink
         try:
-            if len(downlink) == 6:  # has short URL
-                downlink = "https://www.sendspace.com/file/" + downlink
-            msg = stegByteStream.Steg(self.proxy).decodeImageFromURL(
-                self.sendSpace.downloadImage(downlink))
+            #if len(downlink) == 6:  # has short URL
+            #    downlink = "https://www.sendspace.com/file/" + downlink
+            msg = self.stegFactory(self.proxy).decodeImageFromURL(
+                self.storeFactory.downloadImage(downlink))
         except:
             print("A file in the system is corrupt, the file is not accessible. File is not longer in FS")
             return False
@@ -83,16 +104,15 @@ class Console(cmd.Cmd, object):
         return True
 
     # Load a file system
-    def loadfs(self, url=None):
+    def loadfs(self):
         """Load the filesystem from a URL: Download pic, decode it, then send the string to the load function in fsClass."""
-        if len(url) == 6:  # has short URL
-            self.url = "https://www.sendspace.com/file/" + url
-        else:  # has long URL
-            self.url = url
+        #if len(url) == 6:  # has short URL
+        #    self.url = "https://www.sendspace.com/file/" + url
+        #else:  # has long URL
         try:
             self.fs = covertfs.CovertFS()
-            self.fs.loadfs(stegByteStream.Steg(self.proxy).decodeImageFromURL(
-                self.sendSpace.downloadImage(self.url)))
+            self.fs.loadfs(self.stegFactory(self.proxy).decodeImageFromURL(
+                self.storeFactory.downloadImage(self.url)))
             for f in self.fs.walkfiles():
                 # fs is set up
                 # go through and actually download the files
@@ -113,13 +133,9 @@ class Console(cmd.Cmd, object):
     def do_mount(self, args):
         if self.fuse_enabled == False:
             print ("Only able to mount on systems with fuse installed")
-        args = args.split()
-        debug = False
-        if 'debug=True' in args:
-            debug = True
+            return
         from File_System import memfuse
-        self.f = memfuse.MemFS(self.fs)
-        self.mp = 'covertMount'
+        self.fuseFS = memfuse.MemFS(self.fs)
         newDir = False
         if not os.path.exists(self.mp):
             os.makedirs(self.mp)
@@ -127,29 +143,33 @@ class Console(cmd.Cmd, object):
         from threading import Thread
         t=Thread(target = self.open_window)
         t.start()
-        memfuse.mount(self.f,self.mp)
+        memfuse.mount(self.fuseFS,self.mp)
         if newDir:
             os.rmdir(self.mp)
+        if not self.cmdloopused:
+            print("Uploading all files to online")
+            self.do_uploadfs(self)
 
     def do_noproxy(self, args):
         """Turns off the built-in proxy.\n
         Use: noproxy"""
-        self.proxy = False
+        self.proxy = None
         print("Proxy turned off.")
-        #self.sendSpace = api_cons.SendSpace(config.sendSpaceKey, self.proxy)
+        self.storeFactory = self.factoryClass(self.proxy)
 
     def do_proxy(self, args):
         """Turns on the built-in proxy.\n
         Use: proxy"""
         print("Proxy turned on.")
-        self.proxy = True
-        #self.sendSpace = api_cons.SendSpace(config.sendSpaceKey, self.proxy)
+        self.proxy = default_proxies
+        self.storeFactory = self.factoryClass(self.proxy)
 
     def do_loadfs(self, url):
         """Load a covert file system.\n
         Use: loadfs [url]"""
         if url is not None:
-            self.loadfs(url)
+            self.url = url
+            self.loadfs()
         else:
             print("Use: loadfs [url]")
 
@@ -183,16 +203,15 @@ class Console(cmd.Cmd, object):
             try:
                 chunk = chunks.pop()  # encode starting with the last image
                 # encode the image and append the data to the URL
-                img = stegByteStream.Steg(self.proxy).encode(chunk +
+                img = self.stegFactory(self.proxy).encode(chunk +
                                                                 append_url)
                 # upload the image
-                if self.api == 'sendspace':
-                    (download_url, delete_url) = self.sendSpace.upload(img)
-                    img.close()  # close the image
-                    # set the append url to contain the current image's
-                    # download URL. This allows the images to be
-                    # downloaded as a linked list.
-                    append_url = self.url_identifier + download_url + ' ' + str(total)
+                (download_url, delete_url) = self.storeFactory.upload(img)
+                img.close()  # close the image
+                # set the append url to contain the current image's
+                # download URL. This allows the images to be
+                # downloaded as a linked list.
+                append_url = self.url_identifier + download_url + ' ' + str(total)
             except Exception as e:
                 print("Unable to access online resources " + str(e))
                 return 0
@@ -206,9 +225,7 @@ class Console(cmd.Cmd, object):
         Create a direct download link from a url.
         """
         try:
-            if self.api == "sendspace":
-                print("URL: " + self.sendSpace.downloadImage(url))
-            return
+            print("URL: " + self.storeFactory.downloadImage(url))
         except:
             print("Unable to access online resources")
             return
@@ -224,10 +241,9 @@ class Console(cmd.Cmd, object):
         count = 0
         total = 0
         try:
-            if self.api == 'sendspace':
-                msg += stegByteStream.Steg(
-                          self.proxy).decodeImageFromURL(
-                          self.sendSpace.downloadImage(url))
+            msg += self.stegFactory(
+                self.proxy).decodeImageFromURL(
+                self.storeFactory.downloadImage(url))
             # determine how many total images the current image contains
             total = msg[-(len(msg) - (msg.rfind(' ') + 1)):]
             if total == '1':
@@ -243,10 +259,9 @@ class Console(cmd.Cmd, object):
                 if (msg[-offset:-(6 + len_total)] == self.url_identifier):
                     next_url = msg[-(6 + len_total):-len_total]
                     msg = msg[:-(offset)]
-                    if self.api == 'sendspace':
-                        msg += stegByteStream.Steg(
-                              self.proxy).decodeImageFromURL(
-                              self.sendSpace.downloadImage(next_url))
+                    msg += self.stegFactory(
+                        self.proxy).decodeImageFromURL(
+                        self.storeFactory.downloadImage(next_url))
                 else:
                     next_url = "*NO URL*"
 
@@ -294,13 +309,12 @@ class Console(cmd.Cmd, object):
             if entry.downlink == None:
                 print("Uploading ", f)
                 entry.downlink = self.uploadfile(self.fs.getcontents(f).decode())[1]
-        if self.api == 'sendspace':
-            return self.do_encodeimage(self.fs.save())
+        return self.do_encodeimage(self.fs.save())
 
     def uploadfile(self, contents):
         """Helper function to upload file, return the download url."""
-        img = stegByteStream.Steg(self.proxy).encode(contents)
-        (downlink, delete_url) = self.sendSpace.upload(img)
+        img = self.stegFactory(self.proxy).encode(contents)
+        (downlink, delete_url) = self.storeFactory.upload(img)
         img.close()
         return contents, downlink
 
@@ -532,5 +546,79 @@ class Console(cmd.Cmd, object):
             except:
                 print(e.__class__, ":", e)
 
+default_proxies = {'https': 'https://165.139.149.169:3128',
+                'http': 'http://165.139.149.169:3128'}
+
+def proxy_test(proxyL):
+    import requests
+    try:
+        r = requests.get('http://google.com', timeout = 1)
+        assert(r.status_code==200)
+    except:
+        print("Not connected to Internet! Defeats purpose of the whole web-based thing...")
+        return
+    #now test proxy functionality
+    try:
+        ###Add something in here later to actually test proxy with given file store. Use google for now.
+        r = requests.get('http://google.com', proxies=proxyL, timeout = 1)
+        assert(r.status_code == 200)
+    except:
+        print("Given (or default) proxy is down, or took too long to be useful")
+        return
+    else:
+        return proxyL
+
+def proxy_parser(proxyString = None):
+    if proxyString == None:
+        return proxy_test(default_proxies)
+    proxy = proxyString.split(':')[0]
+    port = proxyString.split(':')[1]
+    import ipaddress
+    try:
+        ipaddress.ip_address(proxy)
+        assert(port>0 & port<65536)
+    except:
+        print ("Invalid ip address for proxy. Enter the proxy again.")
+        return
+    proxDict = {'https': 'https'+proxy+':'+port,
+                'http': 'http'+proxy+':'+port}
+    return proxy_test(proxDict)
+
+
 if __name__ == '__main__':
-    Console().cmdloop()
+    parser =  argparse.ArgumentParser(description="Calls the main function of CovertFS")
+    parser.add_argument('url', type=str, default='', nargs='?',
+                        help='Specify the url to load a filesystem from')
+    parser.add_argument('-c', dest='cmdloop', default=False, action='store_true',
+                        help='Use the command loop to access the filesystem')
+    parser.add_argument('-w', dest='website', type=str, default='sendspace',
+                        help='Use alternate online file stores from command line')
+    parser.add_argument('-p', dest="proxy", type=str, default='noproxy', nargs='?',
+                        help='Use a specific proxy to access the web file store. \
+                        There is a default if none provided. \
+                        Format is simply an ip address with port at the end (e.x. 1.2.3.4:8080)')
+    parser.add_argument('-e', dest='encryption', type=str, nargs='?',
+                        help='Use a specific encryption. To be extended later')
+    parser.add_argument('-m', dest="mountpoint", type=str, default='covertMount',
+                        help='Specify a foldername to mount the FUSE module at')
+    parser.add_argument('-s', dest='steganography', default='LSBsteg', nargs='?',
+                        help='Use an alternate steganography class for encoding in images')
+
+    args=parser.parse_args()
+
+    run = True
+    if args.proxy == 'noproxy':
+        proxy = None
+    else:
+        proxy = proxy_parser(args.proxy)
+        if proxy == None:
+            run = False
+    if run:
+        cons = Console(args.website, args.steganography, args.mountpoint, args.url, proxy, args.cmdloop)
+    
+        if args.cmdloop:
+            cons.cmdloop()
+        else:
+            if args.url:
+                cons.loadfs()
+            cons.do_mount(None)

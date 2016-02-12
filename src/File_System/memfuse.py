@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import logging
 
@@ -7,7 +7,7 @@ from errno import ENOENT
 from stat import S_IFDIR, S_IFLNK, S_IFREG
 from sys import argv, exit
 import time, datetime
-import fs.path
+from .fs import path
 
 from .fuse import FUSE, FuseOSError, Operations, LoggingMixIn
 

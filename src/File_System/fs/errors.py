@@ -41,8 +41,8 @@ import sys
 import errno
 import six
 
-from fs.path import *
-from fs.local_functools import wraps
+from .path import *
+from .local_functools import wraps
 
 
 class FSError(Exception):

@@ -3,17 +3,12 @@
 from bs4 import BeautifulSoup  # parse XML response
 import requests  # GET and POST requests
 from PIL import Image
-try:
-    from Web_Connection import proxy_list
-except:
-    import proxy_list  # running file directly
+from Web_Connection.API_Keys import config
 
 """@package api_cons
 
 Documentation for the api_cons module.
 """
-
-proxies = proxy_list.proxies
 
 
 class SendSpace(object):
@@ -23,7 +18,7 @@ class SendSpace(object):
     """
     sendspace_url = 'http://api.sendspace.com/rest/'  # REST API url (v1.1)
 
-    def __init__(self, key, proxy):
+    def __init__(self, proxy, key = config.sendSpaceKey):
         """
         The SendSpace constructor.
         """
@@ -61,7 +56,7 @@ class SendSpace(object):
         if self.proxy:
             r = requests.get(self.sendspace_url,
                              params=connect_params,
-                             proxies=proxies)
+                             proxies=self.proxy)
         else:
             r = requests.get(self.sendspace_url, params=connect_params)
         if r.status_code == requests.codes.ok:
@@ -109,7 +104,7 @@ class SendSpace(object):
         # POST request with the parameters for upload to SendSpace
         if self.proxy:
             r = requests.post(upl_url, data=post_params,
-                              files=files, proxies=proxies)
+                              files=files, proxies=self.proxy)
             # TODO:// FIX MaxRetryError, ConnectionError
             # (Caused by ProxyError('Cannot connect to proxy.',
             # BrokenPipeError(32, 'Broken pipe')))
@@ -145,7 +140,7 @@ class SendSpace(object):
         # check if using full url or partial
         url = "https://www.sendspace.com/file/{}".format(file_id) if len(file_id) == 6 else file_id
         if self.proxy:  # GET request for image
-            r = requests.get(url, proxies=proxies)
+            r = requests.get(url, proxies=self.proxy)
         else:
             r = requests.get(url)
         # the download image retrieved from the uploadImage method does not
