@@ -537,14 +537,15 @@ class Console(cmd.Cmd, object):
         Called on an input line when the command prefix is not recognized.
         In that case we execute the line as Python code.
         """
-        args = self.parser.parse_args(shlex.split(line))
-        if hasattr(args, 'func'):
-            args.func(args)
-        else:
-            try:
-                cmd.Cmd.default(self, line)
-            except:
-                print(e.__class__, ":", e)
+        print('Command "' + line + '" not recognized')
+        #args = self.parser.parse_args(shlex.split(line))
+        #if hasattr(args, 'func'):
+        #    args.func(args)
+        #else:
+        #    try:
+        #        cmd.Cmd.default(self, line)
+        #    except:
+        #        print(e.__class__, ":", e)
 
 default_proxies = {'https': 'https://165.139.149.169:3128',
                 'http': 'http://165.139.149.169:3128'}
