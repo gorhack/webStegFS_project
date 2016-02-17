@@ -72,7 +72,7 @@ class MemFS(LoggingMixIn, Operations):
     def read(self, path, size, offset, fh):
         """Reads the contents of a file and returns the requested number of bytes"""
         self.utimens(path, (None, self.getattr(path)['st_mtime']))
-        return self.fs.getcontents(path)[offset:offset + size] + b'\n'
+        return self.fs.getcontents(path)[offset:offset + size -1] + b'\n'
 
     def rmdir(self, path):
         """Removes a directory from mounted filesystem"""
