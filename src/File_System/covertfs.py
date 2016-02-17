@@ -83,6 +83,7 @@ class CovertFS(memoryfs.MemoryFS):
         makes necessary directories, and creates necessary files
         (empty for now) that are then loaded by main.py.
         """
+        print(fsstring)
         for fol in fsstring.split("\n")[:-1]:
             foldercontents = fol.split(' ')
             curpath = foldercontents[0]

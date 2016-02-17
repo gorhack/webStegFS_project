@@ -158,4 +158,4 @@ class MemFS(LoggingMixIn, Operations):
 
 def mount(memfs, mountpoint, db=False):
     """Actually mounts the given memoryfs onto the given mountpoint"""
-    fuse = FUSE(memfs, mountpoint, foreground=True, debug=db)
+    fuse = FUSE(memfs, mountpoint, foreground=True, debug=True)
