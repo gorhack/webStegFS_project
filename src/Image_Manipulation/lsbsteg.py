@@ -117,27 +117,19 @@ class Steg(object):
         curheight = 0
 
         for byte in msg:
-            current_byte = format(byte, '#010b')[2:]  # keeps 0s in formatting
+            current_byte = format(byte, '08b')  # keeps 0s in formatting
             # splits byte into 3 groups ('111', '111', '11')
             # for encoding to pixels
             bits = (current_byte[0:3], current_byte[3:6], current_byte[6:8])
 
             pixel = pix[curwidth, curheight]  # gets the current pixel
 
-            # having lots of issues with red, green, blue = pixel
-            # TypeError: 'int' object is not subscriptable
-            # ValueError: too many values to unpack (expected 3)
-
             # initialize RGB values
             red, green, blue = 0, 0, 0
-            try:
-                # splits pixel into RGB values
-                red = pixel[0]
-                green = pixel[1]
-                blue = pixel[2]
-            except (TypeError, ValueError) as e:
-                print("Pixel error!")
-                print(pixel)
+
+            red = pixel[0]
+            green = pixel[1]
+            blue = pixel[2]
 
             '''
             encodes a byte into a pixel's colors
@@ -147,16 +139,16 @@ class Steg(object):
 
             max change of 7 to color component
             '''
-            red = format(red, '#010b')[2:]
-            red = '0b' + red[0:5] + bits[0]
+            red = format(red, '08b')
+            red = red[0:5] + bits[0]
             red = int(red, 2)
 
-            green = format(green, '#010b')[2:]
-            green = '0b' + green[0:5] + bits[1]
+            green = format(green, '08b')
+            green = green[0:5] + bits[1]
             green = int(green, 2)
 
-            blue = format(blue, '#010b')[2:]
-            blue = '0b' + blue[0:5] + bits[2]
+            blue = format(blue, '08b')
+            blue = blue[0:6] + bits[2]
             blue = int(blue, 2)
 
             # sets the current pixel to encoded values
@@ -222,9 +214,9 @@ class Steg(object):
                 # haven't had problems with pixels in decode because if it
                 # works in encode it will work in decode...
                 # format adds padding
-                red = format(pixels[w, h][0], '#010b')[2:]
-                green = format(pixels[w, h][1], '#010b')[2:]
-                blue = format(pixels[w, h][2], '#010b')[2:]
+                red = format(pixels[w, h][0], '08b')
+                green = format(pixels[w, h][1], '08b')
+                blue = format(pixels[w, h][2], '08b')
 
                 # assemble the message
                 decodeMsg = red[-3:] + green[-3:] + blue[-2:]
