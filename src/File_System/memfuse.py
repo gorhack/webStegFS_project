@@ -108,7 +108,7 @@ class MemFS(LoggingMixIn, Operations):
         self.utimens(path)
         entry = self.fs._dir_entry(path)
         entry.downlink = None
-        return len(in_data[:offset]+data)
+        return len(data)
 
     def unlink(self, path):
         """Removes a file from the mounted filesystem"""
@@ -158,4 +158,4 @@ class MemFS(LoggingMixIn, Operations):
 
 def mount(memfs, mountpoint, db=False):
     """Actually mounts the given memoryfs onto the given mountpoint"""
-    fuse = FUSE(memfs, mountpoint, foreground=True, debug=True)
+    fuse = FUSE(memfs, mountpoint, foreground=True, debug=db)

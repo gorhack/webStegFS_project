@@ -1,13 +1,18 @@
 #!/usr/bin/env python3
 
 from bs4 import BeautifulSoup  # parse XML response
-import requests  # GET and POST requests
 from PIL import Image
 from Web_Connection.API_Keys import config
-# import socks
-# import socket
-# socks.setdefaultproxy(socks.PROXY_TYPE_SOCKS5, "127.0.0.1", 9050)
-# socket.socket = socks.socksocket
+import platform, subprocess
+if platform.system=='Linux':
+    torEnabled = subprocess.check_output(['ps','aux']).decode().find('/usr/bin/tor')
+    if torEnabled > -1:
+        import socks
+        import socket
+        print("Using tor, rerouting connection")
+        socks.setdefaultproxy(socks.PROXY_TYPE_SOCKS5, "127.0.0.1", 9050)
+        socket.socket = socks.socksocket
+import requests  # GET and POST requests
 
 """@package api_cons
 
@@ -58,10 +63,10 @@ class SendSpace(object):
 
         # get request to get info for anonymous upload
         if self.proxy:
-            # r = requests.get(self.sendspace_url,
-            #                  params=connect_params,
-            #                  proxies=self.proxy)
-            r = requests.get(self.sendspace_url, params=connect_params)
+            r = requests.get(self.sendspace_url,
+                              params=connect_params,
+                              proxies=self.proxy)
+            #r = requests.get(self.sendspace_url, params=connect_params)
         else:
             r = requests.get(self.sendspace_url, params=connect_params)
         if r.status_code == requests.codes.ok:
@@ -108,9 +113,9 @@ class SendSpace(object):
         files = {'userfile': img.getvalue()}
         # POST request with the parameters for upload to SendSpace
         if self.proxy:
-            #r = requests.post(upl_url, data=post_params,
-             #                 files=files, proxies=self.proxy)
-            r = requests.post(upl_url, data=post_params, files=files)
+            r = requests.post(upl_url, data=post_params,
+                             files=files, proxies=self.proxy)
+            #r = requests.post(upl_url, data=post_params, files=files)
             # TODO:// FIX MaxRetryError, ConnectionError
             # (Caused by ProxyError('Cannot connect to proxy.',
             # BrokenPipeError(32, 'Broken pipe')))
@@ -122,6 +127,7 @@ class SendSpace(object):
         if r.status_code == requests.codes.ok:
             # parse the response from the upload post request
             parsed_upl_r = self.parseXML(r.text)
+            print (parsed_upl_r)
             # try to parse the response
             try:
                 download_url = parsed_upl_r.download_url.string[-6:]
@@ -134,7 +140,7 @@ class SendSpace(object):
         img.close()  # close the BytesIO Image object
         r.close()  # close initial POST request
         print("download url: " + download_url)
-        return (download_url, delete_url)
+        return download_url
 
     # Retrieve the direct download URL from the download URL
     def downloadImage(self, file_id):
@@ -148,8 +154,8 @@ class SendSpace(object):
         # check if using full url or partial
         url = "https://www.sendspace.com/file/{}".format(file_id) if len(file_id) == 6 else file_id
         if self.proxy:  # GET request for image
-            # r = requests.get(url, proxies=self.proxy)
-            r = requests.get(url)
+            r = requests.get(url, proxies=self.proxy)
+            #r = requests.get(url)
         else:
             r = requests.get(url)
         # the download image retrieved from the uploadImage method does not

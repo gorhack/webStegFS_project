@@ -3,13 +3,18 @@
 from PIL import Image
 from io import BytesIO
 import binascii
-import requests
 from Image_Manipulation import genImage
 from main import Console
-# import socks
-# import socket
-# socks.setdefaultproxy(socks.PROXY_TYPE_SOCKS5, "127.0.0.1", 9050)
-# socket.socket = socks.socksocket
+import platform, subprocess
+if platform.system=='Linux':
+    torEnabled = subprocess.check_output(['ps','aux']).decode().find('/usr/bin/tor')
+    if torEnabled > -1:
+        import socks
+        import socket
+        print("Using tor, rerouting connection")
+        socks.setdefaultproxy(socks.PROXY_TYPE_SOCKS5, "127.0.0.1", 9050)
+        socket.socket = socks.socksocket
+import requests  # GET and POST requests
 
 """@package lsbsteg
 
@@ -36,7 +41,7 @@ SPECIAL_EOF_HEX = bytearray.fromhex('%08X' % int(SPECIAL_EOF, 2))
 
 
 class Steg(object):
-    def __init__(self, proxy):
+    def __init__(self, proxy, online_file_store):
         """
         The constructor. Extends the superclass constructor.
         """
@@ -45,8 +50,7 @@ class Steg(object):
         # TODO:// need to use main.Console functions to upload files and
         # download files for modularity. Currently hardcoded an instance of
         # the Console class.
-        self.cons = Console('sendspace', 'lsbsteg', 'covertMount', '',
-                            'noproxy', False)
+        self.cons = online_file_store
 
     # prepare message and image for encoding
     # returns url
@@ -99,10 +103,11 @@ class Steg(object):
             # append the next image identifier and the previous url to
             # the next message
             rest.extend(NEXT_IMAGE_HEX)
+            print(url)
             rest.extend(str.encode(url))
             # change url to the most recently uploaded url
             url = self.encode(rest)
-
+        print(url)
         return url
 
     def encodeSteg(self, msg, image):
@@ -177,23 +182,22 @@ class Steg(object):
         image.close()
 
         # upload the image
-        contents, downlink = self.cons.uploadfile(output_image)
-        contents.close()
-
+        downlink = self.cons.upload(output_image)
+        
         return downlink
 
     def decodeImageFromURL(self, file_id):
         """
         The decodeImageFromURL method retrieves an image from a url,
         and extracts a message from the image. The image needs to have
-        been encoded using the stegByteStream.encode(msg) method.
+        been encoded using the Steg.encode(msg) method.
         This method takes a url as a string.
-        This method returns the decoded message as a string.
+        This method returns the decoded message as a bytearray.
         """
         url = self.cons.downloadImage(file_id)
         if self.proxy:  # if the application is using proxies
-            #r = requests.get(url, proxies=self.proxy)  # open a url using the proxies
-            r = requests.get(url)
+            r = requests.get(url, proxies=self.proxy)  # open a url using the proxies
+            #r = requests.get(url)
         else:  # if the application is not using proxies
             r = requests.get(url)  # open the url without proxies
 
@@ -204,7 +208,7 @@ class Steg(object):
             raise FileNotFoundError("Could not retrieve image at {}.".format(url))  # raise an exception that shows the faulty url
 
     # takes image as BytesIO object
-    # returns a BytesIO
+    # returns a bytearray
     def decode(self, img):
         """
         The decode function decodes the message from an image.
@@ -258,6 +262,7 @@ class Steg(object):
                         url = int(url_bin, 2)
                         url = url.to_bytes((url.bit_length() +
                                             7) // 8, 'big').decode()
+                        print(url)
 
                         # remove URL and identifier
                         msg = msg[:-length_of_url]
@@ -267,7 +272,9 @@ class Steg(object):
 
                         msg += next_msg
 
-                    return msg
+                    msg_array = bytearray.fromhex('%08X' % int(msg, 2))
+                    return msg_array
+
                 else:
                     msg += decodeMsg
 
