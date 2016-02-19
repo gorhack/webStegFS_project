@@ -81,7 +81,7 @@ class Console(cmd.Cmd, object):
         ###FUSE usability information###
         self.fuse_enabled = False
         try:
-            if subprocess.call(['locate','fusermount'], stdout = subprocess.PIPE) == 0:
+            if subprocess.call(['whereis','fusermount'], stdout = subprocess.PIPE) == 0:
                 self.fuse_enabled = True
                 self.mp = mountpoint
                 self.fuseFS = None

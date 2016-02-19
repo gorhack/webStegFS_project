@@ -1,6 +1,11 @@
 #!/usr/bin/env python3
 
 from bs4 import BeautifulSoup  # parse XML response
+import socks
+import socket
+socks.setdefaultproxy(socks.PROXY_TYPE_SOCKS5, "127.0.0.1", 9050)
+socket.socket = socks.socksocket
+
 import requests  # GET and POST requests
 from PIL import Image
 from Web_Connection.API_Keys import config
