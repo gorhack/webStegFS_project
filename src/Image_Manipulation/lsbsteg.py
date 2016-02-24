@@ -22,7 +22,7 @@ and then decodes the image. Decode takes a BytesIO object and returns a
 binary string containing the binary of the decoded message.
 """
 
-### Constants
+# Constants
 # URLLIB-> in bits
 NEXT_IMAGE = '0101010101010010010011000100110001001001010000100010110100111110'
 NEXT_IMAGE_HEX = bytearray.fromhex('%08X' % int(NEXT_IMAGE, 2))
@@ -34,6 +34,7 @@ SPECIAL_EOF = '01000101010011100100010001011111010011110100' + \
                 '01100101111101000110010010010100110001000101'
 SPECIAL_EOF_HEX = bytearray.fromhex('%08X' % int(SPECIAL_EOF, 2))
 
+
 class Steg(object):
     def __init__(self, proxy):
         """
@@ -44,7 +45,8 @@ class Steg(object):
         # TODO:// need to use main.Console functions to upload files and
         # download files for modularity. Currently hardcoded an instance of
         # the Console class.
-        self.cons = Console('sendspace', 'lsbsteg', 'covertMount', '', 'noproxy', False)
+        self.cons = Console('sendspace', 'lsbsteg', 'covertMount', '',
+                            'noproxy', False)
 
     # prepare message and image for encoding
     # returns url
@@ -67,8 +69,9 @@ class Steg(object):
         # returns a tuple (msg that will fit, rest of msg)
         def prepareMessage(msg, size_available):
             """
-            The prepare message function splits the message based on the maximum
-            size available to the steg function based on the number of pixels.
+            The prepare message function splits the message based on the
+            maximum size available to the steg function based on the number of
+            pixels.
             """
             print("preparing message")
             return msg[:-size_available], msg[-size_available:]
@@ -117,7 +120,8 @@ class Steg(object):
 
         for byte in msg:
             current_byte = format(byte, '#010b')[2:]  # keeps 0s in formatting
-            # splits byte into 3 groups ('111', '111', '11') for encoding to pixels
+            # splits byte into 3 groups ('111', '111', '11')
+            # for encoding to pixels
             bits = (current_byte[0:3], current_byte[3:6], current_byte[6:8])
 
             pixel = pix[curwidth, curheight]  # gets the current pixel
@@ -252,7 +256,8 @@ class Steg(object):
 
                         # converts binary string of url to ascii
                         url = int(url_bin, 2)
-                        url = url.to_bytes((url.bit_length() + 7) // 8, 'big').decode()
+                        url = url.to_bytes((url.bit_length() +
+                                            7) // 8, 'big').decode()
 
                         # remove URL and identifier
                         msg = msg[:-length_of_url]
