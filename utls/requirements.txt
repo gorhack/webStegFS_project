@@ -1,5 +1,5 @@
 --index-url https://pypi.python.org/simple/
-
+PySocks==1.5.6
 alabaster==0.7.7
 Babel==2.2.0
 beautifulsoup4==4.4.1
