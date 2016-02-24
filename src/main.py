@@ -2,6 +2,7 @@
 
 import os, cmd, subprocess, sys, shlex, time, argparse
 from Image_Manipulation import stegByteStream
+from Image_Manipulation import lsbsteg
 from Web_Connection.API_Keys import config
 from Web_Connection import api_cons
 from File_System import covertfs
@@ -70,7 +71,7 @@ class Console(cmd.Cmd, object):
 
         ###Steganography class setup###
         if self.steg == "LSBsteg":
-            self.stegFactory = stegByteStream.Steg
+            self.stegFactory = lsbsteg.Steg
 
         elif self.steg == "somethingelse": #template for some other steg class
             pass
@@ -190,34 +191,45 @@ class Console(cmd.Cmd, object):
         Returns the url.\n
         Use: encodeimage [message]"""
 
-        count = 0
-        # determine how many times we will break up the image
-        chunks = [msg[i:i+self.max_message_length] for i in range(0, len(msg), self.max_message_length)]
-        total = len(chunks)
-        # apend the number of total images for status update
-        append_url = ' ' + str(total)
-        while (len(chunks) > 0):
-            count += 1
-            # TODO:// log, not print
-            print("encoding image {}/{}".format(count, total))
-            try:
-                chunk = chunks.pop()  # encode starting with the last image
-                # encode the image and append the data to the URL
-                img = self.stegFactory(self.proxy).encode(chunk +
-                                                                append_url)
-                # upload the image
-                (download_url, delete_url) = self.storeFactory.upload(img)
-                img.close()  # close the image
-                # set the append url to contain the current image's
-                # download URL. This allows the images to be
-                # downloaded as a linked list.
-                append_url = self.url_identifier + download_url + ' ' + str(total)
-            except Exception as e:
-                print("Unable to access online resources " + str(e))
-                return 0
-        # print the last images download URL
-        print(append_url[:-(len(str(total)) + 1)])
-        count = 0
+        ##### need to revise!!! trying not to break anything and still test
+        # Large test 0axxln
+        msg_file = open('freekernelpstviewer.exe', 'rb')
+        # Short test
+        #msg_file = open('README.rst', 'rb')
+        my_msg = bytearray(msg_file.read())
+        msg_file.close()
+
+        downlink = self.stegFactory(self.proxy).encode(my_msg)
+        #print(downlink)
+        #####
+
+        # count = 0
+        # # determine how many times we will break up the image
+        # chunks = [msg[i:i+self.max_message_length] for i in range(0, len(msg), self.max_message_length)]
+        # total = len(chunks)
+        # # apend the number of total images for status update
+        # append_url = ' ' + str(total)
+        # while (len(chunks) > 0):
+        #     count += 1
+        #     # TODO:// log, not print
+        #     print("encoding image {}/{}".format(count, total))
+        #     try:
+        #         chunk = chunks.pop()  # encode starting with the last image
+        #         # encode the image and append the data to the URL
+        #         img = self.stegFactory(self.proxy).encode(chunk + append_url)
+        #         # upload the image
+        #         (download_url, delete_url) = self.storeFactory.upload(img)
+        #         img.close()  # close the image
+        #         # set the append url to contain the current image's
+        #         # download URL. This allows the images to be
+        #         # downloaded as a linked list.
+        #         append_url = self.url_identifier + download_url + ' ' + str(total)
+        #     except Exception as e:
+        #         print("Unable to access online resources " + str(e))
+        #         return 0
+        # # print the last images download URL
+        # print(append_url[:-(len(str(total)) + 1)])
+        # count = 0
         return 0
 
     def do_createdownloadlink(self, url):
@@ -231,45 +243,61 @@ class Console(cmd.Cmd, object):
             return
         print("URL: " + download_url)
 
-    def do_decodeimage(self, url):
+    def downloadImage(self, file_id):
+        """
+        helper function to get image object
+        """
+        return self.storeFactory.downloadImage(file_id)
+
+    def do_decodeimage(self, file_id):
         """Decode the message in an image.\n
         Returns the message in plain text.\n
         decodeimage [download url]"""
-        msg = ''
-        next_url = url
-        id_length = len(self.url_identifier) + 6
-        count = 0
-        total = 0
-        try:
-            msg += self.stegFactory(
-                self.proxy).decodeImageFromURL(
-                self.storeFactory.downloadImage(url))
-            # determine how many total images the current image contains
-            total = msg[-(len(msg) - (msg.rfind(' ') + 1)):]
-            if total == '1':
-                # only 1 image total, safe to print message
-                print("Decoded message: " + msg[:-2])  # strip ' 1'
-                return 0
-            len_total = len(total) + 1  # add 1 for space
-            offset = id_length + len_total
-            while(next_url != "*NO URL*"):  # arbitrary stop decoding
-                count += 1  # track current image number to decode
-                print("decoding image {}/{}".format(count, str(total)))
+        url = "https://www.sendspace.com/file/{}".format(file_id) if len(file_id) == 6 else file_id
+        msg = self.stegFactory(self.proxy).decodeImageFromURL(url)
+        # convert from binary to hex
+        msg_ba = bytearray.fromhex('%08X' % int(msg, 2))
+        print(msg_ba[:50])
+        # convert from hex to BytesIO
+        # return self.stegFactory(self.proxy).bytesarray2BytesIO(msg_ba)
 
-                if (msg[-offset:-(6 + len_total)] == self.url_identifier):
-                    next_url = msg[-(6 + len_total):-len_total]
-                    msg = msg[:-(offset)]
-                    msg += self.stegFactory(
-                        self.proxy).decodeImageFromURL(
-                        self.storeFactory.downloadImage(next_url))
-                else:
-                    next_url = "*NO URL*"
+        #print(msg[:64])  # y8hfvo
 
-            print("Decoded message: " + msg[:-len_total])
-            return 0
-        except Exception as e:
-            print("Unable to access online resources, or the given URL is wrong " + str(e))
-            return 0
+        # msg = ''
+        # next_url = url
+        # id_length = len(self.url_identifier) + 6
+        # count = 0
+        # total = 0
+        # try:
+        #     msg += self.stegFactory(
+        #         self.proxy).decodeImageFromURL(
+        #         self.storeFactory.downloadImage(url))
+        #     # determine how many total images the current image contains
+        #     total = msg[-(len(msg) - (msg.rfind(' ') + 1)):]
+        #     if total == '1':
+        #         # only 1 image total, safe to print message
+        #         print("Decoded message: " + msg[:-2])  # strip ' 1'
+        #         return 0
+        #     len_total = len(total) + 1  # add 1 for space
+        #     offset = id_length + len_total
+        #     while(next_url != "*NO URL*"):  # arbitrary stop decoding
+        #         count += 1  # track current image number to decode
+        #         print("decoding image {}/{}".format(count, str(total)))
+
+        #         if (msg[-offset:-(6 + len_total)] == self.url_identifier):
+        #             next_url = msg[-(6 + len_total):-len_total]
+        #             msg = msg[:-(offset)]
+        #             msg += self.stegFactory(
+        #                 self.proxy).decodeImageFromURL(
+        #                 self.storeFactory.downloadImage(next_url))
+        #         else:
+        #             next_url = "*NO URL*"
+
+        #     print("Decoded message: " + msg[:-len_total])
+        #     return 0
+        # except Exception as e:
+        #     print("Unable to access online resources, or the given URL is wrong " + str(e))
+        #     return 0
 
     def do_ls(self, args):
             """List items in directory\n
@@ -313,9 +341,10 @@ class Console(cmd.Cmd, object):
 
     def uploadfile(self, contents):
         """Helper function to upload file, return the download url."""
-        img = self.stegFactory(self.proxy).encode(contents)
-        (downlink, delete_url) = self.storeFactory.upload(img)
-        img.close()
+        #img = self.stegFactory(self.proxy).encode(contents)
+        #print(contents.getvalue()[-50:])
+        (downlink, delete_url) = self.storeFactory.upload(contents)
+        #img.close()
         return contents, downlink
 
 
@@ -616,7 +645,7 @@ if __name__ == '__main__':
             run = False
     if run:
         cons = Console(args.website, args.steganography, args.mountpoint, args.url, proxy, args.cmdloop)
-    
+
         if args.cmdloop:
             cons.cmdloop()
         else:

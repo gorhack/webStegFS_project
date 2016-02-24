@@ -2,10 +2,10 @@
 
 from PIL import Image
 from io import BytesIO
-import socks
+#import socks
 import socket
-socks.setdefaultproxy(socks.PROXY_TYPE_SOCKS5, "127.0.0.1", 9050)
-socket.socket = socks.socksocket
+#socks.setdefaultproxy(socks.PROXY_TYPE_SOCKS5, "127.0.0.1", 9050)
+#socket.socket = socks.socksocket
 
 import requests
 from Image_Manipulation import genImage
