@@ -27,22 +27,22 @@ Sprint broken into three sub-goals:
 
 1. Implement basic steg module to encode and decode an image in Python
 
-- ``$ python3 Image_Manipulation/lsbsteg.py [encode/decode] -i [image_path] -m '[message]'``
-- encode saves a copy of the image_path with a '_1' appended encoded with the message
-- decode prints the encoded message in the image_path
+   - ``$ python3 Image_Manipulation/lsbsteg.py [encode/decode] -i [image_path] -m '[message]'``
+   - encode saves a copy of the image_path with a '_1' appended encoded with the message
+   - decode prints the encoded message in the image_path
 
 2. Determine a suitable social media site that meets our requirements (anonymous user upload, no or lossless compression)
 
-- social media sites investigated:
-  - SendSpace
-  - Whisper
-  - Flickr
-  - Yogile
+   - social media sites investigated:
+     - SendSpace
+     - Whisper
+     - Flickr
+     - Yogile
 
 3. Design and implement basic upload application in Python for the selected social media site
 
-- ``$ python3 Web_Connection/api_cons.py``
-- returns the download url for the uploaded random cat image (stores the delete URL as well)
+   - ``$ python3 Web_Connection/api_cons.py``
+   - returns the download url for the uploaded random cat image (stores the delete URL as well)
 
 
 Sprint 2: Covert Mapping Structure
@@ -52,20 +52,20 @@ Sprint broken into four sub-goals
 1. Design the map structure for the covert file system to allow maximum flexibility and usability.
 2. Break a large message file into parts to encode across multiple images.
 
-- Analysis of how much data can be encoded using LSB
-- Determine file system overhead in each image
+   - Analysis of how much data can be encoded using LSB
+   - Determine file system overhead in each image
 
 3. Begin to add API connection and Encode/Decoder into Application.
 
-- ``$ python3 main.py [url]`` [1]_ url can be the full url path or the file id (6 character ending, i.e xvdmcn)
-- ``covertFS$ [command]``
+   - ``$ python3 main.py [url]`` [1]_ url can be the full url path or the file id (6 character ending, i.e xvdmcn)
+   - ``covertFS$ [command]``
 
 4. Functional Design Documents
 5. From previous Sprint:
 
-- Keep all images in memory
-- Error handling in API connection
-- Enforce restrictions on arguments in encode/decode
+   - Keep all images in memory
+   - Error handling in API connection
+   - Enforce restrictions on arguments in encode/decode
 
 Sprint 3: Beta release
 ++++++++++++++++++++++
@@ -102,28 +102,26 @@ Usage:
   - -s steganography [default: LSBsteg]
 - ``covertFS$ [command]`` basic application usage.
 
-Documented Commands:
-
-- ``mount`` mounts the file system using FUSE
-- ``proxy`` / ``noproxy`` turns the built in proxy on/off respectively 
-- ``loadfs [url]`` load a covert file system
-- ``newfs`` uploads the old fs and returns the url. loads a new covert file system.
-- ``encodeimage [file]`` encode an image with a file, returns the URL to the image
-- ``decodeimage [url]`` decode an image, returns the file
-- ``uploadfs [url]`` save the covert file system, returns URL to the root image. To load the same file system this URL must be retained.
-- ``mkdir [path]`` make directories in the covert file system at the given path
-- ``rmdir [path]`` remove directories in the covert file system at the given path
-- ``mkfile [name] [text] [path]`` create a text file in the covert file system at the path
-- ``upload [local path] [covert path]`` upload a file to the covert file system
-- ``download [covert path] [local path]`` download a file on the covert file system to disk
-- ``ls [path]`` [1]_ list directory contents
-- ``cd [path]`` change directory in the covert file system to the path
-- ``cat [file]`` concatenate and print files
-- ``rm [path]`` remove a file from the covert file system
-- ``hist`` show the history of previous commands
-- ``shell [cmd]`` run shell commands
-- ``help [cmd]`` [1]_ show list of commands or documentation for a specific command
-- ``exit`` exit the covert file system
+  - ``mount`` mounts the file system using FUSE
+  - ``proxy`` / ``noproxy`` turns the built in proxy on/off respectively 
+  - ``loadfs [url]`` load a covert file system
+  - ``newfs`` uploads the old fs and returns the url. loads a new covert file system.
+  - ``encodeimage [file]`` encode an image with a file, returns the URL to the image
+  - ``decodeimage [url]`` decode an image, returns the file
+  - ``uploadfs [url]`` save the covert file system, returns URL to the root image. To load the same file system this URL must be retained.
+  - ``mkdir [path]`` make directories in the covert file system at the given path
+  - ``rmdir [path]`` remove directories in the covert file system at the given path
+  - ``mkfile [name] [text] [path]`` create a text file in the covert file system at the path
+  - ``upload [local path] [covert path]`` upload a file to the covert file system
+  - ``download [covert path] [local path]`` download a file on the covert file system to disk
+  - ``ls [path]`` [1]_ list directory contents
+  - ``cd [path]`` change directory in the covert file system to the path
+  - ``cat [file]`` concatenate and print files
+  - ``rm [path]`` remove a file from the covert file system
+  - ``hist`` show the history of previous commands
+  - ``shell [cmd]`` run shell commands
+  - ``help [cmd]`` [1]_ show list of commands or documentation for a specific command
+  - ``exit`` exit the covert file system
 
 
 Testing:
