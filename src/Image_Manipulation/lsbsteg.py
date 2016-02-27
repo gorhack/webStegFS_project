@@ -2,12 +2,10 @@
 
 from PIL import Image
 from io import BytesIO
-import binascii
 from Image_Manipulation import genImage
-from main import Console
 import platform, subprocess
 if platform.system=='Linux':
-    torEnabled = subprocess.check_output(['ps','aux']).decode().find('/usr/bin/tor')
+    torEnabled = subprocess.check_output(['ps', 'aux']).decode().find('/usr/bin/tor')
     if torEnabled > -1:
         import socks
         import socket
@@ -27,18 +25,22 @@ and then decodes the image. Decode takes a BytesIO object and returns a
 binary string containing the binary of the decoded message.
 """
 
+
+def ascii2bits(message):
+    """
+    The ascii2bits function converts a string of ascii characters to a
+    padded string of bits.
+    """
+    msg = bin(int.from_bytes(message.encode(), 'big'))[2:]
+    return msg.zfill(8 * ((len(msg) + 7) // 8))
 # Constants
-# URLLIB-> in bits
-NEXT_IMAGE = '0101010101010010010011000100110001001001010000100010110100111110'
-NEXT_IMAGE_HEX = bytearray.fromhex('%08X' % int(NEXT_IMAGE, 2))
+NEXT_IMAGE = 'URLLIB->'
+NEXT_IMAGE_BITS = ascii2bits(NEXT_IMAGE)
+NEXT_IMAGE_HEX = bytearray(NEXT_IMAGE.encode())
 
-URL_LENGTH_IN_BINARY = 48  # the length of 6 characters in binary
-
-# END_OF_FILE in bits
-SPECIAL_EOF = '01000101010011100100010001011111010011110100' + \
-                '01100101111101000110010010010100110001000101'
-SPECIAL_EOF_HEX = bytearray.fromhex('%08X' % int(SPECIAL_EOF, 2))
-
+SPECIAL_EOF = 'END_OF_FILE'
+SPECIAL_EOF_BITS = ascii2bits(SPECIAL_EOF)
+SPECIAL_EOF_HEX = bytearray(SPECIAL_EOF.encode())
 
 class Steg(object):
     def __init__(self, proxy, online_file_store):
@@ -47,18 +49,14 @@ class Steg(object):
         """
         self.SIZE_FIELD_LEN = 64
         self.proxy = proxy
-        # TODO:// need to use main.Console functions to upload files and
-        # download files for modularity. Currently hardcoded an instance of
-        # the Console class.
         self.cons = online_file_store
+        self.URL_LENGTH_IN_BINARY = self.cons.url_size * 8
 
-    # prepare message and image for encoding
-    # returns url
     def encode(self, message):
         """
-        The encode function encodes up to 1 byte of data per pixel.
-        This function takes a message as a bytearray object as a parameter.
-        This function returns a url as a string to the encoded message.
+        The encode method encodes up to 1 byte of data per pixel.
+        This method takes a message as a bytearray object as a parameter.
+        This method returns a url as a string to the encoded message.
         """
         def prepareNewImage():
             """
@@ -66,18 +64,14 @@ class Steg(object):
             This function does not take any paramters.
             This function returns an image as a BytesIO object.
             """
-            print("preparing new image")
             return Image.open(genImage.genCatImage())
 
-        # takes the full msg as bytearray and size_available to image as int
-        # returns a tuple (msg that will fit, rest of msg)
         def prepareMessage(msg, size_available):
             """
             The prepare message function splits the message based on the
             maximum size available to the steg function based on the number of
-            pixels.
+            pixels. Returns a tuple (rest of message, message that will fit)
             """
-            print("preparing message")
             return msg[:-size_available], msg[-size_available:]
 
         msg = message
@@ -90,8 +84,8 @@ class Steg(object):
         width, height = image.size
 
         # for logging purposes
-        print("bytes in message: {}".format(len(msg)))
-        print("pixels in image:  {}".format(height * width))
+        # print("bytes in message: {}".format(len(msg)))
+        # print("pixels in image:  {}".format(height * width))
 
         # prepare the message
         rest, msg = prepareMessage(msg, width * height)
@@ -107,16 +101,15 @@ class Steg(object):
             rest.extend(str.encode(url))
             # change url to the most recently uploaded url
             url = self.encode(rest)
-        print(url)
         return url
 
     def encodeSteg(self, msg, image):
         """
-        The encodeSteg function modifies the image and encodes the binary
+        The encodeSteg method modifies the image and encodes the binary
         message into the image using least significant bit stegenography.
-        This function takes a message as a byte array and an image as a
+        This method takes a message as a byte array and an image as a
         PIL Image object.
-        This function returns the url as a str.
+        This method returns the url as a str.
         """
         pix = image.load()
 
@@ -142,9 +135,8 @@ class Steg(object):
                 red = pixel[0]
                 green = pixel[1]
                 blue = pixel[2]
-            except Exception as e:
-                print("pixel may contain alpha value or not enough? " +
-                      str(e))
+            except (TypeError, ValueError) as e:
+                print("Pixel error!")
                 print(pixel)
 
             '''
@@ -183,7 +175,7 @@ class Steg(object):
 
         # upload the image
         downlink = self.cons.upload(output_image)
-        
+
         return downlink
 
     def decodeImageFromURL(self, file_id):
@@ -196,25 +188,25 @@ class Steg(object):
         """
         url = self.cons.downloadImage(file_id)
         if self.proxy:  # if the application is using proxies
-            r = requests.get(url, proxies=self.proxy)  # open a url using the proxies
-            #r = requests.get(url)
+            # open a url using the proxies
+            r = requests.get(url, proxies=self.proxy)
         else:  # if the application is not using proxies
             r = requests.get(url)  # open the url without proxies
 
-        if r.status_code == requests.codes.ok:  # if the url was successfully opened
-            print("decoding URL")
-            return self.decode(BytesIO(r.content))  # decode the image found in the url
+        # if the url was successfully opened
+        if r.status_code == requests.codes.ok:
+            # decode the image found in the url
+            return self.decode(BytesIO(r.content))
         else:  # if the url was not successfully opened
-            raise FileNotFoundError("Could not retrieve image at {}.".format(url))  # raise an exception that shows the faulty url
+            # raise an exception that shows the faulty url
+            raise FileNotFoundError("Could not retrieve image at {}.".format(url))
 
-    # takes image as BytesIO object
-    # returns a bytearray
     def decode(self, img):
         """
-        The decode function decodes the message from an image.
-        This function takes an image as a BytesIO object and returns a string
+        The decode method decodes the message from an image.
+        This method takes an image as a BytesIO object and returns a string
         representing the bits of the message. To decode the bits:
-        `bytearray.fromhex('%08X' % int(message, 2))`
+        ``bytearray.fromhex('%08X' % int(message, 2))``.
         """
 
         # convert BytesIO image to PIL Image object
@@ -229,40 +221,34 @@ class Steg(object):
             for w in range(image.width):
                 # haven't had problems with pixels in decode because if it
                 # works in encode it will work in decode...
-                red = pixels[w, h][0]
-                green = pixels[w, h][1]
-                blue = pixels[w, h][2]
-
-                # add padding
-                red = format(red, '#010b')[2:]
-                green = format(green, '#010b')[2:]
-                blue = format(blue, '#010b')[2:]
+                # format adds padding
+                red = format(pixels[w, h][0], '#010b')[2:]
+                green = format(pixels[w, h][1], '#010b')[2:]
+                blue = format(pixels[w, h][2], '#010b')[2:]
 
                 # assemble the message
                 decodeMsg = red[-3:] + green[-3:] + blue[-2:]
 
                 # see if the eof bytes have been found
                 # subtract 8 for current byte
-                special_ending = msg[-(len(SPECIAL_EOF) - 8):] + decodeMsg
+                special_ending = msg[-(len(SPECIAL_EOF_BITS) - 8):] + decodeMsg
 
-                if special_ending == SPECIAL_EOF:
+                if special_ending == SPECIAL_EOF_BITS:
                     msg += decodeMsg
-                    print("reached end of image")
 
                     # remove EOF signature
-                    msg = msg[:-len(SPECIAL_EOF)]
+                    msg = msg[:-len(SPECIAL_EOF_BITS)]
 
-                    length_of_url = len(NEXT_IMAGE) + URL_LENGTH_IN_BINARY
+                    length_of_url = len(NEXT_IMAGE_BITS) + self.URL_LENGTH_IN_BINARY
 
-                    if msg[-length_of_url:-URL_LENGTH_IN_BINARY] == NEXT_IMAGE:
-                        print("found another image to decode")
-                        url_bin = msg[-URL_LENGTH_IN_BINARY:]
+                    # URL ID found
+                    if msg[-length_of_url:-self.URL_LENGTH_IN_BINARY] == NEXT_IMAGE_BITS:
+                        url_bin = msg[-self.URL_LENGTH_IN_BINARY:]
 
                         # converts binary string of url to ascii
                         url = int(url_bin, 2)
                         url = url.to_bytes((url.bit_length() +
                                             7) // 8, 'big').decode()
-                        print(url)
 
                         # remove URL and identifier
                         msg = msg[:-length_of_url]
@@ -279,11 +265,3 @@ class Steg(object):
                     msg += decodeMsg
 
         return ("Something messed up... " + msg[-50:])
-
-    def bytesarray2BytesIO(self, data):
-        """
-        The bytesarray2BytesIO function converts a bytesarray to BytesIO
-        object. This may be more useful in converting the string representing
-        the bits to a BytesIO object.
-        """
-        return BytesIO(data)

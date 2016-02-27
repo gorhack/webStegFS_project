@@ -32,16 +32,6 @@ class Console(cmd.Cmd, object):
         self.url=url
         self.fs = covertfs.CovertFS()
 
-        if self.version == '0.9.1':  # set basic defaults for version 0.9
-            """
-            Configure the Console for use with the current version
-            """
-            # number of characters to encode in each image
-            self.max_message_length = 136
-            # unique sequence of characters used to determine if another
-            # image is decoded in the current image
-            self.url_identifier = "URLLIB->"
-
         ###Information for the command prompt###
         self.preprompt = "covertFS: "
         self.folder = "/"
@@ -56,7 +46,6 @@ class Console(cmd.Cmd, object):
             """
             Configure the Console for use with SendSpace
             """
-            self.url_size = 6  # length of download URL returned by sendspace
             self.storeFactoryClass = api_cons.SendSpace
 
         elif self.api == "somethingelse": #template for some other api
@@ -177,22 +166,21 @@ class Console(cmd.Cmd, object):
         self.folder = self.fs.current_dir
         self.prompt = self.preprompt + self.folder + "$ "
 
-    def do_encodeimage(self, msg):
+    def do_encodeimage(self, file):
         """
-        Encode a message to an image and upload to social media.\n
+        Encode a file and upload to social media.\n
         Returns the url.\n
-        Use: encodeimage [message]"""
-
-        ##### need to revise!!! trying not to break anything and still test
-        # Large test 0axxln
-        msg_file = open('python3.5', 'rb')
-        # Short test
-        #msg_file = open('README.rst', 'rb')
-        my_msg = bytearray(msg_file.read())
-        msg_file.close()
+        Use: encodeimage [file]"""
+        my_msg = bytearray()
+        try:
+            msg_file = open(file, 'rb')
+            my_msg = bytearray(msg_file.read())
+            msg_file.close()
+        except FileNotFoundError:
+            print("File not found, encoding the text \"{}\".".format(file))
+            my_msg = bytearray(file.encode())
 
         downlink = self.upload_file(my_msg)
-        
         return 0
 
     def do_decodeimage(self, file_id):
@@ -202,8 +190,8 @@ class Console(cmd.Cmd, object):
         url = "https://www.sendspace.com/file/{}".format(file_id) if len(file_id) == 6 else file_id
         msg = self.stegFactory.decodeImageFromURL(url)
         # convert from binary to hex
-        
-        print( msg)
+
+        print(msg)
 
     def do_uploadfs(self, args):
         """Upload covert fileSystem to the web"""
@@ -216,7 +204,9 @@ class Console(cmd.Cmd, object):
 
     def upload_file(self, contents):
         """Helper function to upload file, return the download url."""
-        return self.stegFactory.encode(contents)
+        url = self.stegFactory.encode(contents)
+        print("URL: " + url)
+        return url
 
     def add_file_to_fs(self, fspath, contents):
         """Helper function to add a file to the fs."""

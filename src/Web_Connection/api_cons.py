@@ -33,6 +33,7 @@ class SendSpace(object):
         """
         self.api_key = key
         self.proxy = proxy
+        self.url_size = 6  # length of download URL returned by sendspace
 
     def upload(self, img):
         """
@@ -127,7 +128,6 @@ class SendSpace(object):
         if r.status_code == requests.codes.ok:
             # parse the response from the upload post request
             parsed_upl_r = self.parseXML(r.text)
-            print (parsed_upl_r)
             # try to parse the response
             try:
                 download_url = parsed_upl_r.download_url.string[-6:]
@@ -139,7 +139,6 @@ class SendSpace(object):
             print("Invalid response code " + r.status_code + "\n" + r.text)
         img.close()  # close the BytesIO Image object
         r.close()  # close initial POST request
-        print("download url: " + download_url)
         return download_url
 
     # Retrieve the direct download URL from the download URL
