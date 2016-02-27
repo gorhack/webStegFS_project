@@ -27,11 +27,11 @@ class SendSpace(object):
     """
     sendspace_url = 'http://api.sendspace.com/rest/'  # REST API url (v1.1)
 
-    def __init__(self, proxy, key=config.sendSpaceKey):
+    def __init__(self, proxy):
         """
         The SendSpace constructor.
         """
-        self.api_key = key
+        self.api_key = config.sendSpaceKey
         self.proxy = proxy
         self.url_size = 6  # length of download URL returned by sendspace
 

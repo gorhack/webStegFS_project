@@ -18,6 +18,7 @@ parameters.
 __version__ = "0.9.1"
 __author__ = "Flores, Gorak, Hart, Sjoholm"
 
+
 class Console(cmd.Cmd, object):
     def __init__(self, online_file_store, steg_class, mountpoint, url, proxy, cmdLoopUsed):
         """
@@ -48,7 +49,7 @@ class Console(cmd.Cmd, object):
             """
             self.storeFactoryClass = api_cons.SendSpace
 
-        elif self.api == "somethingelse": #template for some other api
+        elif self.api == "somethingelse":  # template for some other api
             print ("Invalid file store")
             return
         ###################################
@@ -71,7 +72,7 @@ class Console(cmd.Cmd, object):
                 self.mp = mountpoint
                 self.fuseFS = None
         except:
-            pass #preventing the program from attempting to run on Windows or other monstrosities without FUSE
+            pass  # preventing the program from attempting to run on Windows or other monstrosities without FUSE
         ###############################
 
         self.init_factory()
@@ -113,8 +114,8 @@ class Console(cmd.Cmd, object):
             subprocess.call(['gnome-terminal', '--working-directory=' + os.getcwd()+ '/'+ self.mp, '--window'])
 
     def do_mount(self, args):
-        if self.fuse_enabled == False:
-            print ("Only able to mount on systems with fuse installed")
+        if self.fuse_enabled is False:
+            print("Only able to mount on systems with fuse installed")
             return
         from File_System import memfuse
         self.fuseFS = memfuse.MemFS(self.fs)
@@ -123,9 +124,9 @@ class Console(cmd.Cmd, object):
             os.makedirs(self.mp)
             newDir = True
         from threading import Thread
-        t=Thread(target = self.open_window)
+        t = Thread(target=self.open_window)
         t.start()
-        memfuse.mount(self.fuseFS,self.mp)
+        memfuse.mount(self.fuseFS, self.mp)
         if newDir:
             os.rmdir(self.mp)
         if not self.cmdloopused:
@@ -197,7 +198,7 @@ class Console(cmd.Cmd, object):
         """Upload covert fileSystem to the web"""
         for f in self.fs.walkfiles():
             entry = self.fs._dir_entry(f)
-            if entry.downlink == None:
+            if entry.downlink is None:
                 print("Uploading ", f)
                 entry.downlink = self.upload_file(bytearray(self.fs.getcontents(f)))
         return self.upload_file(bytearray(self.fs.save().encode('utf-8')))
@@ -452,30 +453,31 @@ class Console(cmd.Cmd, object):
         In that case we execute the line as Python code.
         """
         print('Command "' + line + '" not recognized')
-        #args = self.parser.parse_args(shlex.split(line))
-        #if hasattr(args, 'func'):
+        # args = self.parser.parse_args(shlex.split(line))
+        # if hasattr(args, 'func'):
         #    args.func(args)
-        #else:
+        # else:
         #    try:
         #        cmd.Cmd.default(self, line)
         #    except:
         #        print(e.__class__, ":", e)
 
 default_proxies = {'https': 'https://165.139.149.169:3128',
-                'http': 'http://165.139.149.169:3128'}
+                   'http': 'http://165.139.149.169:3128'}
+
 
 def proxy_test(proxyL):
     import requests
     try:
-        r = requests.get('http://google.com', timeout = 1)
+        r = requests.get('http://google.com', timeout=1)
         assert(r.status_code==200)
     except:
         print("Not connected to Internet! Defeats purpose of the whole web-based thing...")
         return
-    #now test proxy functionality
+    # now test proxy functionality
     try:
-        ###Add something in here later to actually test proxy with given file store. Use google for now.
-        r = requests.get('http://www.sendspace.com', proxies=proxyL, timeout = 1)
+        # Add something in here later to actually test proxy with given file store. Use google for now.
+        r = requests.get('http://www.sendspace.com', proxies=proxyL, timeout=1)
         assert(r.status_code == 200)
     except:
         print("Given (or default) proxy is down, or took too long to be useful")
@@ -484,17 +486,18 @@ def proxy_test(proxyL):
         print("Proxy is operational")
         return proxyL
 
-def proxy_parser(proxyString = None):
-    if proxyString == None:
+
+def proxy_parser(proxyString=None):
+    if proxyString is None:
         return proxy_test(default_proxies)
     proxy = proxyString.split(':')[0]
     port = proxyString.split(':')[1]
     import ipaddress
     try:
         ipaddress.ip_address(proxy)
-        assert(port>0 & port<65536)
+        assert(port > 0 & port < 65536)
     except:
-        print ("Invalid ip address for proxy. Enter the proxy again.")
+        print("Invalid ip address for proxy. Enter the proxy again.")
         return
     proxDict = {'https': 'https'+proxy+':'+port,
                 'http': 'http'+proxy+':'+port}
@@ -520,14 +523,14 @@ if __name__ == '__main__':
     parser.add_argument('-s', dest='steganography', default='LSBsteg', nargs='?',
                         help='Use an alternate steganography class for encoding in images')
 
-    args=parser.parse_args()
+    args = parser.parse_args()
 
     run = True
     if args.proxy == 'noproxy':
         proxy = None
     else:
         proxy = proxy_parser(args.proxy)
-        if proxy == None:
+        if proxy is None:
             run = False
     if run:
         cons = Console(args.website, args.steganography, args.mountpoint, args.url, proxy, args.cmdloop)

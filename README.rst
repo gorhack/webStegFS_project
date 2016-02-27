@@ -17,8 +17,8 @@ Covert FS is written exclusively in Python 3 due to the vast modules and librari
   - On MacOSX install `FUSE <https://osxfuse.github.io>`_
   - Get a sendspace API key `here <https://www.sendspace.com/dev_apikeys.html>`_
   - Copy your sendspace API key and create a file in /Web_Connection/API_Keys/ containing ``sendSpaceKey='API KEY GOES HERE'``
-  - ``sudo python3 setup.py install``
-  
+  - ``$ sudo python3 setup.py install``
+
 Sprints:
 ========
 Sprint 1: Knowledge acquisition
@@ -84,26 +84,29 @@ Sprint broken down into 5 sub-goals:
 Sprint 5: Publication draft and beta release
 ++++++++++++++++++++++++++++++++++++++++++++
 Sprint broken down into 6 sub-goals:
-1) Encode/decode any file
-2) Background process/thread for uploading and downloading images
-3) Modularize classes
-4) Rough draft (80%) publication
-5) Working implementation of covertFS on Tails OS
-6) Modular encryption class 
+
+1. Encode/decode any file
+2. Background process/thread for uploading and downloading images
+3. Modularize classes
+4. Rough draft (80%) publication
+5. Working implementation of covertFS on Tails OS
+6. Modular encryption class
 
 Usage:
 ======
 - ``$ python3 src/main.py [url to fs image] [-c] [-w] [-p] [-e] [-m] [-s]`` [1]_
+
   - -c command loop, run covertFS shell
   - -w social media site to upload/download images [default: sendspace]
   - -p use built in proxy
   - -e encryption type
   - -m mount point [default: covertMount]
   - -s steganography [default: LSBsteg]
+
 - ``covertFS$ [command]`` basic application usage.
 
   - ``mount`` mounts the file system using FUSE
-  - ``proxy`` / ``noproxy`` turns the built in proxy on/off respectively 
+  - ``proxy`` / ``noproxy`` turns the built in proxy on/off respectively
   - ``loadfs [url]`` load a covert file system
   - ``newfs`` uploads the old fs and returns the url. loads a new covert file system.
   - ``encodeimage [file]`` encode an image with a file, returns the URL to the image
