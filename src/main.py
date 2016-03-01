@@ -30,7 +30,7 @@ class Console(cmd.Cmd, object):
         self.version = __version__
         self.proxy = proxy
         self.cmdloopused = cmdLoopUsed
-        self.url=url
+        self.url = url
         self.fs = covertfs.CovertFS()
 
         ###Information for the command prompt###
@@ -470,7 +470,7 @@ def proxy_test(proxyL):
     import requests
     try:
         r = requests.get('http://google.com', timeout=1)
-        assert(r.status_code==200)
+        assert(r.status_code is 200)
     except:
         print("Not connected to Internet! Defeats purpose of the whole web-based thing...")
         return
@@ -505,7 +505,7 @@ def proxy_parser(proxyString=None):
 
 
 if __name__ == '__main__':
-    parser =  argparse.ArgumentParser(description="Calls the main function of CovertFS")
+    parser = argparse.ArgumentParser(description="Calls the main function of CovertFS")
     parser.add_argument('url', type=str, default='', nargs='?',
                         help='Specify the url to load a filesystem from')
     parser.add_argument('-c', dest='cmdloop', default=False, action='store_true',
