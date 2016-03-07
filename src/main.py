@@ -20,7 +20,7 @@ __author__ = "Flores, Gorak, Hart, Sjoholm"
 
 
 class Console(cmd.Cmd, object):
-    def __init__(self, online_file_store, steg_class, mountpoint, url, proxy, cmdLoopUsed):
+    def __init__(self, online_file_store, steg_class, mountpoint, url, proxy, cmdLoopUsed, dbg):
         """
         The Console constructor.
         """
@@ -28,6 +28,7 @@ class Console(cmd.Cmd, object):
         self.api = online_file_store  # name of API
         self.steg = steg_class      # name of steg class
         self.version = __version__
+        self.dbg = dbg
         self.proxy = proxy
         self.cmdloopused = cmdLoopUsed
         self.url = url
@@ -48,6 +49,8 @@ class Console(cmd.Cmd, object):
             Configure the Console for use with SendSpace
             """
             self.storeFactoryClass = api_cons.SendSpace
+            if self.dbg:
+                print("DEBUG: SendSpace loaded as API")
 
         elif self.api == "somethingelse":  # template for some other api
             print ("Invalid file store")
@@ -58,6 +61,8 @@ class Console(cmd.Cmd, object):
         self.stegFactory = None
         if self.steg == "LSBsteg":
             self.stegFactoryClass = lsbsteg.Steg
+            if self.dbg:
+                print("DEBUG: LSBsteg loaded as steg")
 
         elif self.steg == "somethingelse": #template for some other steg class
             pass
@@ -67,11 +72,15 @@ class Console(cmd.Cmd, object):
         ###FUSE usability information###
         self.fuse_enabled = False
         try:
-            if subprocess.call(['whereis','fusermount'], stdout = subprocess.PIPE) == 0:
+            if subprocess.call(['whereis','fusermount'], stdout = subprocess.DEVNULL) == 0:
                 self.fuse_enabled = True
                 self.mp = mountpoint
                 self.fuseFS = None
+                if self.dbg:
+                    print("DEBUG: FUSE enabled, with mountpoint set as ",self.mp)
         except:
+            if self.dbg:
+                print("DEBUG: FUSE not enabled")
             pass  # preventing the program from attempting to run on Windows or other monstrosities without FUSE
         ###############################
 
@@ -80,52 +89,83 @@ class Console(cmd.Cmd, object):
     def init_factory(self):
         self.storeFactory = self.storeFactoryClass(self.proxy)
         self.stegFactory = self.stegFactoryClass(self.proxy, self.storeFactory)
+        if self.dbg:
+            print("DEBUG: Steg and API factories re-initialized")
 
     def down_and_set_file(self, filename):
         """Download a file. Put it in the filesystem."""
         downlink = self.fs._get_dir_entry(filename).downlink
+        if self.dbg:
+            print("DEBUG: Downlink found in file attributes: ",downlink)
         try:
             msg = self.stegFactory.decodeImageFromURL(downlink)
+            if self.dbg:
+                print("DEBUG: File fully decoded from URL")
         except:
-            print("A file in the system is corrupt, the file is not accessible. File is not longer in FS")
+            out = "File named '"+ filename+"'was not decoded correctly. It is no longer in the filesystem. To attempt to retry this operation, execute command 'downloadFile "+ downlink+"'."
+            if dbg:
+                print("ERROR: "+ out)
+            else:
+                print(out)
             return False
         self.fs.setcontents(filename, msg)
+        if self.dbg:
+            print("DEBUG: File '", filename,"' decoded correctly, stored in filesystem.")
         return True
 
     def loadfs(self):
         """Load the filesystem from a URL: Download pic, decode it, then send the string to the load function in fsClass."""
         try:
             self.fs = covertfs.CovertFS()
+            if self.dbg:
+                print("DEBUG: New, empty filesystem initiated.")
             fs_string = self.stegFactory.decodeImageFromURL(self.url).decode()
+            if self.dbg:
+                print("DEBUG: Filesystem metadata decoded: ")
+                print(fs_string)
             self.fs.loadfs(fs_string)
+            if self.dbg:
+                print("DEBUG: New filesystem loaded.")
             for f in self.fs.walkfiles():
                 print("Loading {}......".format(f))
                 if not self.down_and_set_file(f):
                     self.do_rm(f)
+                    if self.dbg:
+                        print("DEBUG: File named '",f,"' was successfully removed from the filesystem.")
             self.folder = self.fs.current_dir
             self.prompt = self.preprompt + self.folder + "$ "
             print("Loaded Covert File System")
         except:
-            print("Invalid url given")
+            print("Filesystem load was not successful. This could be because of a bad filesystem image URL, or connection problems.")#TODO: mid-program connection testing
 
     def open_window(self):
         time.sleep(1)
         if system() == 'Linux':
             subprocess.call(['gnome-terminal', '--working-directory=' + os.getcwd()+ '/'+ self.mp, '--window'])
+            if self.dbg:
+                print("DEBUG: New window opened, with the mounted FS as the cwd.")
 
     def do_mount(self, args):
+        if self.dbg:
+            print("DEBUG: Mount called")
         if self.fuse_enabled is False:
-            print("Only able to mount on systems with fuse installed")
+            print("ERROR: Only able to mount on systems with fuse installed")
             return
         from File_System import memfuse
         self.fuseFS = memfuse.MemFS(self.fs)
+        if self.dbg:
+            print("DEBUG: MemFS has been created")
         newDir = False
         if not os.path.exists(self.mp):
             os.makedirs(self.mp)
             newDir = True
+        if self.dbg:
+            print("DEBUG: Mountpoint has been prepared")
         from threading import Thread
         t = Thread(target=self.open_window)
         t.start()
+        if self.dbg:
+            print("DEBUG: Window opened, about to mount")
         memfuse.mount(self.fuseFS, self.mp)
         if newDir:
             os.rmdir(self.mp)
