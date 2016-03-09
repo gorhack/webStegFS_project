@@ -3,19 +3,19 @@
 Our application's interface with the internet needs to serve three purposes:
 \begin{enumerate}
 \item Retrieve images to use for embedding a message into. 
-\item Uploading images to an open online forum anonymously without altering the image.
-\item Retrieving specific images from an open online forum anonymously without altering the image. 
+\item Uploading images to a public online forum anonymously without altering the image.
+\item Retrieving specific images from a public online forum anonymously without altering the image. 
 \end{enumerate}
 
-After some research, we discovered a site that could satisfy the first purpose. The Cat API is a site that can offer random cat images. This is suitable because they are content nuetral images that were big enough to store information inside, and the site is reliable. The next two requirements are filled by sendspace.com. This had an API that our application can interface easily with, and it allowed anonymous uploading and downloading of images. 
+After some research, we discovered a site that could satisfy the first purpose. The Cat API is a site that can offer random cat images. This is suitable because they are content neutral images that were big enough to store information inside, and the site is reliable. A downside to this approach is that statistical steg analysis can be done to compare the uploaded images to the originals. The possibility of using local unique images is out of the scope of our project. The next two requirements are filled by sendspace.com. This had an API that our application can interface easily with, and it allowed anonymous uploading and downloading of images. 
 
 The only significant issue that we encountered while using these online resources was with Sendspace. At some point, Sendspace updated their API to require a key. We were not aware of this update and our application was completely broken until we found the bug and fixed it.
 
 The online resources work together as follows:
 \begin{enumerate}
-\item The Cat API retrieves a random cat image for a mesage to be embedded into.
+\item The Cat API retrieves a random cat image for a message to be embedded into.
 \item The cat image with the embedded message is uploaded to Sendspace. Sendspace returns and download and delete URL.
-\item The cat image from step 2 can be retrieved using the download URL. This allows for the retrival of the original message. 
+\item The cat image from step 2 can be retrieved from Sendspace using the download URL. This allows for the retrieval of the original message. 
 \end{enumerate}
 
 
