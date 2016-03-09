@@ -1,0 +1,28 @@
+python3 main.py -p -c #run main, with command line and proxy (so I can use on WestPoint Network)
+ls #should be empty list
+mkdir testDir 
+ls #should be one element in list, testDir
+mkfile testFile.txt this is some sample text #should say that it is encoding the picture, then come up with prompt again
+cat testFile.txt #should return "this is some sample text"
+uploadfs #should say it is encoding the FS, then return with some 6-character string
+cd testDir #should change prompt to testDir
+ls #should return empty list
+upload ../README.rst #ensure that files from the host FS can be uploaded to covertFS
+ls #should be README.rst
+cd .. #prompt should change to root dir
+download testFile.txt testFile.txt
+uploadfs #should pop up with "encoding", then return a 6-char string
+exit
+ls #check and make sure Unix shell shows that testFile.txt is in cd, from download command
+
+python3 main.py XXXXXX -p #X replaced with the 6-char string from above, should automatically mount the fs via FUSE
+#following commands in the 'covertMount' mountpoint of FUSE filesystem
+ls -l #shows a directory and file, directory named testDir and file named testFile.txt
+cat testDir/README.rst #shows entire contents of the README
+vi newFile
+enter in some sample text :wq
+cat newFile #enter in some sample text
+exit
+
+Control-C to Exit
+#uploads all files (really only newFile)

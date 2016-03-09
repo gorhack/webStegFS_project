@@ -9,15 +9,15 @@ If you open a file from a `memoryfs` you will get back a StringIO object from th
 
 
 """
-from File_System.fs import *
 import datetime
 import stat
-from fs.path import iteratepath, pathsplit, normpath
-from fs.base import *
-from fs.errors import *
-from fs import _thread_synchronize_default
-from fs.filelike import StringIO
-from fs import iotools
+from . import fs
+from .fs.path import iteratepath, pathsplit, normpath
+from .fs.base import *
+from .fs.errors import *
+from .fs import _thread_synchronize_default
+from .fs.filelike import StringIO
+from .fs import iotools
 from os import SEEK_END
 import threading
 

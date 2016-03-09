@@ -35,9 +35,9 @@ try:
 except ImportError:
     import dummy_threading as threading
 
-from fs.path import *
-from fs.errors import *
-from fs.local_functools import wraps
+from .path import *
+from .errors import *
+from .local_functools import wraps
 
 import six
 from six import b
@@ -938,7 +938,7 @@ class FS(object):
 
         """
 
-        from fs.wrapfs.subfs import SubFS
+        from .wrapfs.subfs import SubFS
         if not self.exists(path):
             raise ResourceNotFoundError(path)
         if not self.isdir(path):
@@ -1365,7 +1365,7 @@ class FS(object):
             5. Set to None for no limit
 
         """
-        from fs.utils import print_fs
+        from .fs.utils import print_fs
         print_fs(self, max_levels=max_levels)
     tree = printtree
 
@@ -1375,7 +1375,7 @@ class FS(object):
         :param hide_dotfiles: If True, files and folders that begin with a dot will be hidden
 
         """
-        from fs.browsewin import browse
+        from .fs.browsewin import browse
         browse(self, hide_dotfiles)
 
     def getmmap(self, path, read_only=False, copy=False):

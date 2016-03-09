@@ -1,5 +1,10 @@
 #!/usr/bin/env python3
 
+# import socks
+# import socket
+# socks.setdefaultproxy(socks.PROXY_TYPE_SOCKS5, "127.0.0.1", 9050)
+# socket.socket = socks.socksocket
+
 import requests  # requests module for getting images
 from io import BytesIO  # return type of genImage
 

@@ -1,7 +1,7 @@
 
 
 
-from fs import SEEK_SET, SEEK_CUR, SEEK_END
+from . import SEEK_SET, SEEK_CUR, SEEK_END
 
 import io
 from functools import wraps

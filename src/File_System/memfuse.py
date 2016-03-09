@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import logging
 
@@ -7,7 +7,7 @@ from errno import ENOENT
 from stat import S_IFDIR, S_IFLNK, S_IFREG
 from sys import argv, exit
 import time, datetime
-import fs.path
+from .fs import path
 
 from .fuse import FUSE, FuseOSError, Operations, LoggingMixIn
 
@@ -72,7 +72,7 @@ class MemFS(LoggingMixIn, Operations):
     def read(self, path, size, offset, fh):
         """Reads the contents of a file and returns the requested number of bytes"""
         self.utimens(path, (None, self.getattr(path)['st_mtime']))
-        return self.fs.getcontents(path)[offset:offset + size] + b'\n'
+        return self.fs.getcontents(path)[offset:offset + size -1] + b'\n'
 
     def rmdir(self, path):
         """Removes a directory from mounted filesystem"""
@@ -108,7 +108,7 @@ class MemFS(LoggingMixIn, Operations):
         self.utimens(path)
         entry = self.fs._dir_entry(path)
         entry.downlink = None
-        return len(in_data[:offset]+data)
+        return len(data)
 
     def unlink(self, path):
         """Removes a file from the mounted filesystem"""

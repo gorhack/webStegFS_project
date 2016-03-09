@@ -1,6 +1,8 @@
-from fs import memoryfs
+#!/usr/bin/env python3
+
+from File_System import memoryfs
 import stat
-import fs.path
+from .fs import path
 import time, os, datetime
 
 class CovertFile(memoryfs.MemoryFile):
@@ -81,6 +83,7 @@ class CovertFS(memoryfs.MemoryFS):
         makes necessary directories, and creates necessary files
         (empty for now) that are then loaded by main.py.
         """
+        print(fsstring)
         for fol in fsstring.split("\n")[:-1]:
             foldercontents = fol.split(' ')
             curpath = foldercontents[0]
@@ -108,7 +111,7 @@ class CovertFS(memoryfs.MemoryFS):
             if directory[-1] != '/':
                 save_string += '/'
             for f in files:
-                normpath = fs.path.normpath(directory)
+                normpath = path.normpath(directory)
                 parent_dir = self._get_dir_entry(normpath)
                 file_object = parent_dir.contents[f]
                 downlink = file_object.downlink
