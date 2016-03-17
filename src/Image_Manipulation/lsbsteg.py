@@ -33,6 +33,7 @@ def ascii2bits(message):
     """
     msg = bin(int.from_bytes(message.encode(), 'big'))[2:]
     return msg.zfill(8 * ((len(msg) + 7) // 8))
+
 # Constants
 NEXT_IMAGE = 'URLLIB->'
 NEXT_IMAGE_BITS = ascii2bits(NEXT_IMAGE)
