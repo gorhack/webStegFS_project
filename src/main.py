@@ -20,7 +20,7 @@ __author__ = "Flores, Gorak, Hart, Sjoholm"
 
 
 class Console(cmd.Cmd, object):
-    def __init__(self, online_file_store, steg_class, mountpoint, url, proxy, cmdLoopUsed, dbg):
+    def __init__(self, online_file_store, steg_class, mountpoint, url, proxy, cmdLoopUsed, dbg = False):
         """
         The Console constructor.
         """
@@ -230,7 +230,6 @@ class Console(cmd.Cmd, object):
         decodeimage [download url]"""
         url = "https://www.sendspace.com/file/{}".format(file_id) if len(file_id) == 6 else file_id
         msg = self.stegFactory.decodeImageFromURL(url)
-        # convert from binary to hex
 
         print(msg)
 
