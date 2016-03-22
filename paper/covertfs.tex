@@ -36,17 +36,7 @@ In this section we will explain how we decided to implement a prototype of this 
 
 \input{webConnectionPart}
 
-\subsection{FUSE}
-
-What FUSE is, what is provides for us, and why we choose it.
-
-\subsection{Mounting the File System}
-
-Subsection that goes more in-depth of our use of FUSE and our file system.
-
-\subsection{MEMFUSE Module}
-
-\subsection{COVERTFS Module}
+\input{FUSEpart}
 
 \subsection{Mapping File System Data to Photos}
 
@@ -63,7 +53,8 @@ How is the data stored in our file system, and how it is constructed.
 
 \section{Future Implementation Plans}
 
-One of the things we would like to implement into this project is developing the covertfs into the TAILS operating system and having it run as a bootable program through the a flash drive. The reason for this is because the TAILS operating system in and of itself offers various security measures to ensure a stable and fucntioning system. We would like to develop a working prototype where our covertfs is integrated in the TAILS operating system to further allow confidentality and plausible deniability to the users. 
+Our current implementation of covertFS does not require any user authentication, it only requires the 6-character code of the file system image to access all files in the system. We use versioning (i.e. the current version of the file system uses this code, if you change anything then a new code will correspond to the new file system) to protect the information stored in the file system from being deleted--- we don't ever delete images from the online file storage site, even though some sites allow it. An alternative approach could require a user to have an account with the covertFS database. This would take away the idea of plausible deniability, as every user would require some sort of entry in the database. However, it could add to the confidentiality of the file system, as only authenticated users would be able to access the data.
+Another possibility would be to add a simple password entry into the encryption suite. This could increase confidentiality, without removing plausible deniability.
 
 The original concept paper\cite{Baliga2007}
 
