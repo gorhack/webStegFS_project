@@ -55,22 +55,19 @@ How is the data stored in our file system, and how it is constructed.
 
 %Is it ethical? Weighing the good vs the bad uses this system provides. What are the ethics of this system when we are storing our system on a social media or file sharing site (like sendspace)? 
 
-<<<<<<< HEAD
+
 \section{Conclusion}
 
-This CovertFS allows users to create and share file systems which contain simple messages
+An implementation that would increase the flexibility and security of this project is developing the covertfs into the TAILS operating system and having it run as a bootable program through the a flash drive. The reason for this is because the TAILS operating system in and of itself offers various security measures to ensure a stable and fucntioning system. We are working to develop a working prototype where our covertfs is integrated in the TAILS operating system to further allow confidentality and plausible deniability to the users. 
 
-An implementation that would increase the flexibility and security of this project is developing the covertfs into the TAILS operating system and having it run as a bootable program through the a flash drive. The reason for this is because the TAILS operating system in and of itself offers various security measures to ensure a stable and fucntioning system. We would like to develop a working prototype where our covertfs is integrated in the TAILS operating system to further allow confidentality and plausible deniability to the users. 
-=======
-\section{Tails}
+\subsection{Tails}
 
 Tails will be completed prior to publication. TBD. 
 %One of the things we would like to implement into this project is developing the covertfs into the TAILS operating system and having it run as a bootable program through the a flash drive. The reason for this is because the TAILS operating system in and of itself offers various security measures to ensure a stable and functioning system. We would like to develop a working prototype where our covertfs is integrated in the TAILS operating system to further allow confidentiality and plausible deniability to the users. 
 
-\section{Future Work}
+\subsection{Future Work}
 Our current implementation of covertFS does not require any user authentication, it only requires the 6-character code of the file system image to access all files in the system. We use versioning (i.e. the current version of the file system uses this code, if you change anything then a new code will correspond to the new file system) to protect the information stored in the file system from being deleted--- we don't ever delete images from the online file storage site, even though some sites allow it. An alternative approach could require a user to have an account with the covertFS database. This would take away the idea of plausible deniability, as every user would require some sort of entry in the database. However, it could add to the confidentiality of the file system, as only authenticated users would be able to access the data.
 Another possibility would be to add a simple password entry into the encryption suite. This could increase confidentiality, without removing plausible deniability.
->>>>>>> refs/remotes/gorhack/master
 
 
 \subsection{Encryption and Advanced Steganography Techniques}
