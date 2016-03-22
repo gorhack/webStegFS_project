@@ -2,9 +2,17 @@
 
 from PIL import Image
 from io import BytesIO
-from Image_Manipulation import genImage
-import platform, subprocess
-if platform.system=='Linux':
+#try:
+try:
+    from Image_Manipulation import genImage
+except ImportError:
+    from src.Image_Manipulation import genImage
+#except ImportError:
+#    from src.Image_Manipulation import genImagess
+import platform
+import subprocess
+import requests
+if platform.system == 'Linux':
     torEnabled = subprocess.check_output(['ps', 'aux']).decode().find('/usr/bin/tor')
     if torEnabled > -1:
         import socks
@@ -12,7 +20,6 @@ if platform.system=='Linux':
         print("Using tor, rerouting connection")
         socks.setdefaultproxy(socks.PROXY_TYPE_SOCKS5, "127.0.0.1", 9050)
         socket.socket = socks.socksocket
-import requests  # GET and POST requests
 
 """@package lsbsteg
 
@@ -234,6 +241,7 @@ class Steg(object):
 
                     length_of_url = len(NEXT_IMAGE_BITS) + self.URL_LENGTH_IN_BINARY
 
+                    msg_array = bytearray()
                     # URL ID found
                     if msg[-length_of_url:-self.URL_LENGTH_IN_BINARY] == NEXT_IMAGE_BITS:
                         url_bin = msg[-self.URL_LENGTH_IN_BINARY:]
@@ -245,16 +253,54 @@ class Steg(object):
 
                         # remove URL and identifier
                         msg = msg[:-length_of_url]
+                        msg_array = bytearray.fromhex('%08X' % int(msg, 2))
 
                         # append next image's message
                         next_msg = self.decodeImageFromURL(url)
 
-                        msg += next_msg
+                        msg_array += next_msg
+                    else:
+                        msg_array = bytearray.fromhex('%08X' % int(msg, 2))
 
-                    msg_array = bytearray.fromhex('%08X' % int(msg, 2))
                     return msg_array
 
                 else:
                     msg += decodeMsg
 
-        return ("Something messed up... " + msg[-50:])
+        print("Something messed up... " + msg[-50:])
+        return bytearray()
+
+if __name__ == '__main__':
+    #python3 -m src.Image_Manipulation.lsbsteg [file]
+
+    import sys
+    from src.Web_Connection import api_cons
+    stego = Steg(None, api_cons.SendSpace(None))
+
+    file_name = sys.argv[1]
+    print("Opening {}.".format(file_name))
+    my_msg = bytearray()
+    try:
+        msg_file = open(file_name, 'rb')
+        my_msg = bytearray(msg_file.read())
+        msg_file.close()
+    except FileNotFoundError:
+        print("File not found, encoding \"{}\".".format(file_name))
+        my_msg = bytearray(file_name.encode())
+
+    print("Encoding file.")
+    # TODO:// adding EOF to local my_msg var...why?
+    download_url = stego.encode(my_msg)
+    print("Encoded image: {}.".format(download_url))
+    print("Decoding file.")
+    decoded_file = stego.decodeImageFromURL(download_url)
+
+    print("Writing output to orig.txt and dec.txt")
+    with open("orig.txt", 'w') as orig_file, open("dec.txt", 'w') as dec_file:
+        orig_file.write(str(my_msg))
+        dec_file.write(str(decoded_file))
+
+    if decoded_file == my_msg[:-len(SPECIAL_EOF)]: # shouldn't need [:]
+        print("Encode and decode success!")
+    else:
+        print("Decode different than encoded data, FAIL.")
