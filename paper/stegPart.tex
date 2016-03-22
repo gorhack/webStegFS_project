@@ -6,9 +6,11 @@ The primary purpose in a web based covert file system is confidentiality and pla
 \subsubsection{Risks Using Steganography}
 %Not enough data
 The greatest risk to using steganography, particularly our steganography module, is that an embedded message can be discovered using statistical analysis. Since the original images exist on Tumblr and can be retrieved using the Cat API, our images that get uploaded to Sendspace can be compared to the originals. Statistical analysis between the original and the modified images will indicate that a message has been embeded. There are alternative steganograhpy techniques, but their are still several steganalysis tools to detect them (cite http://www.computing.surrey.ac.uk/personal/st/H.Schaathun/projects/Past/leivaditis.pdf). Not only can steganalysis detected changes, but they are visually apparent as well. Figure A shows both an original image and an encoded image.
-\caption{Figure A}
-\includegraphics{comparison}
-\subsubsection{}
+\begin{figure}
+	\centering
+	\includegraphics[width=0.5\textwidth]{comparison}
+	\caption{Comparison of encoded image and non-encoded image}
+\end{figure}
 The image on the left is the one with a message encoded into it. The image on the right is the original. Notice the yellow in the image on the left - that is the encoded message. Because the message was encoded into white pixels, the pixels' value changes noticably.  
 Sometimes, the differences 
 statistical analysis
