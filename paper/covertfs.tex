@@ -30,7 +30,8 @@ The means to store and share information in a covert manner not only serves mult
 This project is an application that allows users to share information in a covert manner that can provide plausible deniability to not only the users but also to the file sharing or social media site used to store the information. Plausible deniability is the indetermination that the data exists with certainty and confidentiality is the idea that the hidden data cannot be uncovered\cite{Baliga2007}. Even if the existence of the file system is uncovered, the data should remain protected and confidential. 
 
 \section{Related Works}
-There are other projects and systems that have been released which offer users covert methods of sharing information. Such examples include Tor and StegFS\cite{Tan2003}. In 2007 students and faculty from Rutgers University provided the main concepts and basic outline for the implementation and design of a covert file system\cite{Baliga2007}.  There has been no other implementation of the application described in Rutger's paper, and this project is our take at creating a working prototype which could later be used to develop a successful application or implementation of the covert file system.
+There are other projects and systems that have been released which offer users covert methods of sharing information. One such work is StegFS\cite{Tan2003}.  The concept of StegFS is a designing a filesystem that contains protected directories which are hidden through the use encryption and steganography. To the extent that these protected directories would not be located or detected unless a password or access key is provided~cite{Tan2003}. This concept grants users plausible deniability to the existence of any information contained within those protected directories, yet these protected directories are still stored to an extent within the user's machine. All information used within CovertFS will only be stored within RAM, thus it increases the security and plausibile deniability benefits to users.
+ In 2007 students and faculty from Rutgers University provided the main concepts and basic outline for the implementation and design of a covert file system\cite{Baliga2007}.  There has been no other implementation of the application described in Rutger's paper, and this project is our take at creating a working prototype which could later be used to develop a successful application or implementation of the covert file system.
 
 %Yet by entering the covert realm of the internet we are allowing our project to criticized on the ethics of it development in accordance with ACM code of Ethics and Professional Conduct\cite{Anderson1993}. Just as Tor is reviewed arguments are brought up against further development\cite{Guitton2013} so to may this project draw vast attention because of what it offers or means to malicious users and intentions.
 
@@ -84,10 +85,10 @@ There are many different kinds of steganographic techniques that assist in reduc
 	%passwd file, permissions
 %handling old data
 
-\section{Acknowledgments}
+%\section{Acknowledgments}
 
 The original Web-Based Covert File System Paper~\cite{Baliga2007}.
 \bibliographystyle{plain}
-\bibliography{covertfsrefs}
+\bibliography{covertfsRefsUpdated}
 
 \end{document}
