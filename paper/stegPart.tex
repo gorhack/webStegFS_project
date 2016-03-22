@@ -5,27 +5,16 @@ The primary purpose in a web based covert file system is confidentiality and pla
 
 \subsubsection{Risks Using Steganography}
 %Not enough data
-The greatest risk to using steganography, particularly our steganography module, is that an embedded message can be discovered using statistical analysis. Since the original images exist on Tumblr and can be retrieved using the Cat API, our images that get uploaded to Sendspace can be compared to the originals. Statistical analysis between the original and the modified images will indicate that a message has been embeded. There are alternative steganograhpy techniques, but their are still several steganalysis tools to detect them (cite http://www.computing.surrey.ac.uk/personal/st/H.Schaathun/projects/Past/leivaditis.pdf). Not only can steganalysis detected changes, but they are visually apparent as well. Figure A shows both an original image and an encoded image.
+The greatest risk to using steganography, particularly our steganography module, is that an embedded message can be discovered using statistical analysis. Since the original images exist on Tumblr and can be retrieved using the Cat API, our images that get uploaded to Sendspace can be compared to the originals. Statistical analysis between the original and the modified images will indicate that a message has been embeded. There are alternative steganograhpy techniques, but their are still several steganalysis tools to detect them (cite http://www.computing.surrey.ac.uk/personal/st/H.Schaathun/projects/Past/leivaditis.pdf). Not only can steganalysis detected changes, but they can be visually obvious as well. Figure A shows both an original image and an encoded image.
 \begin{figure}[h]
 \includegraphics[width=0.5\textwidth]{comparison}
 \caption{Figure A}
 \end{figure}
 The image on the left is the one with a message encoded into it. The image on the right is the original. Notice the yellow in the image on the left - that is the encoded message. Because the message was encoded into white pixels, the pixels' value changes noticeably.  
-Sometimes, the differences 
-statistical analysis
-		the original images exist online since we are using the Cat API
-		perform statistical analysis
-	many kinds of LSB can changes colors that the eye can bit up
-	alternative steg techniques
 
 \subsubsection{Mitigating Risks of Steganography}
 %Not enough data
-These risks are mitigated by the fact that there is no universal standard for steganography methods. A user can easily replace the steganography module that we offer with a module of their own. That way, even if someone knows an image is not the original, that person will still not know who encoded it, or what kind of module was using for the encoding.Also, an encryption module can easily be added to our application and used to encrypt messages before they are encoded into an image. So even if someone knows what kind of steganography module is being used to encode messages into images, that person will also have the added challenge of decrypting the information. Although, there is no research to indicate that encryption helps in fooling steganalysis tools. Finally, since the original images exist on the internet, it will limit the plausible deniability of the user. It can be called into question as to why a certain user is uploading images that do not belong to that user to an online image database. 
-There is no universal standard for steg methods
-		so even if someone knows an image is not the original, they don't really know who encoded it our how due to modularity of CovertFS
-	Can use encryption
-		can help with stat analysis (research)
-Using original images instead of Cat API images, but this will lead to originals existing somewhere which can decrease plausible deniability 
+These risks are mitigated by the fact that there is no universal standard for steganography methods. A user can easily replace the steganography module that we offer with a module of their own. That way, even if someone knows an image is not the original, that person will still not know who encoded it, or what kind of module was using for the encoding. Also, an encryption module can easily be added to our application and used to encrypt messages before they are encoded into an image. So even if someone knows what kind of steganography module is being used to encode messages into images, that person will also have the added challenge of decrypting the information. Although, there is no research to indicate that encryption helps in fooling steganalysis tools. Finally, since the original images exist on the internet, it will limit the plausible deniability of the user. It can be called into question as to why a certain user is uploading images that do not belong to that user to an online image database. 
 
 %IMPLEMENTATION SECTION
 \subsection{Encoding a File System}
