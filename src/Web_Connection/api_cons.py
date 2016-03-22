@@ -2,7 +2,10 @@
 
 from bs4 import BeautifulSoup  # parse XML response
 from PIL import Image
-from Web_Connection.API_Keys import config
+try:
+    from Web_Connection.API_Keys import config
+except ImportError:
+    from src.Web_Connection.API_Keys import config
 import platform, subprocess
 if platform.system=='Linux':
     torEnabled = subprocess.check_output(['ps','aux']).decode().find('/usr/bin/tor')
