@@ -51,6 +51,7 @@ After the user is done using the file system on their local machine, the informa
 \item All data files are uploaded to the online file store, after being processed by the steganography class. The download url for the uploaded data is stored in the file metadata, in the file system object.
 \item The file system is encoded to a string. This includes all directory names, as well as file metadata, such as file names, creation date/time, and the url at which the file data can be found.
 \item The string object that holds all the file system information is sent to the steganography class to be encoded and uploaded. A url is returned to access the file system at a later time.
+\end{enumerate}
 Through this process, all information related to the file system is stored in a string, making it available for future use.
 
 %\subsection{Steganography the System Uses}
