@@ -17,16 +17,18 @@ In 2007 Arati Baliga, Joe Kilian, and Liviu Iftode of Rutgers University present
 
 %\IEEEPARstart{T}{he} main purpose of a web-based covert filesystem is to attempt to develop an environment that allows uses to store and share information with one another in a more discreet and private manner. Technology continues to advance at a rapid pace, and its advancements are making their way into nearly everything we use and wear. 
 
-\IEEEPARstart{T}{echnology} continues to integrate itself more and more in our daily lives because of the convenience it provides to users. Users are becoming connected to the internet in multiple ways nearly everywhere they go. Numerous devices are being developed and released to provide more convenience to users and to keep them updated on their various interests. A user will usually have at the very least a cell phone on their person and throughout their routine on any particular day will browse email, social media sites, and various other applications. These applications themselves, regardless of the convenience they provide users, can track and offer the user the option to post their information on the user's social media site profile to share among friends and acquaintances 
+%Define what plausible deniability and confidentiality is. 
+
+\IEEEPARstart{T}{echnology} continues to integrate itself more and more in our daily lives because of the convenience it provides to users. Users are becoming connected to the internet in multiple ways nearly everywhere they go. Numerous devices are being developed and released to provide more convenience to users and to keep them updated on their various interests. A user will usually have at the very least a cell phone on their person and throughout their routine on any particular day will browse email, social media sites, and various other applications. These applications themselves, regardless of the convenience they provide users, can track and offer the user the option to post their information on the user's social media site profile to share among friends and acquaintances.
 
 The majority of people interact with various forms of technology throughout each day. Depending on what type of technology we interact with there may be some type of data collected from our interaction. Also the use of social media is wide spread and it is easier to find various types of information about people because of this. 
 
 The means to store and share information in a covert manner not only serves multiple purposes, but also has various implications depending on how those means are used. There will be innovations designed with the good intentions, yet there will also usually be clever modifications of those designs for malicious intentions.
 
-This project is an application that allows users to share information in a covert manner that can provide plausible denaibility to not only the users but also to the file sharing or social media site that is being used as a medium where the information is stored.
+This project is an application that allows users to share information in a covert manner that can provide plausible deniability to not only the users but also to the file sharing or social media site that is being used as a medium where the information is stored.
 
 \section{Related Works}
-There are other projects and systems that have been released which offer users covert methods of sharing information. Such examples include Tor and StegFS\cite{Tan2003}. The main concepts of this project were obtained from a paper that which invovled faculty and students from Rutgers University\cite{Baliga2007}.  There has been no other implementation of the application described in the Rutger's paper, and this project is our take at creating a working prototype which could later be used to develop a successful application or implementation of the covert file system.
+There are other projects and systems that have been released which offer users covert methods of sharing information. Such examples include Tor and StegFS\cite{Tan2003}. The main concepts of this project were obtained from a paper that which involved faculty and students from Rutgers University\cite{Baliga2007}.  There has been no other implementation of the application described in the Rutger's paper, and this project is our take at creating a working prototype which could later be used to develop a successful application or implementation of the covert file system.
 
 %Yet by entering the covert realm of the internet we are allowing our project to criticized on the ethics of it development in accordance with ACM code of Ethics and Professional Conduct\cite{Anderson1993}. Just as Tor is reviewed arguments are brought up against further development\cite{Guitton2013} so to may this project draw vast attention because of what it offers or means to malicious users and intentions.
 
@@ -61,19 +63,25 @@ How is the data stored in our file system, and how it is constructed.
 
 %Is it ethical? Weighing the good vs the bad uses this system provides. What are the ethics of this system when we are storing our system on a social media or file sharing site (like sendspace)? 
 
-\section{Future Implementation Plans}
+\section{Tails}
 
-One of the things we would like to implement into this project is developing the covertfs into the TAILS operating system and having it run as a bootable program through the a flash drive. The reason for this is because the TAILS operating system in and of itself offers various security measures to ensure a stable and fucntioning system. We would like to develop a working prototype where our covertfs is integrated in the TAILS operating system to further allow confidentality and plausible deniability to the users. 
+Tails will be completed prior to publication. TBD. 
+%One of the things we would like to implement into this project is developing the covertfs into the TAILS operating system and having it run as a bootable program through the a flash drive. The reason for this is because the TAILS operating system in and of itself offers various security measures to ensure a stable and functioning system. We would like to develop a working prototype where our covertfs is integrated in the TAILS operating system to further allow confidentiality and plausible deniability to the users. 
 
-The original concept paper\cite{Baliga2007}
+\section{Future Work}
+
+The original concept paper\cite{Baliga2007}.
 
 \subsection{Encryption and Advanced Steganography Techniques}
 
 Another future implementation worth looking into is the use of a more advanced steganographic technique. The purpose of this is to ensure the confidentiality and plausible deniability of the users by:
 \begin{enumerate}
 \item Ensuring that pictures being used to hide the information do not give tell-tale signs of modification
-\item To increase the difficulty of steganalysis tools discovering the encrypted pictures within the sea of publicly shared images within the file sharing site or social media site that the system it using to store the file system.
+\item To increase the difficulty of steganographic tools discovering the encrypted pictures within the sea of publicly shared images within the file sharing site or social media site that the system it using to store the file system.
 \end{enumerate}
+There are many different kinds of steganographic techniques that assist in reducing the effectiveness of statistical analysis, recovery of data, and other methods of detection. [?] Other implementations of steganography do not use images at all, but rather encode data within other forms of media such as audio files or PDFs. Using a better steganographic technique in addition to encryption would increase confidentiality and plausible deniability [?]. %depending on definition of these in the introduction, need to find a source. 
+
+%
 
 \section{Conclusion}
 
