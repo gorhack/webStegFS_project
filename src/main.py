@@ -44,11 +44,13 @@ class Console(cmd.Cmd, object):
         ###Online file store information###
         self.storeFactory = None
         self.storeFactoryClass = None
+        self.baseURL = None
         if self.api == "sendspace":  # set defaults for sendspace API
             """
             Configure the Console for use with SendSpace
             """
             self.storeFactoryClass = api_cons.SendSpace
+            self.baseURL = "https://www.sendspace.com/file/"
             if self.dbg:
                 print("DEBUG: SendSpace loaded as API")
 
@@ -170,20 +172,20 @@ class Console(cmd.Cmd, object):
         if newDir:
             os.rmdir(self.mp)
         if not self.cmdloopused:
-            print("Uploading all files to online")
+            print("STATUS: Uploading all files to online")
             self.do_uploadfs(self)
 
     def do_noproxy(self, args):
         """Turns off the built-in proxy.\n
         Use: noproxy"""
         self.proxy = None
-        print("Proxy turned off.")
+        print("STATUS: Proxy turned off.")
         self.init_factory()
 
     def do_proxy(self, args):
         """Turns on the built-in proxy.\n
         Use: proxy"""
-        print("Proxy turned on.")
+        print("STATUS: Proxy turned on.")
         self.proxy = default_proxies
         self.init_factory()
 
@@ -192,6 +194,8 @@ class Console(cmd.Cmd, object):
         Use: loadfs [url]"""
         if url is not None:
             self.url = url
+            if self.dbg:
+                print("DEBUG: Loading a file system from url")
             self.loadfs()
         else:
             print("Use: loadfs [url]")
@@ -201,7 +205,7 @@ class Console(cmd.Cmd, object):
         Create a covert file system, return the URL of the old fs.\n
         Use: newfs
         """
-        print("New file system created. Old file system located at ", end='')
+        print("STATUS: New file system created. Old file system located at ", end='')
         old_url = self.do_uploadfs(None)
         self.fs = covertfs.CovertFS()
         self.folder = self.fs.current_dir
@@ -214,13 +218,21 @@ class Console(cmd.Cmd, object):
         Use: encodeimage [file]"""
         my_msg = bytearray()
         try:
+            if self.dbg:
+                print("DEBUG: Attempting to open file")
             msg_file = open(file, 'rb')
+            if self.dbg:
+                print("DEBUG: Opened file, reading to buffer")
             my_msg = bytearray(msg_file.read())
+            if self.dbg:
+                print("DEBUG: Closing file")
             msg_file.close()
         except FileNotFoundError:
-            print("File not found, encoding the text \"{}\".".format(file))
+            print("ERROR: File not found, encoding the text \"{}\".".format(file))
             my_msg = bytearray(file.encode())
 
+        if self.dbg:
+            print("DEBUG: About to upload encoded file")
         downlink = self.upload_file(my_msg)
         return 0
 
@@ -228,7 +240,9 @@ class Console(cmd.Cmd, object):
         """Decode the message in an image.\n
         Returns the message in plain text.\n
         decodeimage [download url]"""
-        url = "https://www.sendspace.com/file/{}".format(file_id) if len(file_id) == 6 else file_id
+        url = self.baseURL + file_id if len(file_id) == 6 else file_id
+        if self.dbg:
+            print("DEBUG: Url obtained, about to download, decode, and print")
         msg = self.stegFactory.decodeImageFromURL(url)
         # convert from binary to hex
 
@@ -236,24 +250,32 @@ class Console(cmd.Cmd, object):
 
     def do_uploadfs(self, args):
         """Upload covert fileSystem to the web"""
+        if self.dbg:
+            print("DEBUG: About to walk through files")
         for f in self.fs.walkfiles():
             entry = self.fs._dir_entry(f)
             if entry.downlink is None:
-                print("Uploading ", f)
+                print("STATUS: Uploading ", f)
                 entry.downlink = self.upload_file(bytearray(self.fs.getcontents(f)))
+        if self.dbg:
+            print("DEBUG: All files uploaded, uploading fs_string")
         return self.upload_file(bytearray(self.fs.save().encode('utf-8')))
 
     def upload_file(self, contents):
         """Helper function to upload file, return the download url."""
+        if self.dbg:
+            print("DEBUG: Sending data to steg factory for encoding")
         url = self.stegFactory.encode(contents)
         print("URL: " + url)
         return url
 
     def add_file_to_fs(self, fspath, contents):
         """Helper function to add a file to the fs."""
-        print("Uploading ", fspath)
+        print("STATUS: Uploading ", fspath)
         contents_bytes = bytearray(contents.encode())
         downlink = self.upload_file(contents_bytes.copy())
+        if self.dbg:
+            print("DEBUG: Adding file to file system")
         self.fs.addfile(fspath, contents_bytes)
         entry = self.fs._dir_entry(self.fs.current_dir+fspath)
         entry.downlink = downlink
@@ -268,12 +290,16 @@ class Console(cmd.Cmd, object):
             print("Use: mkfile [path] [message]")
             return
         out = self.add_file_to_fs(a[0], ' '.join(a[1:]))
+        if self.dbg:
+            print("DEBUG: mkfile called")
         if type(out) == str:
             print(out)
 
     def san_file(self, file_contents):
         """Sanitize file before 1)viewing contents or 2)putting on host OS"""
         contents = file_contents.decode()
+        if self.dbg:
+            print("DEBUG: File sanitized")
         return contents
 
     def do_upload(self, args):
