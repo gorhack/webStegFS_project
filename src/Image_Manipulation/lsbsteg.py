@@ -2,13 +2,10 @@
 
 from PIL import Image
 from io import BytesIO
-#try:
 try:
     from Image_Manipulation import genImage
 except ImportError:
     from src.Image_Manipulation import genImage
-#except ImportError:
-#    from src.Image_Manipulation import genImagess
 import platform
 import subprocess
 import requests
@@ -24,12 +21,6 @@ if platform.system == 'Linux':
 """@package lsbsteg
 
 Documentation for the lsbsteg module.
-The lsbsteg module has two primary functions, encode and decode.
-Encode takes a message as a bytearray object and returns a url to the
-encoded image using the desired social media site.
-DecodeFromURL takes a url from the social media site, downloads the image,
-and then decodes the image. Decode takes a BytesIO object and returns a
-binary string containing the binary of the decoded message.
 """
 
 
@@ -51,6 +42,15 @@ SPECIAL_EOF_BITS = ascii2bits(SPECIAL_EOF)
 SPECIAL_EOF_HEX = bytearray(SPECIAL_EOF.encode())
 
 class Steg(object):
+    """
+    Documentation for the lsbsteg module.
+    The lsbsteg module has two primary functions, encode and decode.
+    Encode takes a message as a bytearray object and returns a url to the
+    encoded image using the desired social media site.
+    DecodeFromURL takes a url from the social media site, downloads the image,
+    and then decodes the image. Decode takes a BytesIO object and returns a
+    binary string containing the binary of the decoded message.
+    """
     def __init__(self, proxy, online_file_store):
         """
         The constructor. Extends the superclass constructor.
@@ -62,14 +62,14 @@ class Steg(object):
 
     def encode(self, message):
         """
-        The encode method encodes up to 1 byte of data per pixel.
+        The encode method encodes up to 1 byte of data per pixel in an image.
         This method takes a message as a bytearray object as a parameter.
         This method returns a url as a string to the encoded message.
         """
         def prepareNewImage():
             """
             The prepareNewImage function retrieves an image from the Cat API.
-            This function does not take any paramters.
+            This function does not take any parameters.
             This function returns an image as a BytesIO object.
             """
             return Image.open(genImage.genCatImage())
@@ -204,9 +204,8 @@ class Steg(object):
     def decode(self, img):
         """
         The decode method decodes the message from an image.
-        This method takes an image as a BytesIO object and returns a string
-        representing the bits of the message. To decode the bits:
-        ``bytearray.fromhex('%08X' % int(message, 2))``.
+        This method takes an image as a BytesIO object and returns a bytearray
+        object containing the decoded data.
         """
 
         # convert BytesIO image to PIL Image object
@@ -271,7 +270,7 @@ class Steg(object):
         return bytearray()
 
 if __name__ == '__main__':
-    #python3 -m src.Image_Manipulation.lsbsteg [file]
+    # python3 -m src.Image_Manipulation.lsbsteg [file]
 
     import sys
     from src.Web_Connection import api_cons
@@ -300,7 +299,8 @@ if __name__ == '__main__':
         orig_file.write(str(my_msg))
         dec_file.write(str(decoded_file))
 
-    if decoded_file == my_msg[:-len(SPECIAL_EOF)]: # shouldn't need [:]
+    # shouldn't need [:], something wrong with encode()
+    if decoded_file == my_msg[:-len(SPECIAL_EOF)]:
         print("Encode and decode success!")
     else:
         print("Decode different than encoded data, FAIL.")

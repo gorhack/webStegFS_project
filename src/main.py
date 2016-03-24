@@ -7,13 +7,6 @@ from Web_Connection import api_cons
 from File_System import covertfs
 from platform import system
 
-"""@package api_cons
-
-Documentation for the api_cons module.
-The api_cons module creates an anonymous connection to a given social media
-file hosting website and provides connection, uploadImage, and downloadImage
-parameters.
-"""
 
 __version__ = "0.9.1"
 __author__ = "Flores, Gorak, Hart, Sjoholm"
