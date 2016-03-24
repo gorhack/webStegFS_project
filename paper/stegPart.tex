@@ -7,14 +7,14 @@ The primary purpose in a web based covert file system is confidentiality and pla
 %Not enough data
 
 The greatest risk to using steganography, particularly our steganography module, is that an embedded message can be discovered using statistical analysis. Since the original images exist on Tumblr and can be retrieved using the Cat API, our images that get uploaded to Sendspace can be compared to the originals. Statistical analysis between the original and the modified images will indicate that a message has been embeded. There are alternative steganograhpy techniques, but their are still several steganalysis tools to detect them~\cite{Laden}. For example, Virtual Steganography Laboratory (VSL) is a tool developed by Michal Wegrzyn and Pawel Forczmanski, of West Pomeranian University of Technology. VSL has a simple GUI that allows users to select an image and run certain steganalysis modules on that image. The results of the analysis is outputted to an easy-to-read csv file. Figure 1.1 is the original image. Figure 1.2 is the modified image with xxx bytes of data encoded into it. 
-%\begin{figure}[h]
-%	\includegraphics[width=0.5\textwidth]{original}
-%	\caption{Figure 1.1. Original image}
-%\end{figure}
-%\begin{figure}[h]
-%	\includegraphics[width=0.5\textwidth]{encoded}
-%	\caption{Figure 1.2. Image encoded with a xxx byte message}
-%\end{figure}
+\begin{figure}[h]
+	\includegraphics[width=0.5\textwidth]{original}
+	\caption{Figure 1.1. Original image}
+\end{figure}
+\begin{figure}[h]
+	\includegraphics[width=0.5\textwidth]{modified}
+	\caption{Figure 1.2. Image encoded with a xxx byte message}
+\end{figure}
 The VSL determined that there is a message about a xxx byte message in the original image. In reality, there is no message encoded into the original, but this value allows us to compare the two images. VSL determined that the modified image has a xxx byte message encoded into it. ADD VALUES AND FIX ANALYSIS Not only can steganalysis detected changes, but they are visually apparent as well. Figure 1.3 shows both an encoded image and its original.
 
 \begin{figure}[h]
