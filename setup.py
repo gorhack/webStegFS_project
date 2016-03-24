@@ -19,6 +19,8 @@ setup(
         'Topic :: Software Development :: File System',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.5',
+        'Operating System :: MacOS :: MacOS X',
+        'Operating System :: POSIX',
     ],
     keywords='covert file system steganography',
     packages=find_packages(exclude=['docs']),
