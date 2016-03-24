@@ -8,7 +8,7 @@ covertfs module
 ---------------
 
 The `covertfs` module extends the `pyfilesystem` package, using the `MemoryFS` file system.
-The MemoryFS file system stores all directory and file info in main memory, to allow for instantaneous file access as well as to avoid writing any FS information to disk. This allows for plausible deniability. All filesystem-necessary commands (ls, cd, mkdir, rm etc) are extended in this module. 
+The MemoryFS file system stores all directory and file info in main memory, to allow for instantaneous file access as well as to avoid writing any FS information to disk. This allows for plausible deniability. All filesystem-necessary commands (ls, cd, mkdir, rm etc) are extended in this module.
 
 The covertfs module includes CovertFile, a subclass of MemoryFile, CovertEntry, a subclass of MemoryEntry, and CovertFS, a subclass of MemoryFS. CovertFS uses CovertFile as the file factory, and CovertEntry as the entry factory.
 
