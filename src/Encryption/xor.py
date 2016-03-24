@@ -1,20 +1,29 @@
 #!/usr/bin/env python3
 
-"""@package xor
-
-Documentation for the xor module.
-"""
-
 
 class XOR(object):
     """
-    The XOR class uses a simple XOR to obfuscate data with a key.
+    The XOR class uses a simple XOR cipher to obfuscate data with a key.
     """
 
     def encrypt(self, key, data):
+        """
+        The encrypt method encrypts the provided data with a key.
+        The method takes a key as an integer between 0 and 256 and
+        the data as a bytearray object.
+        The method returns an encrypted bytearray object.
+        """
         return bytearray(x ^ key for x in data)
 
     def decrypt(self, key, data):
+        """
+        The decrypt method decrypts the provided data with a key.
+        Since XOR is reversible with the same key, decrypt is the
+        same as encrypt.
+        The method takes a key as an integer between 0 and 256 and
+        the data as a bytearray object.
+        The method returns an encrypted bytearray object.
+        """
         return self.encrypt(key, data)
 
 if __name__ == '__main__':
@@ -27,7 +36,7 @@ if __name__ == '__main__':
     try:
         k = int(sys.argv[1])
     except ValueError:
-        print("key must be integer [0-255], using key = 0.")
+        print("key must be integer [0-256], using key = 0.")
     d = bytearray(sys.argv[2].encode())
 
     enc_data = xor.encrypt(k, d)
