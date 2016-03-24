@@ -7,9 +7,6 @@ Submodules
 api_cons module
 ---------------
 
-The `api_cons` module creates an anonymous connection to a given social media
-file hosting website and provides connection, upload image, and download image
-parameters.
 
 .. automodule:: Web_Connection.api_cons
     :members:
