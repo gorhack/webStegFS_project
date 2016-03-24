@@ -23,6 +23,8 @@ def genCatImage():
     """
     r = requests.get('http://thecatapi.com/api/images/get?format=src&type=png')
     if r.status_code == requests.codes.ok:  # image returned OK
+        with open("image.png", 'w') as f:
+            f.write(r.raw.read())
         img = BytesIO(r.content)  # create BytesIO object from the request
         r.close()  # close the get request
         return img  # return the BytesIO object

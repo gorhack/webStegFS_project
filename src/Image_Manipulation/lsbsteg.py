@@ -274,7 +274,8 @@ if __name__ == '__main__':
 
     import sys
     from src.Web_Connection import api_cons
-    stego = Steg(None, api_cons.SendSpace(None))
+    from src.Web_Connection import proxy_list
+    stego = Steg(proxy_list.proxies, api_cons.SendSpace(proxy_list.proxies))
 
     file_name = sys.argv[1]
     print("Opening {}.".format(file_name))
