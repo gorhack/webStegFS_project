@@ -20,7 +20,7 @@ __author__ = "Flores, Gorak, Hart, Sjoholm"
 
 
 class Console(cmd.Cmd, object):
-    def __init__(self, online_file_store, steg_class, mountpoint, url, proxy, cmdLoopUsed, dbg):
+    def __init__(self, online_file_store, steg_class, mountpoint, url, proxy, cmdLoopUsed, dbg = False):
         """
         The Console constructor.
         """
@@ -244,7 +244,6 @@ class Console(cmd.Cmd, object):
         if self.dbg:
             print("DEBUG: Url obtained, about to download, decode, and print")
         msg = self.stegFactory.decodeImageFromURL(url)
-        # convert from binary to hex
 
         print(msg)
 
