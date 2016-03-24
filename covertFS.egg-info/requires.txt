@@ -4,4 +4,3 @@ fs
 lxml
 Pillow
 fusepy
-fs
