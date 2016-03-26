@@ -18,8 +18,6 @@ lsbsteg module
 genImage module
 ---------------
 
-The `genImage` module returns an image on request as a `BytesIO` object.
-
 
 .. automodule:: Image_Manipulation.genImage
     :members:
