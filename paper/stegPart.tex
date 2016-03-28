@@ -1,12 +1,18 @@
 %DESIGN OVERVIEW
 \subsection{Steganography and CovertFS}
-% Section needs additional research
-The primary purpose in a web based covert file system is confidentiality and plausible deniability. Using steganography can provide both confidentiality for users as well as plausible deniability. However, steganography also has risks that make it vulnerable to both. Statistical analysis and visible alterations (anything else? -- research) can make steganography detectable, thus removing the aspect of both confidentiality and plausible deniability. However, there are ways to reduce the risks of using steganography. 
+% Figure 1: Original
+% Figure 2: lsbsteg encoded image
+% Figure 3: other encoded image
+% Figure 4: detection % chart
+% Figure 5: visual encoding evidence
+
+
+The primary purpose in a web based covert file system is confidentiality and plausible deniability. Using steganography can provide both confidentiality for users as well as plausible deniability. However, steganography also has risks that make it vulnerable to both. Steganalysis and visible alterations\cite{Steganalysis} can make steganography detectable, thus removing the aspect of both confidentiality and plausible deniability. However, there are ways to reduce the risks of using steganography. 
 
 \subsubsection{Risks Using Steganography}
 %Not enough data
 
-The greatest risk to using steganography, particularly our steganography module, is that an embedded message can be discovered using statistical analysis. Since the original images exist on Tumblr and can be retrieved using the Cat API, our images that get uploaded to Sendspace can be compared to the originals. Statistical analysis between the original and the modified images will indicate that a message has been embeded. There are alternative steganograhpy techniques, but their are still several steganalysis tools to detect them~\cite{Laden}. For example, Virtual Steganography Laboratory (VSL) is a tool developed by Michal Wegrzyn and Pawel Forczmanski, of West Pomeranian University of Technology. VSL has a simple GUI that allows users to select an image and run certain steganalysis modules on that image. The results of the analysis is outputted to an easy-to-read csv file. Figure 1.1 is the original image. Figure 1.2 is the modified image with 274.25 KB of data encoded into it. 
+The greatest risk to using steganography, particularly our steganography module, is that an embedded message can be discovered using statistical analysis. Since the original images exist on Tumblr and can be retrieved using the Cat API, our images that get uploaded to Sendspace can be compared to the originals. Statistical analysis between the original and the modified images will indicate that a message has been embeded. There are alternative steganograhpy techniques, but their are still several steganalysis tools to detect them~\cite{Laden}. For example, Virtual Steganography Laboratory (VSL) is a tool developed by Michal Wegrzyn and Pawel Forczmanski, of West Pomeranian University of Technology. VSL has a simple GUI that allows users to select an image and run certain steganalysis modules on that image. The results of the analysis is outputted to an easy-to-read csv file. Figure 1 is the original image. Figure 2 is the modified image with 274.25 KB of data encoded into it. 
 \begin{figure}[h]
 	\includegraphics[width=0.5\textwidth]{original}
 	\caption{Original image}
@@ -15,17 +21,17 @@ The greatest risk to using steganography, particularly our steganography module,
 	\includegraphics[width=0.5\textwidth]{modified}
 	\caption{Image encoded with a 274.25 KB message}
 \end{figure}
-The VSL determined that there is a message about a 5.10 KB message in the original image. In reality, there is no message encoded into the original, but this value allows us to compare the two images. VSL determined that the modified image has a 88.23 KB message encoded into it. This is significant because VSL was able to detect a substantial change in the pixels of the image. The steganalysis shows that there is likely a message inside the modified image. Not only can steganalysis detected changes, but they are visually apparent as well. Figure 1.3 shows both an encoded image and its original.
+The VSL determined that there is a message about a 5.10 KB message in the original image. In reality, there is no message encoded into the original, but this value allows us to compare the two images. VSL determined that the modified image has a 88.23 KB message encoded into it. This is significant because VSL was able to detect a substantial change in the pixels of the image. The steganalysis shows that there is likely a message inside the modified image. Not only can steganalysis detected changes, but they can be visually apparent as well. Figure 4 shows both an encoded image and its original.
 
 \begin{figure}[h]
 	\includegraphics[width=0.5\textwidth]{comparison}
 	\caption{Left: encoded, Right: original}
 \end{figure}
-The discoloration at the top of the encoded image is from the LSB encoding and this shows an obvious visual discoloration that an adversary can easily detect.
+In some cases, the LSB steganography can discolor the image. The encoded image is from the LSB encoding and this shows an obvious visual discoloration that an adversary can easily detect. 
 
 \subsubsection{Mitigating Risks of Steganography}
 %Not enough data
-These risks are mitigated by the fact that there is no universal standard for steganography methods. A user can easily replace the steganography module that we offer with a module of their own. That way, even if someone knows an image is not the original, that person will still not know who encoded it, or what kind of module was using for the encoding. Also, an encryption module can easily be added to our application and used to encrypt messages before they are encoded into an image. So even if someone knows what kind of steganography module is being used to encode messages into images, that person will also have the added challenge of decrypting the information. Although, there is no research to indicate that encryption helps in fooling steganalysis tools. Finally, since the original images exist on the internet, it will limit the plausible deniability of the user. It can be called into question as to why a certain user is uploading images that do not belong to that user to an online image database. 
+These risks are mitigated by the fact that there is no universal standard for steganography methods. A user can easily replace the steganography module that we offer with a module of their own. That way, even if someone knows an image is not the original, that person will still not know who encoded it, or what kind of module was using for the encoding. Also, an encryption module can easily be added to our application and used to encrypt messages before they are encoded into an image. So even if someone knows what kind of steganography module is being used to encode messages into images, that person will also have the added challenge of decrypting the information. There is no research to indicate that encryption helps in fooling steganalysis tools, and it most likely would indicate stronger evidence of steganography. Finally, since the original images exist on the internet, it will limit the plausible deniability of the user. It can be called into question as to why a certain user is uploading images that do not belong to that user to an online image database. 
 
 %IMPLEMENTATION SECTION
 \subsection{Encoding a File System}
@@ -38,7 +44,7 @@ Least significant bit (LSB) steganography is a Substitution type of steganograph
 
 First, we break every byte of the message into three segments. Two segments of the byte will contain three bits, and the last segment will contain two bits. Next, we replace the three least significant bits of the red component with the first three bit segment. The green component follows, with the replacement of its least significant bits with the second three bit segment. Lastly, we replace the two least significant bits of the blue component with the remaining two bit segment of data. 
 
-There are obvious drawbacks to our implementation of LSB steganography, primarily that the image may appear distorted as seen in Figure X and CovertFS images are X percent easier to detect using standard statistical analysis techniques compared to true LSB steganography as seen in figure X. However, this implementation enables us to store more bytes than other implementations of LSB steganography which decreases the latency in uploading and downloading images in large file systems [? Need evidence].
+There are obvious drawbacks to our implementation of LSB steganography, primarily that the image may appear distorted as seen in Figure 5 and CovertFS images are X percent easier to detect using standard statistical analysis techniques compared to true LSB steganography as seen in figure 4. However, this implementation enables us to store more bytes than other implementations of LSB steganography which decreases the latency in uploading and downloading images in large file systems [? Need evidence].
  
 \subsubsection{File System to Images}
 
