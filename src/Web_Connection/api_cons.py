@@ -13,7 +13,7 @@ try:
 except ImportError:
     from src.Web_Connection.API_Keys import config
 import platform, subprocess
-if platform.system=='Linux':
+if platform.system() =='Linux':
     torEnabled = subprocess.check_output(['ps','aux']).decode().find('/usr/bin/tor')
     if torEnabled > -1:
         import socks
@@ -161,6 +161,7 @@ class SendSpace(object):
             #r = requests.get(url)
         else:
             r = requests.get(url)
+            print(r.status_code, r.text)
         # the download image retrieved from the uploadImage method does not
         # return a direct download URL. This parses the request to download
         # for the direct download URL.

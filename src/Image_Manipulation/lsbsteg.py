@@ -18,7 +18,7 @@ except ImportError:
 import platform
 import subprocess
 import requests
-if platform.system == 'Linux':
+if platform.system() == 'Linux':
     torEnabled = subprocess.check_output(['ps', 'aux']).decode().find('/usr/bin/tor')
     if torEnabled > -1:
         import socks

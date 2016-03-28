@@ -6,10 +6,18 @@ from Web_Connection.API_Keys import config
 from Web_Connection import api_cons
 from File_System import covertfs
 from platform import system
+if system()=='Linux':
+    torEnabled = subprocess.check_output(['ps','aux']).decode().find('/usr/bin/tor')
+    if torEnabled > -1:
+        import socks
+        import socket
+        print("Using tor, rerouting connection")
+        socks.setdefaultproxy(socks.PROXY_TYPE_SOCKS5, "127.0.0.1", 9050)
+        socket.socket = socks.socksocket
 from threading import Thread
 
 
-__version__ = "0.9.1"
+__version__ = "0.9.2"
 __author__ = "Flores, Gorak, Hart, Sjoholm"
 
 
@@ -290,7 +298,9 @@ class Console(cmd.Cmd, object):
         print(msg.decode())
 
     def download_file(self, url):
+        print("dling")
         msg = self.stegFactory.decodeImageFromURL(url)
+        print("no problem there")
         if self.dbg:
             print("DEBUG: Contents downloaded")
         if self.encryptClass:
@@ -580,7 +590,7 @@ default_proxies = {'https': 'https://165.139.149.169:3128',
 def proxy_test(proxyL):
     import requests
     try:
-        r = requests.get('http://google.com', timeout=1)
+        r = requests.get('http://google.com', timeout=5)
         assert(r.status_code is 200)
     except:
         print("Not connected to Internet! Defeats purpose of the whole web-based thing...")
@@ -588,7 +598,8 @@ def proxy_test(proxyL):
     # now test proxy functionality
     try:
         # Add something in here later to actually test proxy with given file store. Use google for now.
-        r = requests.get('https://www.sendspace.com', proxies=proxyL, timeout=1)
+        r = requests.get('http://www.sendspace.com', proxies=proxyL, timeout=5)
+        print(r)
         assert(r.status_code == 200)
     except:
         print("Given (or default) proxy is down, or took too long to be useful")
@@ -605,14 +616,14 @@ def proxy_parser(proxyString=None):
     port = proxyString.split(':')[1]
     import ipaddress
     try:
-        ipaddress.ip_address(proxy)
-        assert(port > 0 & port < 65536)
+        print(ipaddress.ip_address(proxy))
+        assert(int(port) > 0 & int(port) < 65536)
     except:
         print("Invalid ip address for proxy. Enter the proxy again.")
         return
     proxDict = {'https': 'https'+proxy+':'+port,
                 'http': 'http'+proxy+':'+port}
-    return proxy_test(proxDict)
+    return proxDict#proxy_test(proxDict)
 
 
 if __name__ == '__main__':
