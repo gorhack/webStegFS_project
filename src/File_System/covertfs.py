@@ -97,8 +97,7 @@ class CovertFS(memoryfs.MemoryFS):
         makes necessary directories, and creates necessary files
         (empty for now) that are then loaded by main.py.
         """
-        print(fsstring)
-        for fol in fsstring.split("\n")[:-1]:
+        for fol in fsstring.split("\n")[1:-1]:
             foldercontents = fol.split(' ')
             curpath = foldercontents[0]
             if curpath != '/':
@@ -119,7 +118,7 @@ class CovertFS(memoryfs.MemoryFS):
         Turns the entire filesystem into a string to be uploaded.
         Returns that string.
         """
-        save_string = ''
+        save_string = 'filesystem:\n'
         for directory, files in self.walk():
             save_string += directory
             if directory[-1] != '/':
