@@ -1,5 +1,14 @@
 #!/usr/bin/env python3
 
+"""
+The basic idea of the algorithm is to take each individual bit of the message
+and set it as the least significant bit of each component of each pixel of the
+image. A pixel has Red, Green, Blue components and sometimes an Alpha
+component. Because the values of these components change very little if the
+least significant bit is changed, the color difference is not particularly
+noticeable, if at all.
+"""
+
 from PIL import Image
 from io import BytesIO
 try:
@@ -18,11 +27,6 @@ if platform.system == 'Linux':
         socks.setdefaultproxy(socks.PROXY_TYPE_SOCKS5, "127.0.0.1", 9050)
         socket.socket = socks.socksocket
 
-"""@package lsbsteg
-
-Documentation for the lsbsteg module.
-"""
-
 
 def ascii2bits(message):
     """
@@ -40,6 +44,7 @@ NEXT_IMAGE_HEX = bytearray(NEXT_IMAGE.encode())
 SPECIAL_EOF = 'END_OF_FILE'
 SPECIAL_EOF_BITS = ascii2bits(SPECIAL_EOF)
 SPECIAL_EOF_HEX = bytearray(SPECIAL_EOF.encode())
+
 
 class Steg(object):
     """

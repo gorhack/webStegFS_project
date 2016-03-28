@@ -24,5 +24,6 @@ Source Documentation
    File_System
    Image_Manipulation
    Web_Connection
+   Encryption
 
 .. [1] Optional parameter

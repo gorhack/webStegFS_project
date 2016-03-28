@@ -1,5 +1,19 @@
 #!/usr/bin/env python3
 
+"""
+The `covertfs` module extends the `pyfilesystem` package, using the `MemoryFS`
+file system.
+The MemoryFS file system stores all directory and file info in main memory,
+to allow for instantaneous file access as well as to avoid writing any FS
+information to disk. This allows for plausible deniability. All
+filesystem-necessary commands (ls, cd, mkdir, rm etc) are extended in this
+module.
+
+The covertfs module includes CovertFile, a subclass of MemoryFile, CovertEntry,
+a subclass of MemoryEntry, and CovertFS, a subclass of MemoryFS. CovertFS uses
+CovertFile as the file factory, and CovertEntry as the entry factory.
+"""
+
 from File_System import memoryfs
 import stat
 from .fs import path
@@ -83,8 +97,7 @@ class CovertFS(memoryfs.MemoryFS):
         makes necessary directories, and creates necessary files
         (empty for now) that are then loaded by main.py.
         """
-        print(fsstring)
-        for fol in fsstring.split("\n")[:-1]:
+        for fol in fsstring.split("\n")[1:-1]:
             foldercontents = fol.split(' ')
             curpath = foldercontents[0]
             if curpath != '/':
@@ -105,7 +118,7 @@ class CovertFS(memoryfs.MemoryFS):
         Turns the entire filesystem into a string to be uploaded.
         Returns that string.
         """
-        save_string = ''
+        save_string = 'filesystem:\n'
         for directory, files in self.walk():
             save_string += directory
             if directory[-1] != '/':

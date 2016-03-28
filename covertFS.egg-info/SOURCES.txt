@@ -7,6 +7,8 @@ covertFS.egg-info/requires.txt
 covertFS.egg-info/top_level.txt
 src/__init__.py
 src/main.py
+src/Encryption/__init__.py
+src/Encryption/xor.py
 src/File_System/__init__.py
 src/File_System/covertfs.py
 src/File_System/fuse.py
