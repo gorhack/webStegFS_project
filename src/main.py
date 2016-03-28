@@ -6,14 +6,23 @@ from Web_Connection.API_Keys import config
 from Web_Connection import api_cons
 from File_System import covertfs
 from platform import system
+if system()=='Linux':
+    torEnabled = subprocess.check_output(['ps','aux']).decode().find('/usr/bin/tor')
+    if torEnabled > -1:
+        import socks
+        import socket
+        print("Using tor, rerouting connection")
+        socks.setdefaultproxy(socks.PROXY_TYPE_SOCKS5, "127.0.0.1", 9050)
+        socket.socket = socks.socksocket
+from threading import Thread
 
 
-__version__ = "0.9.1"
+__version__ = "0.9.2"
 __author__ = "Flores, Gorak, Hart, Sjoholm"
 
 
 class Console(cmd.Cmd, object):
-    def __init__(self, online_file_store, steg_class, mountpoint, url, proxy, cmdLoopUsed, dbg = False):
+    def __init__(self, online_file_store, steg_class, encrypt_class, mountpoint, url, proxy, cmdLoopUsed, dbg = False):
         """
         The Console constructor.
         """
@@ -26,6 +35,7 @@ class Console(cmd.Cmd, object):
         self.cmdloopused = cmdLoopUsed
         self.url = url
         self.fs = covertfs.CovertFS()
+        self.encryption = encrypt_class
 
         ###Information for the command prompt###
         self.preprompt = "covertFS: "
@@ -63,12 +73,37 @@ class Console(cmd.Cmd, object):
             pass
         ###############################
 
+        def inputxorKey():
+            tempKey = input("Passcode? ")
+            try:
+                tempKey = int(tempKey)
+                assert (tempKey)>-1 and (tempKey)<256
+            except:
+                print("Ensure passcode is an integer between 0 and 255.")
+                return
+            self.encryptKey = tempKey
+
+        ###Encryption class setup###
+        self.encryptClass = None
+        self.encryptKey = None
+        if self.encryption == 'xor':
+            from Encryption import xor
+            self.encryptClass = xor.XOR()
+            while self.encryptKey == None:
+                inputxorKey()
+            if self.dbg:
+                print("DEBUG: Encryption enabled, with xor set as the encryption class")
+
+        elif self.encryption == "somethingelse": #template for some other encryption class
+            pass
+        #################################
 
         ###FUSE usability information###
         self.fuse_enabled = False
         try:
             if subprocess.call(['whereis','fusermount'], stdout = subprocess.DEVNULL) == 0:
                 self.fuse_enabled = True
+                self.mounted = False
                 self.mp = mountpoint
                 self.fuseFS = None
                 if self.dbg:
@@ -93,12 +128,12 @@ class Console(cmd.Cmd, object):
         if self.dbg:
             print("DEBUG: Downlink found in file attributes: ",downlink)
         try:
-            msg = self.stegFactory.decodeImageFromURL(downlink)
+            msg = self.download_file(downlink)
             if self.dbg:
                 print("DEBUG: File fully decoded from URL")
         except:
             out = "File named '"+ filename+"'was not decoded correctly. It is no longer in the filesystem. To attempt to retry this operation, execute command 'downloadFile "+ downlink+"'."
-            if dbg:
+            if self.dbg:
                 print("ERROR: "+ out)
             else:
                 print(out)
@@ -108,37 +143,25 @@ class Console(cmd.Cmd, object):
             print("DEBUG: File '", filename,"' decoded correctly, stored in filesystem.")
         return True
 
-    def loadfs(self):
-        """Load the filesystem from a URL: Download pic, decode it, then send the string to the load function in fsClass."""
-        try:
-            self.fs = covertfs.CovertFS()
-            if self.dbg:
-                print("DEBUG: New, empty filesystem initiated.")
-            fs_string = self.stegFactory.decodeImageFromURL(self.url).decode()
-            if self.dbg:
-                print("DEBUG: Filesystem metadata decoded: ")
-                print(fs_string)
-            self.fs.loadfs(fs_string)
-            if self.dbg:
-                print("DEBUG: New filesystem loaded.")
+###Fuse/ Mounting elements###
+    def background_upload(self):
+        while self.mounted:
+            time.sleep(1)
             for f in self.fs.walkfiles():
-                print("Loading {}......".format(f))
-                if not self.down_and_set_file(f):
-                    self.do_rm(f)
-                    if self.dbg:
-                        print("DEBUG: File named '",f,"' was successfully removed from the filesystem.")
-            self.folder = self.fs.current_dir
-            self.prompt = self.preprompt + self.folder + "$ "
-            print("Loaded Covert File System")
-        except:
-            print("Filesystem load was not successful. This could be because of a bad filesystem image URL, or connection problems.")#TODO: mid-program connection testing
+                entry = self.fs._dir_entry(f)
+                if entry.downlink is None and f.rsplit('.')[-1]!= 'swp':
+                    print("STATUS: Uploading ", f)
+                    entry.downlink = self.upload_file(bytearray(self.fs.getcontents(f)))
 
     def open_window(self):
         time.sleep(1)
         if system() == 'Linux':
-            subprocess.call(['gnome-terminal', '--working-directory=' + os.getcwd()+ '/'+ self.mp, '--window'])
-            if self.dbg:
-                print("DEBUG: New window opened, with the mounted FS as the cwd.")
+            try:
+                subprocess.call(['gnome-terminal', '--working-directory=' + os.getcwd()+ '/'+ self.mp, '--window'])
+                if self.dbg:
+                    print("DEBUG: New window opened, with the mounted FS as the cwd.")
+            except:
+                print("DEBUG: gnome-terminal not on this system")
 
     def do_mount(self, args):
         if self.dbg:
@@ -156,18 +179,23 @@ class Console(cmd.Cmd, object):
             newDir = True
         if self.dbg:
             print("DEBUG: Mountpoint has been prepared")
-        from threading import Thread
-        t = Thread(target=self.open_window)
-        t.start()
+        window = Thread(target=self.open_window)
+        monitor = Thread(target=self.background_upload)
+        window.start()
         if self.dbg:
             print("DEBUG: Window opened, about to mount")
+        self.mounted=True
+        monitor.start()
         memfuse.mount(self.fuseFS, self.mp)
+        self.mounted=False
         if newDir:
             os.rmdir(self.mp)
         if not self.cmdloopused:
             print("STATUS: Uploading all files to online")
             self.do_uploadfs(self)
+#############################
 
+###Proxy stuff###
     def do_noproxy(self, args):
         """Turns off the built-in proxy.\n
         Use: noproxy"""
@@ -181,6 +209,34 @@ class Console(cmd.Cmd, object):
         print("STATUS: Proxy turned on.")
         self.proxy = default_proxies
         self.init_factory()
+#################
+
+###File system operations###
+    def loadfs(self):
+        try:
+            self.fs = covertfs.CovertFS()
+            if self.dbg:
+                print("DEBUG: New, empty filesystem initiated.")
+            fs_string = self.download_file(self.url).decode()
+            if self.dbg:
+                print("DEBUG: Filesystem metadata decoded: ")
+                print(fs_string[12:-1])
+            if not fs_string[0:10] == 'filesystem':
+                print("ERROR: no files in this file system. You more than likely have the wrong passcode")
+            self.fs.loadfs(fs_string)
+            if self.dbg:
+                print("DEBUG: New filesystem loaded.")
+            for f in self.fs.walkfiles():
+                print("Loading {}......".format(f))
+                if not self.down_and_set_file(f):
+                    self.do_rm(f)
+                    if self.dbg:
+                        print("DEBUG: File named '",f,"' was successfully removed from the filesystem.")
+            self.folder = self.fs.current_dir
+            self.prompt = self.preprompt + self.folder + "$ "
+            print("Loaded Covert File System")
+        except:
+            print("Filesystem load was not successful. This could be because of a bad filesystem image URL, or connection problems.")#TODO: mid-program connection testing
 
     def do_loadfs(self, url):
         """Load a covert file system.\n
@@ -204,42 +260,6 @@ class Console(cmd.Cmd, object):
         self.folder = self.fs.current_dir
         self.prompt = self.preprompt + self.folder + "$ "
 
-    def do_encodeimage(self, file):
-        """
-        Encode a file and upload to social media.\n
-        Returns the url.\n
-        Use: encodeimage [file]"""
-        my_msg = bytearray()
-        try:
-            if self.dbg:
-                print("DEBUG: Attempting to open file")
-            msg_file = open(file, 'rb')
-            if self.dbg:
-                print("DEBUG: Opened file, reading to buffer")
-            my_msg = bytearray(msg_file.read())
-            if self.dbg:
-                print("DEBUG: Closing file")
-            msg_file.close()
-        except FileNotFoundError:
-            print("ERROR: File not found, encoding the text \"{}\".".format(file))
-            my_msg = bytearray(file.encode())
-
-        if self.dbg:
-            print("DEBUG: About to upload encoded file")
-        downlink = self.upload_file(my_msg)
-        return 0
-
-    def do_decodeimage(self, file_id):
-        """Decode the message in an image.\n
-        Returns the message in plain text.\n
-        decodeimage [download url]"""
-        url = self.baseURL + file_id if len(file_id) == 6 else file_id
-        if self.dbg:
-            print("DEBUG: Url obtained, about to download, decode, and print")
-        msg = self.stegFactory.decodeImageFromURL(url)
-
-        print(msg)
-
     def do_uploadfs(self, args):
         """Upload covert fileSystem to the web"""
         if self.dbg:
@@ -251,14 +271,55 @@ class Console(cmd.Cmd, object):
                 entry.downlink = self.upload_file(bytearray(self.fs.getcontents(f)))
         if self.dbg:
             print("DEBUG: All files uploaded, uploading fs_string")
-        return self.upload_file(bytearray(self.fs.save().encode('utf-8')))
+        print("File system at: ", self.upload_file(bytearray(self.fs.save().encode('utf-8')))) 
+############################
+
+###File upload downloads###
+    
+    def do_encodemsg(self, message):
+        """
+        Encode a message and upload to social media.\n
+        Returns the url.\n
+        Use: encodemsg [message]"""
+        my_msg = bytearray(message.encode())
+        if self.dbg:
+            print("DEBUG: About to upload encoded message")
+        self.upload_file(my_msg)      
+
+    def do_decodemsg(self, in_url):
+        """Decode the message in an image.\n
+        Returns the message in plain text.\n
+        decodeimage [download url]"""
+        url = self.baseURL + in_url if len(in_url) == 6 else in_url
+        if self.dbg:
+            print("DEBUG: Url obtained ({}), about to download, decode, and print".format(url))
+        msg = self.download_file(url)
+
+        print(msg.decode())
+
+    def download_file(self, url):
+        print("dling")
+        msg = self.stegFactory.decodeImageFromURL(url)
+        print("no problem there")
+        if self.dbg:
+            print("DEBUG: Contents downloaded")
+        if self.encryptClass:
+            msg = self.encryptClass.decrypt(self.encryptKey, msg)
+            if self.dbg:
+                print("DEBUG: Contents decrypted")
+        return msg
 
     def upload_file(self, contents):
         """Helper function to upload file, return the download url."""
         if self.dbg:
             print("DEBUG: Sending data to steg factory for encoding")
+        if self.encryptClass:
+            contents = self.encryptClass.encrypt(self.encryptKey, contents)
+            if self.dbg:
+                print("DEBUG: Contents encrypted. About to upload")
         url = self.stegFactory.encode(contents)
-        print("URL: " + url)
+        if self.dbg:
+            print("DEBUG: URL of uploaded file: ", url)
         return url
 
     def add_file_to_fs(self, fspath, contents):
@@ -281,11 +342,8 @@ class Console(cmd.Cmd, object):
         if len(a) < 2:
             print("Use: mkfile [path] [message]")
             return
-        out = self.add_file_to_fs(a[0], ' '.join(a[1:]))
-        if self.dbg:
-            print("DEBUG: mkfile called")
-        if type(out) == str:
-            print(out)
+        upload = Thread(target=self.add_file_to_fs, args = [a[0], ' '.join(a[1:])])
+        upload.start()
 
     def san_file(self, file_contents):
         """Sanitize file before 1)viewing contents or 2)putting on host OS"""
@@ -294,6 +352,9 @@ class Console(cmd.Cmd, object):
             print("DEBUG: File sanitized")
         return contents
 
+    
+
+###Direct file manipulations within file system###
     def do_upload(self, args):
         """Upload a local file to the covert file system.\n
         Use: upload [local path] [covert path]"""
@@ -315,7 +376,8 @@ class Console(cmd.Cmd, object):
         except:
             print("{} is not in current OS directory".format(local_path))
             return
-        out = self.add_file_to_fs(covert_path, fileCont.decode())
+        upload = Thread(target=self.add_file_to_fs, args = [covert_path, fileCont.decode()])
+        upload.start()
 
     def do_download(self, args):
         """Download a covert file to the local file system.\n
@@ -430,6 +492,7 @@ class Console(cmd.Cmd, object):
         out = self.fs.rmdir(a[0], force)
         if type(out) == str:
             print(out)
+##################################################
 
     # Command definitions ##
     def do_hist(self, args):
@@ -527,7 +590,7 @@ default_proxies = {'https': 'https://165.139.149.169:3128',
 def proxy_test(proxyL):
     import requests
     try:
-        r = requests.get('http://google.com', timeout=1)
+        r = requests.get('http://google.com', timeout=5)
         assert(r.status_code is 200)
     except:
         print("Not connected to Internet! Defeats purpose of the whole web-based thing...")
@@ -535,7 +598,8 @@ def proxy_test(proxyL):
     # now test proxy functionality
     try:
         # Add something in here later to actually test proxy with given file store. Use google for now.
-        r = requests.get('http://www.sendspace.com', proxies=proxyL, timeout=1)
+        r = requests.get('http://www.sendspace.com', proxies=proxyL, timeout=5)
+        print(r)
         assert(r.status_code == 200)
     except:
         print("Given (or default) proxy is down, or took too long to be useful")
@@ -552,14 +616,14 @@ def proxy_parser(proxyString=None):
     port = proxyString.split(':')[1]
     import ipaddress
     try:
-        ipaddress.ip_address(proxy)
-        assert(port > 0 & port < 65536)
+        print(ipaddress.ip_address(proxy))
+        assert(int(port) > 0 & int(port) < 65536)
     except:
         print("Invalid ip address for proxy. Enter the proxy again.")
         return
     proxDict = {'https': 'https'+proxy+':'+port,
                 'http': 'http'+proxy+':'+port}
-    return proxy_test(proxDict)
+    return proxDict#proxy_test(proxDict)
 
 
 if __name__ == '__main__':
@@ -568,13 +632,15 @@ if __name__ == '__main__':
                         help='Specify the url to load a filesystem from')
     parser.add_argument('-c', dest='cmdloop', default=False, action='store_true',
                         help='Use the command loop to access the filesystem')
+    parser.add_argument('-d', dest='debug', default=False, action='store_true',
+                        help='Enable debug print statements. For dev use')
     parser.add_argument('-w', dest='website', type=str, default='sendspace',
                         help='Use alternate online file stores from command line')
     parser.add_argument('-p', dest="proxy", type=str, default='noproxy', nargs='?',
                         help='Use a specific proxy to access the web file store. \
                         There is a default if none provided. \
                         Format is simply an ip address with port at the end (e.x. 1.2.3.4:8080)')
-    parser.add_argument('-e', dest='encryption', type=str, nargs='?',
+    parser.add_argument('-e', dest='encryption', type=str, default='noencrypt', nargs='?',
                         help='Use a specific encryption. To be extended later')
     parser.add_argument('-m', dest="mountpoint", type=str, default='covertMount',
                         help='Specify a foldername to mount the FUSE module at')
@@ -582,6 +648,7 @@ if __name__ == '__main__':
                         help='Use an alternate steganography class for encoding in images')
 
     args = parser.parse_args()
+    print(args)
 
     run = True
     if args.proxy == 'noproxy':
@@ -590,12 +657,20 @@ if __name__ == '__main__':
         proxy = proxy_parser(args.proxy)
         if proxy is None:
             run = False
-    if run:
-        cons = Console(args.website, args.steganography, args.mountpoint, args.url, proxy, args.cmdloop)
 
+    if args.encryption == 'noencrypt':
+        encrypt = None
+    else:
+        if args.encryption == None:
+            args.encryption = 'xor' #xor is the default encryption class. In the absence of an argument for -e, xor is used.
+        encrypt = args.encryption
+
+    if run:
+        cons = Console(args.website, args.steganography, encrypt, args.mountpoint, args.url, proxy, args.cmdloop, args.debug)
+
+        if args.url:
+            cons.loadfs()
         if args.cmdloop:
             cons.cmdloop()
         else:
-            if args.url:
-                cons.loadfs()
             cons.do_mount(None)

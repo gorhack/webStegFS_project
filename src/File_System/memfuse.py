@@ -1,5 +1,16 @@
 #!/usr/bin/env python3
 
+"""
+The `memfuse` module extends the `pyfuse` package, specifically the
+`Operations` module.
+'Operations' is linked to the Unix FUSE package with python ctypes, to make the
+file system available to the user, without making system calls. The memfuse
+module extends all necessary file system operations in a way that is accessible
+by FUSE, effectively linking the CovertFS class to the FUSE package. When
+mounted (using FUSE) onto the native Linux file system, memfuse provides access
+to all files and directories in the CovertFS file system.
+"""
+
 import logging
 
 from collections import defaultdict

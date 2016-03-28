@@ -1,5 +1,11 @@
 #!/usr/bin/env python3
 
+"""
+The `api_cons` module creates an anonymous connection to a given social media
+file hosting website and provides connection, upload image, and download image
+parameters.
+"""
+
 from bs4 import BeautifulSoup  # parse XML response
 from PIL import Image
 try:
@@ -7,7 +13,7 @@ try:
 except ImportError:
     from src.Web_Connection.API_Keys import config
 import platform, subprocess
-if platform.system=='Linux':
+if platform.system() =='Linux':
     torEnabled = subprocess.check_output(['ps','aux']).decode().find('/usr/bin/tor')
     if torEnabled > -1:
         import socks
@@ -16,11 +22,6 @@ if platform.system=='Linux':
         socks.setdefaultproxy(socks.PROXY_TYPE_SOCKS5, "127.0.0.1", 9050)
         socket.socket = socks.socksocket
 import requests  # GET and POST requests
-
-"""@package api_cons
-
-Documentation for the api_cons module.
-"""
 
 
 class SendSpace(object):
@@ -160,6 +161,7 @@ class SendSpace(object):
             #r = requests.get(url)
         else:
             r = requests.get(url)
+            print(r.status_code, r.text)
         # the download image retrieved from the uploadImage method does not
         # return a direct download URL. This parses the request to download
         # for the direct download URL.
