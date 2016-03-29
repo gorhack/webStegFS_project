@@ -9,7 +9,7 @@ xor module
 ----------
 
 
-.. automodule:: Encryption.xor
+.. automodule:: covertFS.Encryption.xor
     :members:
     :undoc-members:
     :show-inheritance:

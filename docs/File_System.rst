@@ -7,7 +7,7 @@ Submodules
 covertfs module
 ---------------
 
-.. automodule:: File_System.covertfs
+.. automodule:: covertFS.File_System.covertfs
     :members:
     :undoc-members:
     :show-inheritance:
@@ -17,7 +17,7 @@ memfuse module
 --------------
 
 
-.. automodule:: File_System.memfuse
+.. automodule:: covertFS.File_System.memfuse
     :members:
     :undoc-members:
     :show-inheritance:

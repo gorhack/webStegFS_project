@@ -20,8 +20,8 @@
 
 
 \title{CovertFS Documentation}
-\date{March 28, 2016}
-\release{0.9.2rc1}
+\date{March 29, 2016}
+\release{0.9.4b}
 \author{Kyle Gorak, Adam Sjoholm, David Hart, Ryne Flores}
 \newcommand{\sphinxlogo}{}
 \renewcommand{\releasename}{Release}
@@ -38,67 +38,67 @@
     \PYG@it{\PYG@bf{\PYG@ff{#1}}}}}}}
 \def\PYG#1#2{\PYG@reset\PYG@toks#1+\relax+\PYG@do{#2}}
 
-\expandafter\def\csname PYG@tok@vi\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.73,0.38,0.84}{##1}}}
-\expandafter\def\csname PYG@tok@ss\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.32,0.47,0.09}{##1}}}
-\expandafter\def\csname PYG@tok@kt\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.56,0.13,0.00}{##1}}}
-\expandafter\def\csname PYG@tok@mb\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.13,0.50,0.31}{##1}}}
-\expandafter\def\csname PYG@tok@sb\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
-\expandafter\def\csname PYG@tok@cp\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
-\expandafter\def\csname PYG@tok@c\endcsname{\let\PYG@it=\textit\def\PYG@tc##1{\textcolor[rgb]{0.25,0.50,0.56}{##1}}}
-\expandafter\def\csname PYG@tok@gs\endcsname{\let\PYG@bf=\textbf}
-\expandafter\def\csname PYG@tok@k\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
-\expandafter\def\csname PYG@tok@se\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
-\expandafter\def\csname PYG@tok@nb\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
-\expandafter\def\csname PYG@tok@m\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.13,0.50,0.31}{##1}}}
-\expandafter\def\csname PYG@tok@err\endcsname{\def\PYG@bc##1{\setlength{\fboxsep}{0pt}\fcolorbox[rgb]{1.00,0.00,0.00}{1,1,1}{\strut ##1}}}
-\expandafter\def\csname PYG@tok@ow\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
-\expandafter\def\csname PYG@tok@s2\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
-\expandafter\def\csname PYG@tok@nn\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.05,0.52,0.71}{##1}}}
-\expandafter\def\csname PYG@tok@cm\endcsname{\let\PYG@it=\textit\def\PYG@tc##1{\textcolor[rgb]{0.25,0.50,0.56}{##1}}}
-\expandafter\def\csname PYG@tok@gh\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.00,0.50}{##1}}}
-\expandafter\def\csname PYG@tok@mh\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.13,0.50,0.31}{##1}}}
-\expandafter\def\csname PYG@tok@mo\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.13,0.50,0.31}{##1}}}
 \expandafter\def\csname PYG@tok@si\endcsname{\let\PYG@it=\textit\def\PYG@tc##1{\textcolor[rgb]{0.44,0.63,0.82}{##1}}}
-\expandafter\def\csname PYG@tok@gr\endcsname{\def\PYG@tc##1{\textcolor[rgb]{1.00,0.00,0.00}{##1}}}
-\expandafter\def\csname PYG@tok@ni\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.84,0.33,0.22}{##1}}}
-\expandafter\def\csname PYG@tok@nc\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.05,0.52,0.71}{##1}}}
-\expandafter\def\csname PYG@tok@kr\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
-\expandafter\def\csname PYG@tok@kc\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
-\expandafter\def\csname PYG@tok@kd\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
-\expandafter\def\csname PYG@tok@gu\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.50,0.00,0.50}{##1}}}
-\expandafter\def\csname PYG@tok@gd\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.63,0.00,0.00}{##1}}}
-\expandafter\def\csname PYG@tok@gi\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.00,0.63,0.00}{##1}}}
-\expandafter\def\csname PYG@tok@mf\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.13,0.50,0.31}{##1}}}
-\expandafter\def\csname PYG@tok@go\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.20,0.20,0.20}{##1}}}
-\expandafter\def\csname PYG@tok@kp\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
-\expandafter\def\csname PYG@tok@sx\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.78,0.36,0.04}{##1}}}
-\expandafter\def\csname PYG@tok@nf\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.02,0.16,0.49}{##1}}}
-\expandafter\def\csname PYG@tok@nv\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.73,0.38,0.84}{##1}}}
-\expandafter\def\csname PYG@tok@cs\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.25,0.50,0.56}{##1}}\def\PYG@bc##1{\setlength{\fboxsep}{0pt}\colorbox[rgb]{1.00,0.94,0.94}{\strut ##1}}}
-\expandafter\def\csname PYG@tok@nd\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.33,0.33,0.33}{##1}}}
-\expandafter\def\csname PYG@tok@s1\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
-\expandafter\def\csname PYG@tok@c1\endcsname{\let\PYG@it=\textit\def\PYG@tc##1{\textcolor[rgb]{0.25,0.50,0.56}{##1}}}
-\expandafter\def\csname PYG@tok@vc\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.73,0.38,0.84}{##1}}}
-\expandafter\def\csname PYG@tok@bp\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
-\expandafter\def\csname PYG@tok@sc\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
-\expandafter\def\csname PYG@tok@sd\endcsname{\let\PYG@it=\textit\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
-\expandafter\def\csname PYG@tok@s\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
 \expandafter\def\csname PYG@tok@mi\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.13,0.50,0.31}{##1}}}
+\expandafter\def\csname PYG@tok@cp\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
+\expandafter\def\csname PYG@tok@na\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
+\expandafter\def\csname PYG@tok@nd\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.33,0.33,0.33}{##1}}}
+\expandafter\def\csname PYG@tok@sd\endcsname{\let\PYG@it=\textit\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
 \expandafter\def\csname PYG@tok@no\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.38,0.68,0.84}{##1}}}
-\expandafter\def\csname PYG@tok@nl\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.13,0.44}{##1}}}
+\expandafter\def\csname PYG@tok@vi\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.73,0.38,0.84}{##1}}}
+\expandafter\def\csname PYG@tok@mo\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.13,0.50,0.31}{##1}}}
+\expandafter\def\csname PYG@tok@ge\endcsname{\let\PYG@it=\textit}
+\expandafter\def\csname PYG@tok@s1\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
+\expandafter\def\csname PYG@tok@sh\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
+\expandafter\def\csname PYG@tok@nf\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.02,0.16,0.49}{##1}}}
+\expandafter\def\csname PYG@tok@sb\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
+\expandafter\def\csname PYG@tok@nc\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.05,0.52,0.71}{##1}}}
+\expandafter\def\csname PYG@tok@nv\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.73,0.38,0.84}{##1}}}
+\expandafter\def\csname PYG@tok@ss\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.32,0.47,0.09}{##1}}}
+\expandafter\def\csname PYG@tok@kn\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
+\expandafter\def\csname PYG@tok@nn\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.05,0.52,0.71}{##1}}}
+\expandafter\def\csname PYG@tok@se\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
+\expandafter\def\csname PYG@tok@c\endcsname{\let\PYG@it=\textit\def\PYG@tc##1{\textcolor[rgb]{0.25,0.50,0.56}{##1}}}
+\expandafter\def\csname PYG@tok@w\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.73,0.73,0.73}{##1}}}
+\expandafter\def\csname PYG@tok@bp\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
+\expandafter\def\csname PYG@tok@gh\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.00,0.50}{##1}}}
+\expandafter\def\csname PYG@tok@gr\endcsname{\def\PYG@tc##1{\textcolor[rgb]{1.00,0.00,0.00}{##1}}}
+\expandafter\def\csname PYG@tok@vc\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.73,0.38,0.84}{##1}}}
+\expandafter\def\csname PYG@tok@kr\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
+\expandafter\def\csname PYG@tok@o\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PYG@tok@m\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.13,0.50,0.31}{##1}}}
+\expandafter\def\csname PYG@tok@sc\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
+\expandafter\def\csname PYG@tok@cm\endcsname{\let\PYG@it=\textit\def\PYG@tc##1{\textcolor[rgb]{0.25,0.50,0.56}{##1}}}
+\expandafter\def\csname PYG@tok@il\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.13,0.50,0.31}{##1}}}
+\expandafter\def\csname PYG@tok@gi\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.00,0.63,0.00}{##1}}}
 \expandafter\def\csname PYG@tok@gt\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.00,0.27,0.87}{##1}}}
 \expandafter\def\csname PYG@tok@sr\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.14,0.33,0.53}{##1}}}
-\expandafter\def\csname PYG@tok@o\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PYG@tok@kd\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
+\expandafter\def\csname PYG@tok@gs\endcsname{\let\PYG@bf=\textbf}
+\expandafter\def\csname PYG@tok@kt\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.56,0.13,0.00}{##1}}}
+\expandafter\def\csname PYG@tok@err\endcsname{\def\PYG@bc##1{\setlength{\fboxsep}{0pt}\fcolorbox[rgb]{1.00,0.00,0.00}{1,1,1}{\strut ##1}}}
 \expandafter\def\csname PYG@tok@nt\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.02,0.16,0.45}{##1}}}
-\expandafter\def\csname PYG@tok@il\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.13,0.50,0.31}{##1}}}
-\expandafter\def\csname PYG@tok@na\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
-\expandafter\def\csname PYG@tok@w\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.73,0.73,0.73}{##1}}}
-\expandafter\def\csname PYG@tok@sh\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
-\expandafter\def\csname PYG@tok@kn\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
-\expandafter\def\csname PYG@tok@ne\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
+\expandafter\def\csname PYG@tok@ni\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.84,0.33,0.22}{##1}}}
+\expandafter\def\csname PYG@tok@gd\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.63,0.00,0.00}{##1}}}
+\expandafter\def\csname PYG@tok@gu\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.50,0.00,0.50}{##1}}}
+\expandafter\def\csname PYG@tok@nl\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.13,0.44}{##1}}}
+\expandafter\def\csname PYG@tok@c1\endcsname{\let\PYG@it=\textit\def\PYG@tc##1{\textcolor[rgb]{0.25,0.50,0.56}{##1}}}
 \expandafter\def\csname PYG@tok@gp\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.78,0.36,0.04}{##1}}}
-\expandafter\def\csname PYG@tok@ge\endcsname{\let\PYG@it=\textit}
+\expandafter\def\csname PYG@tok@ne\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
+\expandafter\def\csname PYG@tok@kc\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
+\expandafter\def\csname PYG@tok@s2\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
+\expandafter\def\csname PYG@tok@go\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.20,0.20,0.20}{##1}}}
+\expandafter\def\csname PYG@tok@mh\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.13,0.50,0.31}{##1}}}
+\expandafter\def\csname PYG@tok@sx\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.78,0.36,0.04}{##1}}}
+\expandafter\def\csname PYG@tok@ow\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
+\expandafter\def\csname PYG@tok@cs\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.25,0.50,0.56}{##1}}\def\PYG@bc##1{\setlength{\fboxsep}{0pt}\colorbox[rgb]{1.00,0.94,0.94}{\strut ##1}}}
 \expandafter\def\csname PYG@tok@vg\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.73,0.38,0.84}{##1}}}
+\expandafter\def\csname PYG@tok@mf\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.13,0.50,0.31}{##1}}}
+\expandafter\def\csname PYG@tok@nb\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
+\expandafter\def\csname PYG@tok@k\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
+\expandafter\def\csname PYG@tok@s\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
+\expandafter\def\csname PYG@tok@kp\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
+\expandafter\def\csname PYG@tok@mb\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.13,0.50,0.31}{##1}}}
 
 \def\PYGZbs{\char`\\}
 \def\PYGZus{\char`\_}
@@ -131,82 +131,96 @@
 
 
 
+\chapter{Index}
+\label{index:index}\label{index:welcome-to-covertfs}\begin{itemize}
+\item {} 
+\DUspan{xref,std,std-ref}{genindex}
+
+\item {} 
+\DUspan{xref,std,std-ref}{modindex}
+
+\item {} 
+\DUspan{xref,std,std-ref}{search}
+
+\end{itemize}
+
+
 \chapter{Source Documentation}
 \label{index:source-documentation}
 
 \section{Command line main module}
-\label{main::doc}\label{main:command-line-main-module}\label{main:module-main}\index{main (module)}
+\label{console:command-line-main-module}\label{console::doc}\label{console:module-covertFS.console}\index{covertFS.console (module)}
 \emph{covertFS} is a command line based program created using the \emph{cmd} module.
 The \emph{main.py} file contains all commands available and additional helper
 functions.
-\index{Console (class in main)}
+\index{Console (class in covertFS.console)}
 
 \begin{fulllineitems}
-\phantomsection\label{main:main.Console}\pysiglinewithargsret{\strong{class }\code{main.}\bfcode{Console}}{\emph{online\_file\_store}, \emph{steg\_class}, \emph{encrypt\_class}, \emph{mountpoint}, \emph{url}, \emph{proxy}, \emph{cmdLoopUsed}, \emph{dbg=False}}{}
+\phantomsection\label{console:covertFS.console.Console}\pysiglinewithargsret{\strong{class }\code{covertFS.console.}\bfcode{Console}}{\emph{online\_file\_store}, \emph{steg\_class}, \emph{encrypt\_class}, \emph{mountpoint}, \emph{url}, \emph{proxy}, \emph{cmdLoopUsed}, \emph{dbg=False}}{}
 Bases: \code{cmd.Cmd}, \code{object}
-\index{add\_file\_to\_fs() (main.Console method)}
+\index{add\_file\_to\_fs() (covertFS.console.Console method)}
 
 \begin{fulllineitems}
-\phantomsection\label{main:main.Console.add_file_to_fs}\pysiglinewithargsret{\bfcode{add\_file\_to\_fs}}{\emph{fspath}, \emph{contents}}{}
+\phantomsection\label{console:covertFS.console.Console.add_file_to_fs}\pysiglinewithargsret{\bfcode{add\_file\_to\_fs}}{\emph{fspath}, \emph{contents}}{}
 Helper function to add a file to the fs.
 
 \end{fulllineitems}
 
-\index{background\_upload() (main.Console method)}
+\index{background\_upload() (covertFS.console.Console method)}
 
 \begin{fulllineitems}
-\phantomsection\label{main:main.Console.background_upload}\pysiglinewithargsret{\bfcode{background\_upload}}{}{}
+\phantomsection\label{console:covertFS.console.Console.background_upload}\pysiglinewithargsret{\bfcode{background\_upload}}{}{}
 \end{fulllineitems}
 
-\index{completedefault() (main.Console method)}
+\index{completedefault() (covertFS.console.Console method)}
 
 \begin{fulllineitems}
-\phantomsection\label{main:main.Console.completedefault}\pysiglinewithargsret{\bfcode{completedefault}}{\emph{text}, \emph{line}, \emph{begidx}, \emph{endidx}}{}
+\phantomsection\label{console:covertFS.console.Console.completedefault}\pysiglinewithargsret{\bfcode{completedefault}}{\emph{text}, \emph{line}, \emph{begidx}, \emph{endidx}}{}
 Allow Tab autocompletion of file names.
 
 \end{fulllineitems}
 
-\index{default() (main.Console method)}
+\index{default() (covertFS.console.Console method)}
 
 \begin{fulllineitems}
-\phantomsection\label{main:main.Console.default}\pysiglinewithargsret{\bfcode{default}}{\emph{line}}{}
+\phantomsection\label{console:covertFS.console.Console.default}\pysiglinewithargsret{\bfcode{default}}{\emph{line}}{}
 Called on an input line when the command prefix is not recognized.
 In that case we execute the line as Python code.
 
 \end{fulllineitems}
 
-\index{do\_EOF() (main.Console method)}
+\index{do\_EOF() (covertFS.console.Console method)}
 
 \begin{fulllineitems}
-\phantomsection\label{main:main.Console.do_EOF}\pysiglinewithargsret{\bfcode{do\_EOF}}{\emph{args}}{}
+\phantomsection\label{console:covertFS.console.Console.do_EOF}\pysiglinewithargsret{\bfcode{do\_EOF}}{\emph{args}}{}
 Exit on system end of file character
 
 \end{fulllineitems}
 
-\index{do\_cat() (main.Console method)}
+\index{do\_cat() (covertFS.console.Console method)}
 
 \begin{fulllineitems}
-\phantomsection\label{main:main.Console.do_cat}\pysiglinewithargsret{\bfcode{do\_cat}}{\emph{args}}{}
+\phantomsection\label{console:covertFS.console.Console.do_cat}\pysiglinewithargsret{\bfcode{do\_cat}}{\emph{args}}{}
 View the contents of a file in the file system.
 
 Use: cat {[}covert path{]}
 
 \end{fulllineitems}
 
-\index{do\_cd() (main.Console method)}
+\index{do\_cd() (covertFS.console.Console method)}
 
 \begin{fulllineitems}
-\phantomsection\label{main:main.Console.do_cd}\pysiglinewithargsret{\bfcode{do\_cd}}{\emph{args}}{}
+\phantomsection\label{console:covertFS.console.Console.do_cd}\pysiglinewithargsret{\bfcode{do\_cd}}{\emph{args}}{}
 Change directory to specified {[}path{]}
 
 Use: cd {[}path{]}*
 
 \end{fulllineitems}
 
-\index{do\_decodemsg() (main.Console method)}
+\index{do\_decodemsg() (covertFS.console.Console method)}
 
 \begin{fulllineitems}
-\phantomsection\label{main:main.Console.do_decodemsg}\pysiglinewithargsret{\bfcode{do\_decodemsg}}{\emph{in\_url}}{}
+\phantomsection\label{console:covertFS.console.Console.do_decodemsg}\pysiglinewithargsret{\bfcode{do\_decodemsg}}{\emph{in\_url}}{}
 Decode the message in an image.
 
 Returns the message in plain text.
@@ -215,20 +229,20 @@ decodeimage {[}download url{]}
 
 \end{fulllineitems}
 
-\index{do\_download() (main.Console method)}
+\index{do\_download() (covertFS.console.Console method)}
 
 \begin{fulllineitems}
-\phantomsection\label{main:main.Console.do_download}\pysiglinewithargsret{\bfcode{do\_download}}{\emph{args}}{}
+\phantomsection\label{console:covertFS.console.Console.do_download}\pysiglinewithargsret{\bfcode{do\_download}}{\emph{args}}{}
 Download a covert file to the local file system.
 
 Use: download {[}covert path{]} {[}local path{]}
 
 \end{fulllineitems}
 
-\index{do\_encodemsg() (main.Console method)}
+\index{do\_encodemsg() (covertFS.console.Console method)}
 
 \begin{fulllineitems}
-\phantomsection\label{main:main.Console.do_encodemsg}\pysiglinewithargsret{\bfcode{do\_encodemsg}}{\emph{message}}{}
+\phantomsection\label{console:covertFS.console.Console.do_encodemsg}\pysiglinewithargsret{\bfcode{do\_encodemsg}}{\emph{message}}{}
 Encode a message and upload to social media.
 
 Returns the url.
@@ -237,18 +251,18 @@ Use: encodemsg {[}message{]}
 
 \end{fulllineitems}
 
-\index{do\_exit() (main.Console method)}
+\index{do\_exit() (covertFS.console.Console method)}
 
 \begin{fulllineitems}
-\phantomsection\label{main:main.Console.do_exit}\pysiglinewithargsret{\bfcode{do\_exit}}{\emph{args}}{}
+\phantomsection\label{console:covertFS.console.Console.do_exit}\pysiglinewithargsret{\bfcode{do\_exit}}{\emph{args}}{}
 Exits from the console
 
 \end{fulllineitems}
 
-\index{do\_help() (main.Console method)}
+\index{do\_help() (covertFS.console.Console method)}
 
 \begin{fulllineitems}
-\phantomsection\label{main:main.Console.do_help}\pysiglinewithargsret{\bfcode{do\_help}}{\emph{args}}{}~\begin{description}
+\phantomsection\label{console:covertFS.console.Console.do_help}\pysiglinewithargsret{\bfcode{do\_help}}{\emph{args}}{}~\begin{description}
 \item[{Get help on commands}] \leavevmode
 `help' or `?' with no arguments prints the list of commands
 `help \textless{}command\textgreater{}' or `? \textless{}command\textgreater{}' gives help on \textless{}command\textgreater{}
@@ -257,227 +271,227 @@ Exits from the console
 
 \end{fulllineitems}
 
-\index{do\_hist() (main.Console method)}
+\index{do\_hist() (covertFS.console.Console method)}
 
 \begin{fulllineitems}
-\phantomsection\label{main:main.Console.do_hist}\pysiglinewithargsret{\bfcode{do\_hist}}{\emph{args}}{}
+\phantomsection\label{console:covertFS.console.Console.do_hist}\pysiglinewithargsret{\bfcode{do\_hist}}{\emph{args}}{}
 Print a list of commands that have been entered
 
 \end{fulllineitems}
 
-\index{do\_loadfs() (main.Console method)}
+\index{do\_loadfs() (covertFS.console.Console method)}
 
 \begin{fulllineitems}
-\phantomsection\label{main:main.Console.do_loadfs}\pysiglinewithargsret{\bfcode{do\_loadfs}}{\emph{url}}{}
+\phantomsection\label{console:covertFS.console.Console.do_loadfs}\pysiglinewithargsret{\bfcode{do\_loadfs}}{\emph{url}}{}
 Load a covert file system.
 
 Use: loadfs {[}url{]}
 
 \end{fulllineitems}
 
-\index{do\_ls() (main.Console method)}
+\index{do\_ls() (covertFS.console.Console method)}
 
 \begin{fulllineitems}
-\phantomsection\label{main:main.Console.do_ls}\pysiglinewithargsret{\bfcode{do\_ls}}{\emph{args}}{}
+\phantomsection\label{console:covertFS.console.Console.do_ls}\pysiglinewithargsret{\bfcode{do\_ls}}{\emph{args}}{}
 List items in directory
 
 Use: ls {[}path{]}*
 
 \end{fulllineitems}
 
-\index{do\_mkdir() (main.Console method)}
+\index{do\_mkdir() (covertFS.console.Console method)}
 
 \begin{fulllineitems}
-\phantomsection\label{main:main.Console.do_mkdir}\pysiglinewithargsret{\bfcode{do\_mkdir}}{\emph{args}}{}
+\phantomsection\label{console:covertFS.console.Console.do_mkdir}\pysiglinewithargsret{\bfcode{do\_mkdir}}{\emph{args}}{}
 Make a folder at the given path.
 
 Use: mkdir {[}path{]}
 
 \end{fulllineitems}
 
-\index{do\_mkfile() (main.Console method)}
+\index{do\_mkfile() (covertFS.console.Console method)}
 
 \begin{fulllineitems}
-\phantomsection\label{main:main.Console.do_mkfile}\pysiglinewithargsret{\bfcode{do\_mkfile}}{\emph{args}}{}
+\phantomsection\label{console:covertFS.console.Console.do_mkfile}\pysiglinewithargsret{\bfcode{do\_mkfile}}{\emph{args}}{}
 Create a text file with a message to the file system.
 
 Use: mkfile {[}path{]} {[}message{]}
 
 \end{fulllineitems}
 
-\index{do\_mount() (main.Console method)}
+\index{do\_mount() (covertFS.console.Console method)}
 
 \begin{fulllineitems}
-\phantomsection\label{main:main.Console.do_mount}\pysiglinewithargsret{\bfcode{do\_mount}}{\emph{args}}{}
+\phantomsection\label{console:covertFS.console.Console.do_mount}\pysiglinewithargsret{\bfcode{do\_mount}}{\emph{args}}{}
 \end{fulllineitems}
 
-\index{do\_newfs() (main.Console method)}
+\index{do\_newfs() (covertFS.console.Console method)}
 
 \begin{fulllineitems}
-\phantomsection\label{main:main.Console.do_newfs}\pysiglinewithargsret{\bfcode{do\_newfs}}{\emph{args}}{}
+\phantomsection\label{console:covertFS.console.Console.do_newfs}\pysiglinewithargsret{\bfcode{do\_newfs}}{\emph{args}}{}
 Create a covert file system, return the URL of the old fs.
 
 Use: newfs
 
 \end{fulllineitems}
 
-\index{do\_noproxy() (main.Console method)}
+\index{do\_noproxy() (covertFS.console.Console method)}
 
 \begin{fulllineitems}
-\phantomsection\label{main:main.Console.do_noproxy}\pysiglinewithargsret{\bfcode{do\_noproxy}}{\emph{args}}{}
+\phantomsection\label{console:covertFS.console.Console.do_noproxy}\pysiglinewithargsret{\bfcode{do\_noproxy}}{\emph{args}}{}
 Turns off the built-in proxy.
 
 Use: noproxy
 
 \end{fulllineitems}
 
-\index{do\_proxy() (main.Console method)}
+\index{do\_proxy() (covertFS.console.Console method)}
 
 \begin{fulllineitems}
-\phantomsection\label{main:main.Console.do_proxy}\pysiglinewithargsret{\bfcode{do\_proxy}}{\emph{args}}{}
+\phantomsection\label{console:covertFS.console.Console.do_proxy}\pysiglinewithargsret{\bfcode{do\_proxy}}{\emph{args}}{}
 Turns on the built-in proxy.
 
 Use: proxy
 
 \end{fulllineitems}
 
-\index{do\_rm() (main.Console method)}
+\index{do\_rm() (covertFS.console.Console method)}
 
 \begin{fulllineitems}
-\phantomsection\label{main:main.Console.do_rm}\pysiglinewithargsret{\bfcode{do\_rm}}{\emph{args}}{}
+\phantomsection\label{console:covertFS.console.Console.do_rm}\pysiglinewithargsret{\bfcode{do\_rm}}{\emph{args}}{}
 Remove a file from the covert file system.
 
 Use: rm {[}path{]}*
 
 \end{fulllineitems}
 
-\index{do\_rmdir() (main.Console method)}
+\index{do\_rmdir() (covertFS.console.Console method)}
 
 \begin{fulllineitems}
-\phantomsection\label{main:main.Console.do_rmdir}\pysiglinewithargsret{\bfcode{do\_rmdir}}{\emph{args}}{}
+\phantomsection\label{console:covertFS.console.Console.do_rmdir}\pysiglinewithargsret{\bfcode{do\_rmdir}}{\emph{args}}{}
 Remove a folder in the current directory.
 
 Use: rmdir {[}path{]}
 
 \end{fulllineitems}
 
-\index{do\_shell() (main.Console method)}
+\index{do\_shell() (covertFS.console.Console method)}
 
 \begin{fulllineitems}
-\phantomsection\label{main:main.Console.do_shell}\pysiglinewithargsret{\bfcode{do\_shell}}{\emph{args}}{}
+\phantomsection\label{console:covertFS.console.Console.do_shell}\pysiglinewithargsret{\bfcode{do\_shell}}{\emph{args}}{}
 Pass command to a system shell when line begins with `!'
 
 \end{fulllineitems}
 
-\index{do\_upload() (main.Console method)}
+\index{do\_upload() (covertFS.console.Console method)}
 
 \begin{fulllineitems}
-\phantomsection\label{main:main.Console.do_upload}\pysiglinewithargsret{\bfcode{do\_upload}}{\emph{args}}{}
+\phantomsection\label{console:covertFS.console.Console.do_upload}\pysiglinewithargsret{\bfcode{do\_upload}}{\emph{args}}{}
 Upload a local file to the covert file system.
 
 Use: upload {[}local path{]} {[}covert path{]}
 
 \end{fulllineitems}
 
-\index{do\_uploadfs() (main.Console method)}
+\index{do\_uploadfs() (covertFS.console.Console method)}
 
 \begin{fulllineitems}
-\phantomsection\label{main:main.Console.do_uploadfs}\pysiglinewithargsret{\bfcode{do\_uploadfs}}{\emph{args}}{}
+\phantomsection\label{console:covertFS.console.Console.do_uploadfs}\pysiglinewithargsret{\bfcode{do\_uploadfs}}{\emph{args}}{}
 Upload covert fileSystem to the web
 
 \end{fulllineitems}
 
-\index{down\_and\_set\_file() (main.Console method)}
+\index{down\_and\_set\_file() (covertFS.console.Console method)}
 
 \begin{fulllineitems}
-\phantomsection\label{main:main.Console.down_and_set_file}\pysiglinewithargsret{\bfcode{down\_and\_set\_file}}{\emph{filename}}{}
+\phantomsection\label{console:covertFS.console.Console.down_and_set_file}\pysiglinewithargsret{\bfcode{down\_and\_set\_file}}{\emph{filename}}{}
 Download a file. Put it in the filesystem.
 
 \end{fulllineitems}
 
-\index{download\_file() (main.Console method)}
+\index{download\_file() (covertFS.console.Console method)}
 
 \begin{fulllineitems}
-\phantomsection\label{main:main.Console.download_file}\pysiglinewithargsret{\bfcode{download\_file}}{\emph{url}}{}
+\phantomsection\label{console:covertFS.console.Console.download_file}\pysiglinewithargsret{\bfcode{download\_file}}{\emph{url}}{}
 \end{fulllineitems}
 
-\index{emptyline() (main.Console method)}
+\index{emptyline() (covertFS.console.Console method)}
 
 \begin{fulllineitems}
-\phantomsection\label{main:main.Console.emptyline}\pysiglinewithargsret{\bfcode{emptyline}}{}{}
+\phantomsection\label{console:covertFS.console.Console.emptyline}\pysiglinewithargsret{\bfcode{emptyline}}{}{}
 Do nothing on empty input line
 
 \end{fulllineitems}
 
-\index{init\_factory() (main.Console method)}
+\index{init\_factory() (covertFS.console.Console method)}
 
 \begin{fulllineitems}
-\phantomsection\label{main:main.Console.init_factory}\pysiglinewithargsret{\bfcode{init\_factory}}{}{}
+\phantomsection\label{console:covertFS.console.Console.init_factory}\pysiglinewithargsret{\bfcode{init\_factory}}{}{}
 \end{fulllineitems}
 
-\index{loadfs() (main.Console method)}
+\index{loadfs() (covertFS.console.Console method)}
 
 \begin{fulllineitems}
-\phantomsection\label{main:main.Console.loadfs}\pysiglinewithargsret{\bfcode{loadfs}}{}{}
+\phantomsection\label{console:covertFS.console.Console.loadfs}\pysiglinewithargsret{\bfcode{loadfs}}{}{}
 \end{fulllineitems}
 
-\index{open\_window() (main.Console method)}
+\index{open\_window() (covertFS.console.Console method)}
 
 \begin{fulllineitems}
-\phantomsection\label{main:main.Console.open_window}\pysiglinewithargsret{\bfcode{open\_window}}{}{}
+\phantomsection\label{console:covertFS.console.Console.open_window}\pysiglinewithargsret{\bfcode{open\_window}}{}{}
 \end{fulllineitems}
 
-\index{postcmd() (main.Console method)}
+\index{postcmd() (covertFS.console.Console method)}
 
 \begin{fulllineitems}
-\phantomsection\label{main:main.Console.postcmd}\pysiglinewithargsret{\bfcode{postcmd}}{\emph{stop}, \emph{line}}{}
+\phantomsection\label{console:covertFS.console.Console.postcmd}\pysiglinewithargsret{\bfcode{postcmd}}{\emph{stop}, \emph{line}}{}
 If you want to stop the console, return something that evaluates to true.
 If you want to do some post command processing, do it here.
 
 \end{fulllineitems}
 
-\index{postloop() (main.Console method)}
+\index{postloop() (covertFS.console.Console method)}
 
 \begin{fulllineitems}
-\phantomsection\label{main:main.Console.postloop}\pysiglinewithargsret{\bfcode{postloop}}{}{}
+\phantomsection\label{console:covertFS.console.Console.postloop}\pysiglinewithargsret{\bfcode{postloop}}{}{}
 Take care of any unfinished business.
 Despite the claims in the Cmd documentaion,
 Cmd.postloop() is not a stub.
 
 \end{fulllineitems}
 
-\index{precmd() (main.Console method)}
+\index{precmd() (covertFS.console.Console method)}
 
 \begin{fulllineitems}
-\phantomsection\label{main:main.Console.precmd}\pysiglinewithargsret{\bfcode{precmd}}{\emph{line}}{}
+\phantomsection\label{console:covertFS.console.Console.precmd}\pysiglinewithargsret{\bfcode{precmd}}{\emph{line}}{}
 This method is called after the line has been input but before
 it has been interpreted. If you want to modifdy the input line
 before execution (for example, variable substitution) do it here.
 
 \end{fulllineitems}
 
-\index{preloop() (main.Console method)}
+\index{preloop() (covertFS.console.Console method)}
 
 \begin{fulllineitems}
-\phantomsection\label{main:main.Console.preloop}\pysiglinewithargsret{\bfcode{preloop}}{}{}
+\phantomsection\label{console:covertFS.console.Console.preloop}\pysiglinewithargsret{\bfcode{preloop}}{}{}
 Initialization before prompting user for commands.
 Despite the claims in the Cmd documentaion,
 Cmd.preloop() is not a stub.
 
 \end{fulllineitems}
 
-\index{san\_file() (main.Console method)}
+\index{san\_file() (covertFS.console.Console method)}
 
 \begin{fulllineitems}
-\phantomsection\label{main:main.Console.san_file}\pysiglinewithargsret{\bfcode{san\_file}}{\emph{file\_contents}}{}
+\phantomsection\label{console:covertFS.console.Console.san_file}\pysiglinewithargsret{\bfcode{san\_file}}{\emph{file\_contents}}{}
 Sanitize file before 1)viewing contents or 2)putting on host OS
 
 \end{fulllineitems}
 
-\index{upload\_file() (main.Console method)}
+\index{upload\_file() (covertFS.console.Console method)}
 
 \begin{fulllineitems}
-\phantomsection\label{main:main.Console.upload_file}\pysiglinewithargsret{\bfcode{upload\_file}}{\emph{contents}}{}
+\phantomsection\label{console:covertFS.console.Console.upload_file}\pysiglinewithargsret{\bfcode{upload\_file}}{\emph{contents}}{}
 Helper function to upload file, return the download url.
 
 \end{fulllineitems}
@@ -485,28 +499,34 @@ Helper function to upload file, return the download url.
 
 \end{fulllineitems}
 
-\index{proxy\_parser() (in module main)}
+\index{main() (in module covertFS.console)}
 
 \begin{fulllineitems}
-\phantomsection\label{main:main.proxy_parser}\pysiglinewithargsret{\code{main.}\bfcode{proxy\_parser}}{\emph{proxyString=None}}{}
+\phantomsection\label{console:covertFS.console.main}\pysiglinewithargsret{\code{covertFS.console.}\bfcode{main}}{}{}
 \end{fulllineitems}
 
-\index{proxy\_test() (in module main)}
+\index{proxy\_parser() (in module covertFS.console)}
 
 \begin{fulllineitems}
-\phantomsection\label{main:main.proxy_test}\pysiglinewithargsret{\code{main.}\bfcode{proxy\_test}}{\emph{proxyL}}{}
+\phantomsection\label{console:covertFS.console.proxy_parser}\pysiglinewithargsret{\code{covertFS.console.}\bfcode{proxy\_parser}}{\emph{proxyString=None}}{}
+\end{fulllineitems}
+
+\index{proxy\_test() (in module covertFS.console)}
+
+\begin{fulllineitems}
+\phantomsection\label{console:covertFS.console.proxy_test}\pysiglinewithargsret{\code{covertFS.console.}\bfcode{proxy\_test}}{\emph{proxyL}}{}
 \end{fulllineitems}
 
 
 
 \section{File\_System package}
-\label{File_System:file-system-package}\label{File_System::doc}
+\label{File_System::doc}\label{File_System:file-system-package}
 
 \subsection{Submodules}
 \label{File_System:submodules}
 
 \subsubsection{covertfs module}
-\label{File_System:module-File_System.covertfs}\label{File_System:covertfs-module}\index{File\_System.covertfs (module)}
+\label{File_System:module-covertFS.File_System.covertfs}\label{File_System:covertfs-module}\index{covertFS.File\_System.covertfs (module)}
 The \emph{covertfs} module extends the \emph{pyfilesystem} package, using the \emph{MemoryFS}
 file system.
 The MemoryFS file system stores all directory and file info in main memory,
@@ -518,33 +538,33 @@ module.
 The covertfs module includes CovertFile, a subclass of MemoryFile, CovertEntry,
 a subclass of MemoryEntry, and CovertFS, a subclass of MemoryFS. CovertFS uses
 CovertFile as the file factory, and CovertEntry as the entry factory.
-\index{CovertEntry (class in File\_System.covertfs)}
+\index{CovertEntry (class in covertFS.File\_System.covertfs)}
 
 \begin{fulllineitems}
-\phantomsection\label{File_System:File_System.covertfs.CovertEntry}\pysiglinewithargsret{\strong{class }\code{File\_System.covertfs.}\bfcode{CovertEntry}}{\emph{type}, \emph{name}, \emph{contents=None}}{}
-Bases: \code{File\_System.memoryfs.DirEntry}
+\phantomsection\label{File_System:covertFS.File_System.covertfs.CovertEntry}\pysiglinewithargsret{\strong{class }\code{covertFS.File\_System.covertfs.}\bfcode{CovertEntry}}{\emph{type}, \emph{name}, \emph{contents=None}}{}
+Bases: \code{covertFS.File\_System.memoryfs.DirEntry}
 
 \end{fulllineitems}
 
-\index{CovertFS (class in File\_System.covertfs)}
+\index{CovertFS (class in covertFS.File\_System.covertfs)}
 
 \begin{fulllineitems}
-\phantomsection\label{File_System:File_System.covertfs.CovertFS}\pysigline{\strong{class }\code{File\_System.covertfs.}\bfcode{CovertFS}}
-Bases: \code{File\_System.memoryfs.MemoryFS}
-\index{addfile() (File\_System.covertfs.CovertFS method)}
+\phantomsection\label{File_System:covertFS.File_System.covertfs.CovertFS}\pysigline{\strong{class }\code{covertFS.File\_System.covertfs.}\bfcode{CovertFS}}
+Bases: \code{covertFS.File\_System.memoryfs.MemoryFS}
+\index{addfile() (covertFS.File\_System.covertfs.CovertFS method)}
 
 \begin{fulllineitems}
-\phantomsection\label{File_System:File_System.covertfs.CovertFS.addfile}\pysiglinewithargsret{\bfcode{addfile}}{\emph{path}, \emph{contents}}{}
+\phantomsection\label{File_System:covertFS.File_System.covertfs.CovertFS.addfile}\pysiglinewithargsret{\bfcode{addfile}}{\emph{path}, \emph{contents}}{}
 Add a file, with given contents, to given path.
 Error if path is a file, directory, or if parent directory
 is not present.
 
 \end{fulllineitems}
 
-\index{cd() (File\_System.covertfs.CovertFS method)}
+\index{cd() (covertFS.File\_System.covertfs.CovertFS method)}
 
 \begin{fulllineitems}
-\phantomsection\label{File_System:File_System.covertfs.CovertFS.cd}\pysiglinewithargsret{\bfcode{cd}}{\emph{path='/'}}{}
+\phantomsection\label{File_System:covertFS.File_System.covertfs.CovertFS.cd}\pysiglinewithargsret{\bfcode{cd}}{\emph{path='/'}}{}
 Changes current directory. Superclass has no concept of
 current directory (all calls are made from root dir), so
 this method is purely local.
@@ -552,19 +572,19 @@ Error if given path does not exist, or is a file.
 
 \end{fulllineitems}
 
-\index{check\_parent\_dir() (File\_System.covertfs.CovertFS method)}
+\index{check\_parent\_dir() (covertFS.File\_System.covertfs.CovertFS method)}
 
 \begin{fulllineitems}
-\phantomsection\label{File_System:File_System.covertfs.CovertFS.check_parent_dir}\pysiglinewithargsret{\bfcode{check\_parent\_dir}}{\emph{path}}{}
+\phantomsection\label{File_System:covertFS.File_System.covertfs.CovertFS.check_parent_dir}\pysiglinewithargsret{\bfcode{check\_parent\_dir}}{\emph{path}}{}
 Checks to ensure parent directory is present before
 attempting to add a file to it.
 
 \end{fulllineitems}
 
-\index{loadfs() (File\_System.covertfs.CovertFS method)}
+\index{loadfs() (covertFS.File\_System.covertfs.CovertFS method)}
 
 \begin{fulllineitems}
-\phantomsection\label{File_System:File_System.covertfs.CovertFS.loadfs}\pysiglinewithargsret{\bfcode{loadfs}}{\emph{fsstring}}{}
+\phantomsection\label{File_System:covertFS.File_System.covertfs.CovertFS.loadfs}\pysiglinewithargsret{\bfcode{loadfs}}{\emph{fsstring}}{}
 Iterates through a string that represents the filesystem
 (either pulled from online, or given as a test string),
 makes necessary directories, and creates necessary files
@@ -572,48 +592,48 @@ makes necessary directories, and creates necessary files
 
 \end{fulllineitems}
 
-\index{ls() (File\_System.covertfs.CovertFS method)}
+\index{ls() (covertFS.File\_System.covertfs.CovertFS method)}
 
 \begin{fulllineitems}
-\phantomsection\label{File_System:File_System.covertfs.CovertFS.ls}\pysiglinewithargsret{\bfcode{ls}}{\emph{path=None}}{}
+\phantomsection\label{File_System:covertFS.File_System.covertfs.CovertFS.ls}\pysiglinewithargsret{\bfcode{ls}}{\emph{path=None}}{}
 Returns a list of the files and directories in the given
 path, or the current directory if no path is given.
 Error if given path does not exist, or is a file.
 
 \end{fulllineitems}
 
-\index{mkdir() (File\_System.covertfs.CovertFS method)}
+\index{mkdir() (covertFS.File\_System.covertfs.CovertFS method)}
 
 \begin{fulllineitems}
-\phantomsection\label{File_System:File_System.covertfs.CovertFS.mkdir}\pysiglinewithargsret{\bfcode{mkdir}}{\emph{path}}{}
+\phantomsection\label{File_System:covertFS.File_System.covertfs.CovertFS.mkdir}\pysiglinewithargsret{\bfcode{mkdir}}{\emph{path}}{}
 Makes a new directory at given path.
 Error if path is a directory already, or a file.
 
 \end{fulllineitems}
 
-\index{rm() (File\_System.covertfs.CovertFS method)}
+\index{rm() (covertFS.File\_System.covertfs.CovertFS method)}
 
 \begin{fulllineitems}
-\phantomsection\label{File_System:File_System.covertfs.CovertFS.rm}\pysiglinewithargsret{\bfcode{rm}}{\emph{path}}{}
+\phantomsection\label{File_System:covertFS.File_System.covertfs.CovertFS.rm}\pysiglinewithargsret{\bfcode{rm}}{\emph{path}}{}
 Removes file at given path.
 Error if no such file.
 
 \end{fulllineitems}
 
-\index{rmdir() (File\_System.covertfs.CovertFS method)}
+\index{rmdir() (covertFS.File\_System.covertfs.CovertFS method)}
 
 \begin{fulllineitems}
-\phantomsection\label{File_System:File_System.covertfs.CovertFS.rmdir}\pysiglinewithargsret{\bfcode{rmdir}}{\emph{path=None}, \emph{force=False}}{}
+\phantomsection\label{File_System:covertFS.File_System.covertfs.CovertFS.rmdir}\pysiglinewithargsret{\bfcode{rmdir}}{\emph{path=None}, \emph{force=False}}{}
 Removes empty directory at given path, or non-empty
 directory if force option is given.
 Error if path is not a directory.
 
 \end{fulllineitems}
 
-\index{sanitize\_path() (File\_System.covertfs.CovertFS method)}
+\index{sanitize\_path() (covertFS.File\_System.covertfs.CovertFS method)}
 
 \begin{fulllineitems}
-\phantomsection\label{File_System:File_System.covertfs.CovertFS.sanitize_path}\pysiglinewithargsret{\bfcode{sanitize\_path}}{\emph{path=None}}{}
+\phantomsection\label{File_System:covertFS.File_System.covertfs.CovertFS.sanitize_path}\pysiglinewithargsret{\bfcode{sanitize\_path}}{\emph{path=None}}{}
 This method takes a user-input path and makes it
 method-readable, by adding the current path to the
 front (if the desired path doesn't start with /) or
@@ -621,27 +641,27 @@ returning the root path if no path is given.
 
 \end{fulllineitems}
 
-\index{save() (File\_System.covertfs.CovertFS method)}
+\index{save() (covertFS.File\_System.covertfs.CovertFS method)}
 
 \begin{fulllineitems}
-\phantomsection\label{File_System:File_System.covertfs.CovertFS.save}\pysiglinewithargsret{\bfcode{save}}{}{}
+\phantomsection\label{File_System:covertFS.File_System.covertfs.CovertFS.save}\pysiglinewithargsret{\bfcode{save}}{}{}
 Turns the entire filesystem into a string to be uploaded.
 Returns that string.
 
 \end{fulllineitems}
 
-\index{setcreate() (File\_System.covertfs.CovertFS method)}
+\index{setcreate() (covertFS.File\_System.covertfs.CovertFS method)}
 
 \begin{fulllineitems}
-\phantomsection\label{File_System:File_System.covertfs.CovertFS.setcreate}\pysiglinewithargsret{\bfcode{setcreate}}{\emph{path}, \emph{timeIn=None}}{}
+\phantomsection\label{File_System:covertFS.File_System.covertfs.CovertFS.setcreate}\pysiglinewithargsret{\bfcode{setcreate}}{\emph{path}, \emph{timeIn=None}}{}
 Sets the creation time of a file or directory. Used when the filesystem is loaded from online repository
 
 \end{fulllineitems}
 
-\index{settimes() (File\_System.covertfs.CovertFS method)}
+\index{settimes() (covertFS.File\_System.covertfs.CovertFS method)}
 
 \begin{fulllineitems}
-\phantomsection\label{File_System:File_System.covertfs.CovertFS.settimes}\pysiglinewithargsret{\bfcode{settimes}}{\emph{path}, \emph{accessed\_time=None}, \emph{modified\_time=None}}{}
+\phantomsection\label{File_System:covertFS.File_System.covertfs.CovertFS.settimes}\pysiglinewithargsret{\bfcode{settimes}}{\emph{path}, \emph{accessed\_time=None}, \emph{modified\_time=None}}{}
 Sets accessed and modified times of a file or directory after file operations take place
 
 \end{fulllineitems}
@@ -649,18 +669,18 @@ Sets accessed and modified times of a file or directory after file operations ta
 
 \end{fulllineitems}
 
-\index{CovertFile (class in File\_System.covertfs)}
+\index{CovertFile (class in covertFS.File\_System.covertfs)}
 
 \begin{fulllineitems}
-\phantomsection\label{File_System:File_System.covertfs.CovertFile}\pysiglinewithargsret{\strong{class }\code{File\_System.covertfs.}\bfcode{CovertFile}}{\emph{path}, \emph{memory\_fs}, \emph{mem\_file}, \emph{mode}, \emph{lock}}{}
-Bases: \code{File\_System.memoryfs.MemoryFile}
+\phantomsection\label{File_System:covertFS.File_System.covertfs.CovertFile}\pysiglinewithargsret{\strong{class }\code{covertFS.File\_System.covertfs.}\bfcode{CovertFile}}{\emph{path}, \emph{memory\_fs}, \emph{mem\_file}, \emph{mode}, \emph{lock}}{}
+Bases: \code{covertFS.File\_System.memoryfs.MemoryFile}
 
 \end{fulllineitems}
 
 
 
 \subsubsection{memfuse module}
-\label{File_System:memfuse-module}\label{File_System:module-File_System.memfuse}\index{File\_System.memfuse (module)}
+\label{File_System:module-covertFS.File_System.memfuse}\label{File_System:memfuse-module}\index{covertFS.File\_System.memfuse (module)}
 The \emph{memfuse} module extends the \emph{pyfuse} package, specifically the
 \emph{Operations} module.
 `Operations' is linked to the Unix FUSE package with python ctypes, to make the
@@ -669,153 +689,153 @@ module extends all necessary file system operations in a way that is accessible
 by FUSE, effectively linking the CovertFS class to the FUSE package. When
 mounted (using FUSE) onto the native Linux file system, memfuse provides access
 to all files and directories in the CovertFS file system.
-\index{MemFS (class in File\_System.memfuse)}
+\index{MemFS (class in covertFS.File\_System.memfuse)}
 
 \begin{fulllineitems}
-\phantomsection\label{File_System:File_System.memfuse.MemFS}\pysiglinewithargsret{\strong{class }\code{File\_System.memfuse.}\bfcode{MemFS}}{\emph{memoryfs}}{}
-Bases: \code{File\_System.fuse.LoggingMixIn}, \code{File\_System.fuse.Operations}
+\phantomsection\label{File_System:covertFS.File_System.memfuse.MemFS}\pysiglinewithargsret{\strong{class }\code{covertFS.File\_System.memfuse.}\bfcode{MemFS}}{\emph{memoryfs}}{}
+Bases: \code{covertFS.File\_System.fuse.LoggingMixIn}, \code{covertFS.File\_System.fuse.Operations}
 
 Subclass of operations. Links all necessary filesystem operations to CovertFS
-\index{create() (File\_System.memfuse.MemFS method)}
+\index{create() (covertFS.File\_System.memfuse.MemFS method)}
 
 \begin{fulllineitems}
-\phantomsection\label{File_System:File_System.memfuse.MemFS.create}\pysiglinewithargsret{\bfcode{create}}{\emph{path}, \emph{mode}}{}
+\phantomsection\label{File_System:covertFS.File_System.memfuse.MemFS.create}\pysiglinewithargsret{\bfcode{create}}{\emph{path}, \emph{mode}}{}
 Makes a new file in mounted filesystem
 
 \end{fulllineitems}
 
-\index{flush() (File\_System.memfuse.MemFS method)}
+\index{flush() (covertFS.File\_System.memfuse.MemFS method)}
 
 \begin{fulllineitems}
-\phantomsection\label{File_System:File_System.memfuse.MemFS.flush}\pysiglinewithargsret{\bfcode{flush}}{\emph{path}, \emph{fh}}{}
+\phantomsection\label{File_System:covertFS.File_System.memfuse.MemFS.flush}\pysiglinewithargsret{\bfcode{flush}}{\emph{path}, \emph{fh}}{}
 Writes all attributes and extra attributes of a file after it is done being accessed
 
 \end{fulllineitems}
 
-\index{fsync() (File\_System.memfuse.MemFS method)}
+\index{fsync() (covertFS.File\_System.memfuse.MemFS method)}
 
 \begin{fulllineitems}
-\phantomsection\label{File_System:File_System.memfuse.MemFS.fsync}\pysiglinewithargsret{\bfcode{fsync}}{\emph{path}, \emph{fdatasync}, \emph{fh}}{}
+\phantomsection\label{File_System:covertFS.File_System.memfuse.MemFS.fsync}\pysiglinewithargsret{\bfcode{fsync}}{\emph{path}, \emph{fdatasync}, \emph{fh}}{}
 Same as flush
 
 \end{fulllineitems}
 
-\index{getattr() (File\_System.memfuse.MemFS method)}
+\index{getattr() (covertFS.File\_System.memfuse.MemFS method)}
 
 \begin{fulllineitems}
-\phantomsection\label{File_System:File_System.memfuse.MemFS.getattr}\pysiglinewithargsret{\bfcode{getattr}}{\emph{path}, \emph{fh=None}}{}
+\phantomsection\label{File_System:covertFS.File_System.memfuse.MemFS.getattr}\pysiglinewithargsret{\bfcode{getattr}}{\emph{path}, \emph{fh=None}}{}
 Function used extensively by the OS package FUSE for interaction with system calls
 
 \end{fulllineitems}
 
-\index{getxattr() (File\_System.memfuse.MemFS method)}
+\index{getxattr() (covertFS.File\_System.memfuse.MemFS method)}
 
 \begin{fulllineitems}
-\phantomsection\label{File_System:File_System.memfuse.MemFS.getxattr}\pysiglinewithargsret{\bfcode{getxattr}}{\emph{path}, \emph{name}, \emph{position=0}}{}
+\phantomsection\label{File_System:covertFS.File_System.memfuse.MemFS.getxattr}\pysiglinewithargsret{\bfcode{getxattr}}{\emph{path}, \emph{name}, \emph{position=0}}{}
 Returns an additional attribute of a file (such as SELinux information)
 
 \end{fulllineitems}
 
-\index{listxattr() (File\_System.memfuse.MemFS method)}
+\index{listxattr() (covertFS.File\_System.memfuse.MemFS method)}
 
 \begin{fulllineitems}
-\phantomsection\label{File_System:File_System.memfuse.MemFS.listxattr}\pysiglinewithargsret{\bfcode{listxattr}}{\emph{path}}{}
+\phantomsection\label{File_System:covertFS.File_System.memfuse.MemFS.listxattr}\pysiglinewithargsret{\bfcode{listxattr}}{\emph{path}}{}
 Lists extra attributes of a file
 
 \end{fulllineitems}
 
-\index{mkdir() (File\_System.memfuse.MemFS method)}
+\index{mkdir() (covertFS.File\_System.memfuse.MemFS method)}
 
 \begin{fulllineitems}
-\phantomsection\label{File_System:File_System.memfuse.MemFS.mkdir}\pysiglinewithargsret{\bfcode{mkdir}}{\emph{path}, \emph{mode}}{}
+\phantomsection\label{File_System:covertFS.File_System.memfuse.MemFS.mkdir}\pysiglinewithargsret{\bfcode{mkdir}}{\emph{path}, \emph{mode}}{}
 Make a directory in mounted filesystem
 
 \end{fulllineitems}
 
-\index{open() (File\_System.memfuse.MemFS method)}
+\index{open() (covertFS.File\_System.memfuse.MemFS method)}
 
 \begin{fulllineitems}
-\phantomsection\label{File_System:File_System.memfuse.MemFS.open}\pysiglinewithargsret{\bfcode{open}}{\emph{path}, \emph{flags}}{}
+\phantomsection\label{File_System:covertFS.File_System.memfuse.MemFS.open}\pysiglinewithargsret{\bfcode{open}}{\emph{path}, \emph{flags}}{}
 Opens the file at a given path in mounted filesystem
 
 \end{fulllineitems}
 
-\index{read() (File\_System.memfuse.MemFS method)}
+\index{read() (covertFS.File\_System.memfuse.MemFS method)}
 
 \begin{fulllineitems}
-\phantomsection\label{File_System:File_System.memfuse.MemFS.read}\pysiglinewithargsret{\bfcode{read}}{\emph{path}, \emph{size}, \emph{offset}, \emph{fh}}{}
+\phantomsection\label{File_System:covertFS.File_System.memfuse.MemFS.read}\pysiglinewithargsret{\bfcode{read}}{\emph{path}, \emph{size}, \emph{offset}, \emph{fh}}{}
 Reads the contents of a file and returns the requested number of bytes
 
 \end{fulllineitems}
 
-\index{readdir() (File\_System.memfuse.MemFS method)}
+\index{readdir() (covertFS.File\_System.memfuse.MemFS method)}
 
 \begin{fulllineitems}
-\phantomsection\label{File_System:File_System.memfuse.MemFS.readdir}\pysiglinewithargsret{\bfcode{readdir}}{\emph{path}, \emph{fh}}{}
+\phantomsection\label{File_System:covertFS.File_System.memfuse.MemFS.readdir}\pysiglinewithargsret{\bfcode{readdir}}{\emph{path}, \emph{fh}}{}
 Same as listing the contents of a directory
 
 \end{fulllineitems}
 
-\index{removexattr() (File\_System.memfuse.MemFS method)}
+\index{removexattr() (covertFS.File\_System.memfuse.MemFS method)}
 
 \begin{fulllineitems}
-\phantomsection\label{File_System:File_System.memfuse.MemFS.removexattr}\pysiglinewithargsret{\bfcode{removexattr}}{\emph{path}, \emph{name}}{}
+\phantomsection\label{File_System:covertFS.File_System.memfuse.MemFS.removexattr}\pysiglinewithargsret{\bfcode{removexattr}}{\emph{path}, \emph{name}}{}
 Removes the extra attribute from file
 
 \end{fulllineitems}
 
-\index{rename() (File\_System.memfuse.MemFS method)}
+\index{rename() (covertFS.File\_System.memfuse.MemFS method)}
 
 \begin{fulllineitems}
-\phantomsection\label{File_System:File_System.memfuse.MemFS.rename}\pysiglinewithargsret{\bfcode{rename}}{\emph{old}, \emph{new}}{}
+\phantomsection\label{File_System:covertFS.File_System.memfuse.MemFS.rename}\pysiglinewithargsret{\bfcode{rename}}{\emph{old}, \emph{new}}{}
 Rename a file or directory in a mounted filesystem
 
 \end{fulllineitems}
 
-\index{rmdir() (File\_System.memfuse.MemFS method)}
+\index{rmdir() (covertFS.File\_System.memfuse.MemFS method)}
 
 \begin{fulllineitems}
-\phantomsection\label{File_System:File_System.memfuse.MemFS.rmdir}\pysiglinewithargsret{\bfcode{rmdir}}{\emph{path}}{}
+\phantomsection\label{File_System:covertFS.File_System.memfuse.MemFS.rmdir}\pysiglinewithargsret{\bfcode{rmdir}}{\emph{path}}{}
 Removes a directory from mounted filesystem
 
 \end{fulllineitems}
 
-\index{setxattr() (File\_System.memfuse.MemFS method)}
+\index{setxattr() (covertFS.File\_System.memfuse.MemFS method)}
 
 \begin{fulllineitems}
-\phantomsection\label{File_System:File_System.memfuse.MemFS.setxattr}\pysiglinewithargsret{\bfcode{setxattr}}{\emph{path}, \emph{name}, \emph{value}, \emph{options}, \emph{position=0}}{}
+\phantomsection\label{File_System:covertFS.File_System.memfuse.MemFS.setxattr}\pysiglinewithargsret{\bfcode{setxattr}}{\emph{path}, \emph{name}, \emph{value}, \emph{options}, \emph{position=0}}{}
 Sets the extra attribute to given value
 
 \end{fulllineitems}
 
-\index{truncate() (File\_System.memfuse.MemFS method)}
+\index{truncate() (covertFS.File\_System.memfuse.MemFS method)}
 
 \begin{fulllineitems}
-\phantomsection\label{File_System:File_System.memfuse.MemFS.truncate}\pysiglinewithargsret{\bfcode{truncate}}{\emph{path}, \emph{length}, \emph{fh=None}}{}
+\phantomsection\label{File_System:covertFS.File_System.memfuse.MemFS.truncate}\pysiglinewithargsret{\bfcode{truncate}}{\emph{path}, \emph{length}, \emph{fh=None}}{}
 Shortens the size of a file by a certain amount
 
 \end{fulllineitems}
 
-\index{unlink() (File\_System.memfuse.MemFS method)}
+\index{unlink() (covertFS.File\_System.memfuse.MemFS method)}
 
 \begin{fulllineitems}
-\phantomsection\label{File_System:File_System.memfuse.MemFS.unlink}\pysiglinewithargsret{\bfcode{unlink}}{\emph{path}}{}
+\phantomsection\label{File_System:covertFS.File_System.memfuse.MemFS.unlink}\pysiglinewithargsret{\bfcode{unlink}}{\emph{path}}{}
 Removes a file from the mounted filesystem
 
 \end{fulllineitems}
 
-\index{utimens() (File\_System.memfuse.MemFS method)}
+\index{utimens() (covertFS.File\_System.memfuse.MemFS method)}
 
 \begin{fulllineitems}
-\phantomsection\label{File_System:File_System.memfuse.MemFS.utimens}\pysiglinewithargsret{\bfcode{utimens}}{\emph{path}, \emph{times=None}}{}
+\phantomsection\label{File_System:covertFS.File_System.memfuse.MemFS.utimens}\pysiglinewithargsret{\bfcode{utimens}}{\emph{path}, \emph{times=None}}{}
 Changes the modified and access times of a file in the mounted filesystem
 
 \end{fulllineitems}
 
-\index{write() (File\_System.memfuse.MemFS method)}
+\index{write() (covertFS.File\_System.memfuse.MemFS method)}
 
 \begin{fulllineitems}
-\phantomsection\label{File_System:File_System.memfuse.MemFS.write}\pysiglinewithargsret{\bfcode{write}}{\emph{path}, \emph{data}, \emph{offset}, \emph{fh}}{}
+\phantomsection\label{File_System:covertFS.File_System.memfuse.MemFS.write}\pysiglinewithargsret{\bfcode{write}}{\emph{path}, \emph{data}, \emph{offset}, \emph{fh}}{}
 Writes the provided data to a file in the mounted filesystem
 
 \end{fulllineitems}
@@ -823,10 +843,10 @@ Writes the provided data to a file in the mounted filesystem
 
 \end{fulllineitems}
 
-\index{mount() (in module File\_System.memfuse)}
+\index{mount() (in module covertFS.File\_System.memfuse)}
 
 \begin{fulllineitems}
-\phantomsection\label{File_System:File_System.memfuse.mount}\pysiglinewithargsret{\code{File\_System.memfuse.}\bfcode{mount}}{\emph{memfs}, \emph{mountpoint}, \emph{db=False}}{}
+\phantomsection\label{File_System:covertFS.File_System.memfuse.mount}\pysiglinewithargsret{\code{covertFS.File\_System.memfuse.}\bfcode{mount}}{\emph{memfs}, \emph{mountpoint}, \emph{db=False}}{}
 Actually mounts the given memoryfs onto the given mountpoint
 
 \end{fulllineitems}
@@ -834,23 +854,23 @@ Actually mounts the given memoryfs onto the given mountpoint
 
 
 \section{Image\_Manipulation package}
-\label{Image_Manipulation::doc}\label{Image_Manipulation:image-manipulation-package}
+\label{Image_Manipulation:image-manipulation-package}\label{Image_Manipulation::doc}
 
 \subsection{Submodules}
 \label{Image_Manipulation:submodules}
 
 \subsubsection{lsbsteg module}
-\label{Image_Manipulation:lsbsteg-module}\label{Image_Manipulation:module-Image_Manipulation.lsbsteg}\index{Image\_Manipulation.lsbsteg (module)}
+\label{Image_Manipulation:module-covertFS.Image_Manipulation.lsbsteg}\label{Image_Manipulation:lsbsteg-module}\index{covertFS.Image\_Manipulation.lsbsteg (module)}
 The basic idea of the algorithm is to take each individual bit of the message
 and set it as the least significant bit of each component of each pixel of the
 image. A pixel has Red, Green, Blue components and sometimes an Alpha
 component. Because the values of these components change very little if the
 least significant bit is changed, the color difference is not particularly
 noticeable, if at all.
-\index{Steg (class in Image\_Manipulation.lsbsteg)}
+\index{Steg (class in covertFS.Image\_Manipulation.lsbsteg)}
 
 \begin{fulllineitems}
-\phantomsection\label{Image_Manipulation:Image_Manipulation.lsbsteg.Steg}\pysiglinewithargsret{\strong{class }\code{Image\_Manipulation.lsbsteg.}\bfcode{Steg}}{\emph{proxy}, \emph{online\_file\_store}}{}
+\phantomsection\label{Image_Manipulation:covertFS.Image_Manipulation.lsbsteg.Steg}\pysiglinewithargsret{\strong{class }\code{covertFS.Image\_Manipulation.lsbsteg.}\bfcode{Steg}}{\emph{proxy}, \emph{online\_file\_store}}{}
 Bases: \code{object}
 
 Documentation for the lsbsteg module.
@@ -860,20 +880,20 @@ encoded image using the desired social media site.
 DecodeFromURL takes a url from the social media site, downloads the image,
 and then decodes the image. Decode takes a BytesIO object and returns a
 binary string containing the binary of the decoded message.
-\index{decode() (Image\_Manipulation.lsbsteg.Steg method)}
+\index{decode() (covertFS.Image\_Manipulation.lsbsteg.Steg method)}
 
 \begin{fulllineitems}
-\phantomsection\label{Image_Manipulation:Image_Manipulation.lsbsteg.Steg.decode}\pysiglinewithargsret{\bfcode{decode}}{\emph{img}}{}
+\phantomsection\label{Image_Manipulation:covertFS.Image_Manipulation.lsbsteg.Steg.decode}\pysiglinewithargsret{\bfcode{decode}}{\emph{img}}{}
 The decode method decodes the message from an image.
 This method takes an image as a BytesIO object and returns a bytearray
 object containing the decoded data.
 
 \end{fulllineitems}
 
-\index{decodeImageFromURL() (Image\_Manipulation.lsbsteg.Steg method)}
+\index{decodeImageFromURL() (covertFS.Image\_Manipulation.lsbsteg.Steg method)}
 
 \begin{fulllineitems}
-\phantomsection\label{Image_Manipulation:Image_Manipulation.lsbsteg.Steg.decodeImageFromURL}\pysiglinewithargsret{\bfcode{decodeImageFromURL}}{\emph{file\_id}}{}
+\phantomsection\label{Image_Manipulation:covertFS.Image_Manipulation.lsbsteg.Steg.decodeImageFromURL}\pysiglinewithargsret{\bfcode{decodeImageFromURL}}{\emph{file\_id}}{}
 The decodeImageFromURL method retrieves an image from a url,
 and extracts a message from the image. The image needs to have
 been encoded using the Steg.encode(msg) method.
@@ -882,20 +902,20 @@ This method returns the decoded message as a bytearray.
 
 \end{fulllineitems}
 
-\index{encode() (Image\_Manipulation.lsbsteg.Steg method)}
+\index{encode() (covertFS.Image\_Manipulation.lsbsteg.Steg method)}
 
 \begin{fulllineitems}
-\phantomsection\label{Image_Manipulation:Image_Manipulation.lsbsteg.Steg.encode}\pysiglinewithargsret{\bfcode{encode}}{\emph{message}}{}
+\phantomsection\label{Image_Manipulation:covertFS.Image_Manipulation.lsbsteg.Steg.encode}\pysiglinewithargsret{\bfcode{encode}}{\emph{message}}{}
 The encode method encodes up to 1 byte of data per pixel in an image.
 This method takes a message as a bytearray object as a parameter.
 This method returns a url as a string to the encoded message.
 
 \end{fulllineitems}
 
-\index{encodeSteg() (Image\_Manipulation.lsbsteg.Steg method)}
+\index{encodeSteg() (covertFS.Image\_Manipulation.lsbsteg.Steg method)}
 
 \begin{fulllineitems}
-\phantomsection\label{Image_Manipulation:Image_Manipulation.lsbsteg.Steg.encodeSteg}\pysiglinewithargsret{\bfcode{encodeSteg}}{\emph{msg}, \emph{image}}{}
+\phantomsection\label{Image_Manipulation:covertFS.Image_Manipulation.lsbsteg.Steg.encodeSteg}\pysiglinewithargsret{\bfcode{encodeSteg}}{\emph{msg}, \emph{image}}{}
 The encodeSteg method modifies the image and encodes the binary
 message into the image using least significant bit stegenography.
 This method takes a message as a byte array and an image as a
@@ -907,10 +927,10 @@ This method returns the url as a str.
 
 \end{fulllineitems}
 
-\index{ascii2bits() (in module Image\_Manipulation.lsbsteg)}
+\index{ascii2bits() (in module covertFS.Image\_Manipulation.lsbsteg)}
 
 \begin{fulllineitems}
-\phantomsection\label{Image_Manipulation:Image_Manipulation.lsbsteg.ascii2bits}\pysiglinewithargsret{\code{Image\_Manipulation.lsbsteg.}\bfcode{ascii2bits}}{\emph{message}}{}
+\phantomsection\label{Image_Manipulation:covertFS.Image_Manipulation.lsbsteg.ascii2bits}\pysiglinewithargsret{\code{covertFS.Image\_Manipulation.lsbsteg.}\bfcode{ascii2bits}}{\emph{message}}{}
 The ascii2bits function converts a string of ascii characters to a
 padded string of bits.
 
@@ -919,12 +939,12 @@ padded string of bits.
 
 
 \subsubsection{genImage module}
-\label{Image_Manipulation:module-Image_Manipulation.genImage}\label{Image_Manipulation:genimage-module}\index{Image\_Manipulation.genImage (module)}
+\label{Image_Manipulation:genimage-module}\label{Image_Manipulation:module-covertFS.Image_Manipulation.genImage}\index{covertFS.Image\_Manipulation.genImage (module)}
 The \emph{genImage} module returns an image on request as a \emph{BytesIO} object.
-\index{genCatImage() (in module Image\_Manipulation.genImage)}
+\index{genCatImage() (in module covertFS.Image\_Manipulation.genImage)}
 
 \begin{fulllineitems}
-\phantomsection\label{Image_Manipulation:Image_Manipulation.genImage.genCatImage}\pysiglinewithargsret{\code{Image\_Manipulation.genImage.}\bfcode{genCatImage}}{}{}
+\phantomsection\label{Image_Manipulation:covertFS.Image_Manipulation.genImage.genCatImage}\pysiglinewithargsret{\code{covertFS.Image\_Manipulation.genImage.}\bfcode{genCatImage}}{}{}
 The genCatImage function returns an image from The Cat API.
 This function does not take any parameters.
 This function returns a BytesIO object.
@@ -940,22 +960,22 @@ This function returns a BytesIO object.
 \label{Web_Connection:submodules}
 
 \subsubsection{api\_cons module}
-\label{Web_Connection:module-Web_Connection.api_cons}\label{Web_Connection:api-cons-module}\index{Web\_Connection.api\_cons (module)}
+\label{Web_Connection:api-cons-module}\label{Web_Connection:module-covertFS.Web_Connection.api_cons}\index{covertFS.Web\_Connection.api\_cons (module)}
 The \emph{api\_cons} module creates an anonymous connection to a given social media
 file hosting website and provides connection, upload image, and download image
 parameters.
-\index{SendSpace (class in Web\_Connection.api\_cons)}
+\index{SendSpace (class in covertFS.Web\_Connection.api\_cons)}
 
 \begin{fulllineitems}
-\phantomsection\label{Web_Connection:Web_Connection.api_cons.SendSpace}\pysiglinewithargsret{\strong{class }\code{Web\_Connection.api\_cons.}\bfcode{SendSpace}}{\emph{proxy}}{}
+\phantomsection\label{Web_Connection:covertFS.Web_Connection.api_cons.SendSpace}\pysiglinewithargsret{\strong{class }\code{covertFS.Web\_Connection.api\_cons.}\bfcode{SendSpace}}{\emph{proxy}}{}
 Bases: \code{object}
 
 The SendSpace class is creates a connection to the SendSpace file
 sharing website.
-\index{connect() (Web\_Connection.api\_cons.SendSpace method)}
+\index{connect() (covertFS.Web\_Connection.api\_cons.SendSpace method)}
 
 \begin{fulllineitems}
-\phantomsection\label{Web_Connection:Web_Connection.api_cons.SendSpace.connect}\pysiglinewithargsret{\bfcode{connect}}{}{}
+\phantomsection\label{Web_Connection:covertFS.Web_Connection.api_cons.SendSpace.connect}\pysiglinewithargsret{\bfcode{connect}}{}{}
 The connect method creates an anonymous connection to SendSpace.
 The connection uses the sendspace API (1.1) and does not require
 authentication or login.
@@ -965,10 +985,10 @@ image to SendSpace.
 
 \end{fulllineitems}
 
-\index{downloadImage() (Web\_Connection.api\_cons.SendSpace method)}
+\index{downloadImage() (covertFS.Web\_Connection.api\_cons.SendSpace method)}
 
 \begin{fulllineitems}
-\phantomsection\label{Web_Connection:Web_Connection.api_cons.SendSpace.downloadImage}\pysiglinewithargsret{\bfcode{downloadImage}}{\emph{file\_id}}{}
+\phantomsection\label{Web_Connection:covertFS.Web_Connection.api_cons.SendSpace.downloadImage}\pysiglinewithargsret{\bfcode{downloadImage}}{\emph{file\_id}}{}
 The downloadImage method retrieves the direct download URL from the
 download url returned by SendSpace.
 This method take the download url returned by uploadImage as a
@@ -977,34 +997,34 @@ This method returns the direct download url.
 
 \end{fulllineitems}
 
-\index{parseXML() (Web\_Connection.api\_cons.SendSpace method)}
+\index{parseXML() (covertFS.Web\_Connection.api\_cons.SendSpace method)}
 
 \begin{fulllineitems}
-\phantomsection\label{Web_Connection:Web_Connection.api_cons.SendSpace.parseXML}\pysiglinewithargsret{\bfcode{parseXML}}{\emph{xml}}{}
+\phantomsection\label{Web_Connection:covertFS.Web_Connection.api_cons.SendSpace.parseXML}\pysiglinewithargsret{\bfcode{parseXML}}{\emph{xml}}{}
 This method parses XML data with the BeautifulSoup module.
 
 \end{fulllineitems}
 
-\index{sendspace\_url (Web\_Connection.api\_cons.SendSpace attribute)}
+\index{sendspace\_url (covertFS.Web\_Connection.api\_cons.SendSpace attribute)}
 
 \begin{fulllineitems}
-\phantomsection\label{Web_Connection:Web_Connection.api_cons.SendSpace.sendspace_url}\pysigline{\bfcode{sendspace\_url}\strong{ = `http://api.sendspace.com/rest/'}}
+\phantomsection\label{Web_Connection:covertFS.Web_Connection.api_cons.SendSpace.sendspace_url}\pysigline{\bfcode{sendspace\_url}\strong{ = `http://api.sendspace.com/rest/'}}
 \end{fulllineitems}
 
-\index{upload() (Web\_Connection.api\_cons.SendSpace method)}
+\index{upload() (covertFS.Web\_Connection.api\_cons.SendSpace method)}
 
 \begin{fulllineitems}
-\phantomsection\label{Web_Connection:Web_Connection.api_cons.SendSpace.upload}\pysiglinewithargsret{\bfcode{upload}}{\emph{img}}{}
+\phantomsection\label{Web_Connection:covertFS.Web_Connection.api_cons.SendSpace.upload}\pysiglinewithargsret{\bfcode{upload}}{\emph{img}}{}
 The upload method uploads an image to SendSpace.
 This method takes an image as a BytesIO object.
 This method returns the download and delete urls as a tuple.
 
 \end{fulllineitems}
 
-\index{uploadImage() (Web\_Connection.api\_cons.SendSpace method)}
+\index{uploadImage() (covertFS.Web\_Connection.api\_cons.SendSpace method)}
 
 \begin{fulllineitems}
-\phantomsection\label{Web_Connection:Web_Connection.api_cons.SendSpace.uploadImage}\pysiglinewithargsret{\bfcode{uploadImage}}{\emph{upl\_url}, \emph{max\_size}, \emph{upl\_id}, \emph{upl\_extra\_info}, \emph{img}}{}
+\phantomsection\label{Web_Connection:covertFS.Web_Connection.api_cons.SendSpace.uploadImage}\pysiglinewithargsret{\bfcode{uploadImage}}{\emph{upl\_url}, \emph{max\_size}, \emph{upl\_id}, \emph{upl\_extra\_info}, \emph{img}}{}
 The uploadImage method sends an image file for upload to SendSpace.
 This method requires the upload url and extra info from the SendSpace
 connection and the image (BytesIO object) as parameters.
@@ -1019,7 +1039,7 @@ as a tuple.
 
 
 \subsubsection{proxy\_list module}
-\label{Web_Connection:module-Web_Connection.proxy_list}\label{Web_Connection:proxy-list-module}\index{Web\_Connection.proxy\_list (module)}
+\label{Web_Connection:proxy-list-module}\label{Web_Connection:module-covertFS.Web_Connection.proxy_list}\index{covertFS.Web\_Connection.proxy\_list (module)}
 The list of possible https and http proxies to use with \emph{sendspace}. Proxies are necessary on the DREN at USMA.
 The DREN blocks many file-sharing websites, such as \emph{sendspace}.
 
@@ -1035,23 +1055,23 @@ Free US proxies:
 
 
 \section{Encryption package}
-\label{Encryption::doc}\label{Encryption:encryption-package}
+\label{Encryption:encryption-package}\label{Encryption::doc}
 
 \subsection{Submodules}
 \label{Encryption:submodules}
 
 \subsubsection{xor module}
-\label{Encryption:xor-module}\label{Encryption:module-Encryption.xor}\index{Encryption.xor (module)}\index{XOR (class in Encryption.xor)}
+\label{Encryption:xor-module}\label{Encryption:module-covertFS.Encryption.xor}\index{covertFS.Encryption.xor (module)}\index{XOR (class in covertFS.Encryption.xor)}
 
 \begin{fulllineitems}
-\phantomsection\label{Encryption:Encryption.xor.XOR}\pysigline{\strong{class }\code{Encryption.xor.}\bfcode{XOR}}
+\phantomsection\label{Encryption:covertFS.Encryption.xor.XOR}\pysigline{\strong{class }\code{covertFS.Encryption.xor.}\bfcode{XOR}}
 Bases: \code{object}
 
 The XOR class uses a simple XOR cipher to obfuscate data with a key.
-\index{decrypt() (Encryption.xor.XOR method)}
+\index{decrypt() (covertFS.Encryption.xor.XOR method)}
 
 \begin{fulllineitems}
-\phantomsection\label{Encryption:Encryption.xor.XOR.decrypt}\pysiglinewithargsret{\bfcode{decrypt}}{\emph{key}, \emph{data}}{}
+\phantomsection\label{Encryption:covertFS.Encryption.xor.XOR.decrypt}\pysiglinewithargsret{\bfcode{decrypt}}{\emph{key}, \emph{data}}{}
 The decrypt method decrypts the provided data with a key.
 Since XOR is reversible with the same key, decrypt is the
 same as encrypt.
@@ -1061,10 +1081,10 @@ The method returns an encrypted bytearray object.
 
 \end{fulllineitems}
 
-\index{encrypt() (Encryption.xor.XOR method)}
+\index{encrypt() (covertFS.Encryption.xor.XOR method)}
 
 \begin{fulllineitems}
-\phantomsection\label{Encryption:Encryption.xor.XOR.encrypt}\pysiglinewithargsret{\bfcode{encrypt}}{\emph{key}, \emph{data}}{}
+\phantomsection\label{Encryption:covertFS.Encryption.xor.XOR.encrypt}\pysiglinewithargsret{\bfcode{encrypt}}{\emph{key}, \emph{data}}{}
 The encrypt method encrypts the provided data with a key.
 The method takes a key as an integer between 0 and 256 and
 the data as a bytearray object.
@@ -1363,23 +1383,15 @@ Optional parameter
 \renewcommand{\indexname}{Python Module Index}
 \begin{theindex}
 \def\bigletter#1{{\Large\sffamily#1}\nopagebreak\vspace{1mm}}
-\bigletter{e}
-\item {\texttt{Encryption.xor}}, \pageref{Encryption:module-Encryption.xor}
-\indexspace
-\bigletter{f}
-\item {\texttt{File\_System.covertfs}}, \pageref{File_System:module-File_System.covertfs}
-\item {\texttt{File\_System.memfuse}}, \pageref{File_System:module-File_System.memfuse}
-\indexspace
-\bigletter{i}
-\item {\texttt{Image\_Manipulation.genImage}}, \pageref{Image_Manipulation:module-Image_Manipulation.genImage}
-\item {\texttt{Image\_Manipulation.lsbsteg}}, \pageref{Image_Manipulation:module-Image_Manipulation.lsbsteg}
-\indexspace
-\bigletter{m}
-\item {\texttt{main}}, \pageref{main:module-main}
-\indexspace
-\bigletter{w}
-\item {\texttt{Web\_Connection.api\_cons}}, \pageref{Web_Connection:module-Web_Connection.api_cons}
-\item {\texttt{Web\_Connection.proxy\_list}}, \pageref{Web_Connection:module-Web_Connection.proxy_list}
+\bigletter{c}
+\item {\texttt{covertFS.console}}, \pageref{console:module-covertFS.console}
+\item {\texttt{covertFS.Encryption.xor}}, \pageref{Encryption:module-covertFS.Encryption.xor}
+\item {\texttt{covertFS.File\_System.covertfs}}, \pageref{File_System:module-covertFS.File_System.covertfs}
+\item {\texttt{covertFS.File\_System.memfuse}}, \pageref{File_System:module-covertFS.File_System.memfuse}
+\item {\texttt{covertFS.Image\_Manipulation.genImage}}, \pageref{Image_Manipulation:module-covertFS.Image_Manipulation.genImage}
+\item {\texttt{covertFS.Image\_Manipulation.lsbsteg}}, \pageref{Image_Manipulation:module-covertFS.Image_Manipulation.lsbsteg}
+\item {\texttt{covertFS.Web\_Connection.api\_cons}}, \pageref{Web_Connection:module-covertFS.Web_Connection.api_cons}
+\item {\texttt{covertFS.Web\_Connection.proxy\_list}}, \pageref{Web_Connection:module-covertFS.Web_Connection.proxy_list}
 \end{theindex}
 
 \renewcommand{\indexname}{Index}

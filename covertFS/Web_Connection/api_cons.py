@@ -8,10 +8,7 @@ parameters.
 
 from bs4 import BeautifulSoup  # parse XML response
 from PIL import Image
-try:
-    from Web_Connection.API_Keys import config
-except ImportError:
-    from src.Web_Connection.API_Keys import config
+from .API_Keys import config
 import platform, subprocess
 import requests  # GET and POST requests
 if platform.system() == 'Linux':

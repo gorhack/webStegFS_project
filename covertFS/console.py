@@ -7,10 +7,10 @@ functions.
 """
 
 import os, cmd, subprocess, sys, shlex, time, argparse
-from src.Image_Manipulation import lsbsteg
-from src.Web_Connection.API_Keys import config
-from src.Web_Connection import api_cons
-from src.File_System import covertfs
+from .Image_Manipulation import lsbsteg
+from .Web_Connection.API_Keys import config
+from .Web_Connection import api_cons
+from .File_System import covertfs
 from platform import system
 from threading import Thread
 if system() == 'Linux':
@@ -631,6 +631,7 @@ def proxy_parser(proxyString=None):
                 'http': 'http'+proxy+':'+port}
     return proxDict#proxy_test(proxDict)
 
+
 def main():
     parser = argparse.ArgumentParser(description="Calls the main function of CovertFS")
     parser.add_argument('url', type=str, default='', nargs='?',
@@ -679,3 +680,6 @@ def main():
             cons.cmdloop()
         else:
             cons.do_mount(None)
+
+if __name__ == '__main__':
+    main()

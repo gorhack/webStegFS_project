@@ -2,7 +2,7 @@ Command line main module
 ========================
 
 
-.. automodule:: main
+.. automodule:: covertFS.console
     :members:
     :undoc-members:
     :show-inheritance:
