@@ -14,7 +14,10 @@ a subclass of MemoryEntry, and CovertFS, a subclass of MemoryFS. CovertFS uses
 CovertFile as the file factory, and CovertEntry as the entry factory.
 """
 
-from File_System import memoryfs
+try:
+    from File_System import memoryfs
+except:
+    from src.File_System import memoryfs
 import stat
 from .fs import path
 import time, os, datetime
