@@ -1,6 +1,6 @@
 Metadata-Version: 1.1
 Name: covertFS
-Version: 0.9.2rc1
+Version: 0.9.3b0
 Summary: It's covert and stuff
 Home-page: https://github.com/gorhack/covertFS
 Author: Kyle Gorak, David Hart, Adam Sjoholm, and Ryne Flores
@@ -144,4 +144,4 @@ Classifier: Topic :: Software Development :: File System
 Classifier: Programming Language :: Python :: 3
 Classifier: Programming Language :: Python :: 3.5
 Classifier: Operating System :: MacOS :: MacOS X
-Classifier: Operating System :: POSIX
+Classifier: Operating System :: Unix

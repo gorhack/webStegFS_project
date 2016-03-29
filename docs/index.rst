@@ -11,9 +11,6 @@ Index
 - :ref:`modindex`
 - :ref:`search`
 
-.. include:: ../README.rst
-
-
 Source Documentation
 ====================
 
@@ -25,5 +22,9 @@ Source Documentation
    Image_Manipulation
    Web_Connection
    Encryption
+
+
+.. include:: ../README.rst
+
 
 .. [1] Optional parameter

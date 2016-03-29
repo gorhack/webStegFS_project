@@ -1,23 +1,41 @@
 #!/usr/bin/env python3
 
+"""
+`covertFS` is a command line based program created using the `cmd` module.
+The `main.py` file contains all commands available and additional helper
+functions.
+"""
+
 import os, cmd, subprocess, sys, shlex, time, argparse
-from Image_Manipulation import lsbsteg
-from Web_Connection.API_Keys import config
-from Web_Connection import api_cons
-from File_System import covertfs
+try:
+    from Image_Manipulation import lsbsteg
+except ImportError:
+    from src.Image_Manipulation import lsbsteg
+try:
+    from Web_Connection.API_Keys import config
+except ImportError:
+    from src.Web_Connection.API_Keys import config
+try:
+    from Web_Connection import api_cons
+except ImportError:
+    from src.Web_Connection import api_cons
+try:
+    from File_System import covertfs
+except ImportError:
+    from src.File_System import covertfs
 from platform import system
-if system()=='Linux':
-    torEnabled = subprocess.check_output(['ps','aux']).decode().find('/usr/bin/tor')
+from threading import Thread
+if system() == 'Linux':
+    torEnabled = subprocess.check_output(['ps', 'aux']).decode().find('/usr/bin/tor')
     if torEnabled > -1:
         import socks
         import socket
         print("Using tor, rerouting connection")
         socks.setdefaultproxy(socks.PROXY_TYPE_SOCKS5, "127.0.0.1", 9050)
         socket.socket = socks.socksocket
-from threading import Thread
 
 
-__version__ = "0.9.2"
+__version__ = "0.9.3"
 __author__ = "Flores, Gorak, Hart, Sjoholm"
 
 
@@ -149,7 +167,7 @@ class Console(cmd.Cmd, object):
             time.sleep(1)
             for f in self.fs.walkfiles():
                 entry = self.fs._dir_entry(f)
-                if entry.downlink is None and f.rsplit('.')[-1]!= 'swp':
+                if entry.downlink is None and f.rsplit('.')[-1] != 'swp':
                     print("STATUS: Uploading ", f)
                     entry.downlink = self.upload_file(bytearray(self.fs.getcontents(f)))
 
@@ -271,11 +289,11 @@ class Console(cmd.Cmd, object):
                 entry.downlink = self.upload_file(bytearray(self.fs.getcontents(f)))
         if self.dbg:
             print("DEBUG: All files uploaded, uploading fs_string")
-        print("File system at: ", self.upload_file(bytearray(self.fs.save().encode('utf-8')))) 
+        print("File system at: ", self.upload_file(bytearray(self.fs.save().encode('utf-8'))))
 ############################
 
 ###File upload downloads###
-    
+
     def do_encodemsg(self, message):
         """
         Encode a message and upload to social media.\n
@@ -284,7 +302,7 @@ class Console(cmd.Cmd, object):
         my_msg = bytearray(message.encode())
         if self.dbg:
             print("DEBUG: About to upload encoded message")
-        self.upload_file(my_msg)      
+        self.upload_file(my_msg)
 
     def do_decodemsg(self, in_url):
         """Decode the message in an image.\n
@@ -298,9 +316,9 @@ class Console(cmd.Cmd, object):
         print(msg.decode())
 
     def download_file(self, url):
-        print("dling")
+        print("downloading...")
         msg = self.stegFactory.decodeImageFromURL(url)
-        print("no problem there")
+        print("download success!")
         if self.dbg:
             print("DEBUG: Contents downloaded")
         if self.encryptClass:
@@ -352,7 +370,7 @@ class Console(cmd.Cmd, object):
             print("DEBUG: File sanitized")
         return contents
 
-    
+
 
 ###Direct file manipulations within file system###
     def do_upload(self, args):
@@ -662,7 +680,7 @@ if __name__ == '__main__':
         encrypt = None
     else:
         if args.encryption == None:
-            args.encryption = 'xor' #xor is the default encryption class. In the absence of an argument for -e, xor is used.
+            args.encryption = 'xor'  # xor is the default encryption class. In the absence of an argument for -e, xor is used.
         encrypt = args.encryption
 
     if run:

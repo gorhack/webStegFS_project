@@ -7,7 +7,7 @@ with open('README.rst', 'r') as f:
 
 setup(
     name='covertFS',
-    version='0.9.2rc1',
+    version='0.9.3b',
     description='It\'s covert and stuff',
     long_description=readme,
     author='Kyle Gorak, David Hart, Adam Sjoholm, and Ryne Flores',
@@ -24,8 +24,7 @@ setup(
         'Operating System :: Unix',
     ],
     keywords='covert file system steganography',
-    packages=find_packages(exclude=['docs', 'dist', 'design', 'paper',
-                           'covertFS.egg-info', '__pycache__', '.idea']),
+    packages=find_packages(exclude=['docs', 'dist', 'design', 'paper', 'covertFS.egg-info', '__pycache__', '.idea']),
     package_data={
         'README': ['README.rst'],
     },

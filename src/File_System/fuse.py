@@ -393,7 +393,7 @@ class FUSE(object):
         #del self.operations     # Invoke the destructor
         if err:
             raise RuntimeError(err)
-        print("ompleted!")
+        print("completed!")
 
     @staticmethod
     def _normalize_fuse_options(**kargs):

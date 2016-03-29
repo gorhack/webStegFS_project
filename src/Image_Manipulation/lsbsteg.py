@@ -139,10 +139,12 @@ class Steg(object):
 
             # initialize RGB values
             red, green, blue = 0, 0, 0
-
-            red = pixel[0]
-            green = pixel[1]
-            blue = pixel[2]
+            try:
+                red = pixel[0]
+                green = pixel[1]
+                blue = pixel[2]
+            except TypeError as e:
+                print("Error {}: {}".format(e, pixel))
 
             '''
             encodes a byte into a pixel's colors
