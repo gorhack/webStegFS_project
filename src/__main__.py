@@ -7,26 +7,10 @@ functions.
 """
 
 import os, cmd, subprocess, sys, shlex, time, argparse
-try:
-    from Image_Manipulation import lsbsteg
-except ImportError:
-    from src.Image_Manipulation import lsbsteg
-
-try:
-    from Web_Connection.API_Keys import config
-except ImportError:
-    from src.Web_Connection.API_Keys import config
-
-try:
-    from Web_Connection import api_cons
-except ImportError:
-    from src.Web_Connection import api_cons
-
-try:
-    from File_System import covertfs
-except ImportError:
-    from src.File_System import covertfs
-
+from Image_Manipulation import lsbsteg
+from Web_Connection.API_Keys import config
+from Web_Connection import api_cons
+from File_System import covertfs
 from platform import system
 from threading import Thread
 if system() == 'Linux':
