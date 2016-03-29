@@ -7,10 +7,10 @@ functions.
 """
 
 import os, cmd, subprocess, sys, shlex, time, argparse
-from Image_Manipulation import lsbsteg
-from Web_Connection.API_Keys import config
-from Web_Connection import api_cons
-from File_System import covertfs
+from src.Image_Manipulation import lsbsteg
+from src.Web_Connection.API_Keys import config
+from src.Web_Connection import api_cons
+from src.File_System import covertfs
 from platform import system
 from threading import Thread
 if system() == 'Linux':
@@ -175,7 +175,7 @@ class Console(cmd.Cmd, object):
         if self.fuse_enabled is False:
             print("ERROR: Only able to mount on systems with fuse installed")
             return
-        from File_System import memfuse
+        from .File_System import memfuse
         self.fuseFS = memfuse.MemFS(self.fs)
         if self.dbg:
             print("DEBUG: MemFS has been created")
@@ -631,8 +631,7 @@ def proxy_parser(proxyString=None):
                 'http': 'http'+proxy+':'+port}
     return proxDict#proxy_test(proxDict)
 
-
-if __name__ == '__main__':
+def main():
     parser = argparse.ArgumentParser(description="Calls the main function of CovertFS")
     parser.add_argument('url', type=str, default='', nargs='?',
                         help='Specify the url to load a filesystem from')

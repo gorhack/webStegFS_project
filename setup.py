@@ -8,6 +8,7 @@ with open('README.rst', 'r') as f:
 setup(
     name='covertFS',
     version='0.9.3b',
+    entry_points={'console_scripts': ['covertFS = src.__main__:main']},
     description='It\'s covert and stuff',
     long_description=readme,
     author='Kyle Gorak, David Hart, Adam Sjoholm, and Ryne Flores',
