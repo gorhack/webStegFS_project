@@ -16,7 +16,7 @@ CovertFile as the file factory, and CovertEntry as the entry factory.
 
 try:
     from File_System import memoryfs
-except:
+except ImportError:
     from src.File_System import memoryfs
 import stat
 from .fs import path
