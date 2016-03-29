@@ -18,15 +18,8 @@ from errno import ENOENT
 from stat import S_IFDIR, S_IFLNK, S_IFREG
 from sys import argv, exit
 import time, datetime
-try:
-    from .fs import path
-except ImportError:
-    from src.File_System.fs import path
-
-try:
-    from .fuse import FUSE, FuseOSError, Operations, LoggingMixIn
-except:
-    from src.File_System.fuse import FUSE, FuseOSError, Operations, LoggingMixIn
+from .fs import path
+from .fuse import FUSE, FuseOSError, Operations, LoggingMixIn
 
 if not hasattr(__builtins__, 'bytes'):
     bytes = str
