@@ -7,7 +7,7 @@ with open('README.rst', 'r') as f:
 
 setup(
     name='covertFS',
-    version='0.9.3b',
+    version='0.9.4b',
     entry_points={'console_scripts': ['covertFS = covertFS.__main__:main']},
     description='It\'s covert and stuff',
     long_description=readme,

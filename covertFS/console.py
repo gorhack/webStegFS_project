@@ -23,7 +23,7 @@ if system() == 'Linux':
         socket.socket = socks.socksocket
 
 
-__version__ = "0.9.3"
+__version__ = "0.9.4b"
 __author__ = "Flores, Gorak, Hart, Sjoholm"
 
 

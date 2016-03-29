@@ -1,6 +1,6 @@
 Metadata-Version: 1.1
 Name: covertFS
-Version: 0.9.3b
+Version: 0.9.4b0
 Summary: It's covert and stuff
 Home-page: https://github.com/gorhack/covertFS
 Author: Kyle Gorak, David Hart, Adam Sjoholm, and Ryne Flores
@@ -103,7 +103,7 @@ Description: About the Project
         
         Usage
         =====
-        - ``$ python3 src/main.py [url to fs image] [-c] [-w] [-p] [-e] [-m] [-s]`` [1]_
+        - ``$ python3 -m covertFS [url to fs image] [options]`` [1]_
         
           - -c command loop, run covertFS shell
           - -w social media site to upload/download images [default: sendspace]
