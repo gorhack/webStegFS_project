@@ -119,7 +119,7 @@ class Console(cmd.Cmd, object):
             if self.dbg:
                 print("DEBUG: FUSE not enabled")
             pass  # preventing the program from attempting to run on Windows or
-                  # other monstrosities without FUSE
+            # other monstrosities without FUSE
         ###############################
 
         self.init_factory()
