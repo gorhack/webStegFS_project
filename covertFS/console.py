@@ -141,9 +141,10 @@ class Console(cmd.Cmd, object):
             if self.dbg:
                 print("DEBUG: File fully decoded from URL")
         except:
-            out = "File named '{}' was not decoded correctly. It is no" +
-            " longer in the filesystem. To attempt to retry this operation," +
-            " execute command 'downloadFile {}".format(filename, downlink)
+            out = ("File named '{}' was not decoded correctly. It is no" +
+                   " longer in the filesystem. To attempt to retry this " +
+                   "operation, execute command " +
+                   "'downloadFile {}".format(filename, downlink))
             if self.dbg:
                 print("ERROR: " + out)
             else:
