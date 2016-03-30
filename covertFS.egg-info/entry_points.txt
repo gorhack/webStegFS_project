@@ -1,3 +1,0 @@
-[console_scripts]
-covertFS = covertFS.__main__:main
-

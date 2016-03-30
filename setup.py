@@ -1,6 +1,16 @@
-#!/usr/bin/env python3
+from setuptools import setup
 
-from setuptools import setup, find_packages
+setup(name='covertFS',
+      version='0.1.0',
+      packages=['covertFS'],
+      entry_points={
+          'console_scripts': [
+              'covertFS = covertFS.__main__:main'
+          ]
+      },
+      )
+
+"""from setuptools import setup  # , find_packages
 
 with open('README.rst', 'r') as f:
     readme = f.read()
@@ -8,6 +18,7 @@ with open('README.rst', 'r') as f:
 setup(
     name='covertFS',
     version='0.9.4b',
+    packages= ['covertFS'],  # find_packages(exclude=['docs', 'dist', 'design', 'paper', 'covertFS.egg-info', '__pycache__', '.idea']),
     entry_points={'console_scripts': ['covertFS = covertFS.__main__:main']},
     description='It\'s covert and stuff',
     long_description=readme,
@@ -25,7 +36,6 @@ setup(
         'Operating System :: Unix',
     ],
     keywords='covert file system steganography',
-    packages=find_packages(exclude=['docs', 'dist', 'design', 'paper', 'covertFS.egg-info', '__pycache__', '.idea']),
     package_data={
         'README': ['README.rst'],
     },
@@ -37,4 +47,4 @@ setup(
         "Pillow",
         "fusepy",
     ]
-)
+)"""
