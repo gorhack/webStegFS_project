@@ -1,6 +1,5 @@
-co	#!/usr/bin/env python3
-
 from setuptools import setup, find_packages
+
 
 with open('README.rst', 'r') as f:
     readme = f.read()
@@ -8,7 +7,15 @@ with open('README.rst', 'r') as f:
 setup(
     name='covertFS',
     version='0.9.4b',
-    packages=['covertFS'],
+    packages=[
+        'covertFS',
+        'covertFS.Encryption',
+        'covertFS.File_System',
+        'covertFS.File_System.fs',
+        'covertFS.Image_Manipulation',
+        'covertFS.Web_Connection',
+        'covertFS.Web_Connection.API_Keys',
+             ],
     entry_points={'console_scripts': ['covertFS = covertFS.__main__:main']},
     description='It\'s covert and stuff',
     long_description=readme,
