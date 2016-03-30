@@ -589,5 +589,3 @@ class Console(cmd.Cmd, object):
         #    except:
         #        print(e.__class__, ":", e)
 
-
-

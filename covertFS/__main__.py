@@ -1,6 +1,5 @@
-"""import argparse
+import argparse
 from covertFS import console
-
 
 default_proxies = {'https': 'https://165.139.149.169:3128',
                    'http': 'http://165.139.149.169:3128'}
@@ -65,8 +64,7 @@ def main():
                         help='Specify a foldername to mount the FUSE module at')
     parser.add_argument('-s', dest='steganography', default='LSBsteg', nargs='?',
                         help='Use an alternate steganography class for encoding in images')
-    
-    
+
     args = parser.parse_args()
     print(args)
 
@@ -93,20 +91,8 @@ def main():
         if args.cmdloop:
             cons.cmdloop()
         else:
-            cons.do_mount(None)"""
+            cons.do_mount(None)
 
-import sys
-
-def main(args=None):
-    """The main routine."""
-    if args is None:
-        args = sys.argv[1:]
-
-    print("This is the main routine.")
-    print("It should do something interesting.")
-
-    # Do argument parsing here (eg. with argparse) and anything else
-    # you want your project to do.
 
 if __name__ == '__main__':
     main()
