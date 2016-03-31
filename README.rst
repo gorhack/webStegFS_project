@@ -95,12 +95,13 @@ Covert File System is written exclusively in Python 3 due to the vast modules an
 
 Usage
 =====
-- ``$ python3 src/main.py [url to fs image] [-c] [-w] [-p] [-e] [-m] [-s]`` [1]_
+- From source: ``$ python3 -m covertFS [url to fs] [options]`` [1]_
+- From wheel: ``$ covertfs [url to fs] [options]``
 
   - -c command loop, run covertFS shell
   - -w social media site to upload/download images [default: sendspace]
   - -p use built in proxy
-  - -e encryption type
+  - -e encryption type [default: xor]
   - -m mount point [default: covertMount]
   - -s steganography [default: LSBsteg]
 

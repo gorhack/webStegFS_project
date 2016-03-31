@@ -7,27 +7,35 @@
 % Figure 5: visual encoding evidence
 
 
-The primary purpose in a web based covert file system is confidentiality and plausible deniability. Using steganography can provide both confidentiality for users as well as plausible deniability. However, steganography also has risks that make it vulnerable to both. Steganalysis and visible alterations\cite{Steganalysis} can make steganography detectable, thus removing the aspect of both confidentiality and plausible deniability. However, there are ways to reduce the risks of using steganography. 
+The primary purpose in a web based covert file system is confidentiality and plausible deniability. Using steganography can provide both confidentiality for users as well as plausible deniability. However, steganography also has risks that make it vulnerable to both. Steganalysis and visible alterations\cite{PierreRicher2003} can make steganography detectable, thus removing the aspect of both confidentiality and plausible deniability. However, there are ways to reduce the risks of using steganography. 
 
 \subsubsection{Risks Using Steganography}
 %Not enough data
 
-The greatest risk to using steganography, particularly our steganography module, is that an embedded message can be discovered using statistical analysis. Since the original images exist on Tumblr and can be retrieved using the Cat API, our images that get uploaded to Sendspace can be compared to the originals. Statistical analysis between the original and the modified images will indicate that a message has been embeded. There are alternative steganograhpy techniques, but their are still several steganalysis tools to detect them~\cite{Laden}. For example, Virtual Steganography Laboratory (VSL) is a tool developed by Michal Wegrzyn and Pawel Forczmanski, of West Pomeranian University of Technology. VSL has a simple GUI that allows users to select an image and run certain steganalysis modules on that image. The results of the analysis is outputted to an easy-to-read csv file. Figure 1 is the original image. Figure 2 is the modified image with 274.25 KB of data encoded into it. 
+The greatest risk to using steganography, particularly our steganography module, is that an embedded message can be discovered using statistical analysis. Since the original images exist on Tumblr and can be retrieved using the Cat API, our images that get uploaded to Sendspace can be compared to the originals. Statistical analysis between the original and the modified images will indicate that a message has been embeded. There are alternative steganograhpy techniques, but their are still several steganalysis tools to detect them~\cite{Laden}. For example, Virtual Steganography Laboratory (VSL) is a tool developed by Michal Wegrzyn and Pawel Forczmanski, of West Pomeranian University of Technology. VSL has a simple GUI that allows users to select an image and run certain steganalysis modules on that image. The results of the analysis is outputted to an easy-to-read csv file. Figure 1 is the original image used. Figure 2 is a modified image with 2.75 KB of data encoded into it using our custom steganography module. Figure 3 is a modifed image with the same 2.75 KB of data encoded into it using VSL's least significant bit steganography module.
 \begin{figure}[h]
-	\includegraphics[width=0.5\textwidth]{original}
+	\includegraphics[width=0.5\textwidth]{smalloriginal}
 	\caption{Original image}
 \end{figure}
 \begin{figure}[h]
-	\includegraphics[width=0.5\textwidth]{modified}
-	\caption{Image encoded with a 274.25 KB message}
+	\includegraphics[width=0.5\textwidth]{smallmodifiedOURS}
+	\caption{Image encoded with a 2.75 KB message using our steg module}
 \end{figure}
-The VSL determined that there is a message about a 5.10 KB message in the original image. In reality, there is no message encoded into the original, but this value allows us to compare the two images. VSL determined that the modified image has a 88.23 KB message encoded into it. This is significant because VSL was able to detect a substantial change in the pixels of the image. The steganalysis shows that there is likely a message inside the modified image. Not only can steganalysis detected changes, but they can be visually apparent as well. Figure 4 shows both an encoded image and its original.
-
+\begin{figure}[h]
+	\includegraphics[width=0.5\textwidth]{smallmodifiedTHEIRS}
+	\caption{Image encoded with a 2.75 KB message using VSL's steg module}
+\end{figure}
+The steganaylsis tools, provided by VSL, determines that the there is a 1.34 KB message encoded into the original image. In reality there is no message encoded into the original, but this value offers a baseline of comparison with images that are modified. VSL determines that the image modified using our steganography module has a 1.75 KB message encoded into it. VSL also determines that the image modified using the VSL steganography module has a 3.60 KB message. Figure 4 summarizes these results.
+\begin{figure}[h]
+	\includegraphics[width=0.5\textwidth]{steganalysis}
+	\caption{Table summarizing results of steganalysis}
+\end{figure}
+These results are significant because VSL is able to detect substantial changes in the images that are modified. The steganalysis shows that there is likely a message inside both modified images when the images are compared against the original image. Not only can steganalysis detect changes caused by multiple implementations of least significant bit steganography, but the changes can be visually apparent as well. Figure 5 shows both an encoded image and its original.
 \begin{figure}[h]
 	\includegraphics[width=0.5\textwidth]{comparison}
 	\caption{Left: encoded, Right: original}
 \end{figure}
-In some cases, the LSB steganography can discolor the image. The encoded image is from the LSB encoding and this shows an obvious visual discoloration that an adversary can easily detect. 
+In some cases, our implementation of least significant bit steganography can cause a significant amount of discoloration in images. The white portions in figure 5 turn yellow when data is encoded into those pixels. 
 
 \subsubsection{Mitigating Risks of Steganography}
 %Not enough data
@@ -49,6 +57,6 @@ There are obvious drawbacks to our implementation of LSB steganography, primaril
 \subsubsection{File System to Images}
 
 %David, I will need you to describe how the FUSE file system is prepared for encoding. Additionally, I will need information on how the files are uploaded as they are added to the file system (and future parallel upload/download). 
-The first step in encoding a file system is retrieving an image. We use "The Cat API" which retrieves a random cat picture from Tumblr or a various number of other sources~\cite{CatAPIDoc}. Once we retrieve the image, we determine the number of bytes we can encode in the image by multiplying the height and width of the image, in pixels. Since we encode one byte per pixel, the result of height times width results in the total number of bytes, \textit{n}, of data we can encode in the image. For example, a 640x480 pixel image can hold 307,200 bytes of data. Next, we take the data we are going to encode and append a special end of file byte encoding. Then, we break the data into two sets, one containing the last \textit{n} bytes and the other the remaining bytes. 
+In order to encode a message (either the contents of a file, or the string that represents the entire file system), we must start with an image. We use "The Cat API" which retrieves a random cat picture from the web~\cite{CatAPIDoc}. Once we retrieve the image, we determine the number of bytes we can encode in the image by finding the area of the image in pixels. Since we encode one byte per pixel, the total number of bytes we can encode is height \textit{x} width, \textit{n} bytes. For example, a 640x480 pixel image can hold 307,200 bytes of data. Appending a special end of file byte encoding allows us to read the pixels only until the end of the file. After appending the EOF, we break the data into two sets, one set containing the last \textit{n+1} bytes and the other set, the remaining bytes. This allows us to encode the final bytes of data in the first image, the next to final bytes in the second, and so on, so that the final image we encode has a pointer to the next. We are creating a linked list of images as we go.
 
-Next, we encode the data in the first set into the image and upload the image. We retrieve the URL of the uploaded image and append a URL identifier byte encoding along with the URL itself to the remaining data. Then, we repeat the encoding steps by appending the end of file byte encoding, splitting the data, and uploading until there is no data left to encode. At this point, we have encoded all the data and have a "linked list" of encoded images containing the data. Finally, we can return the URL to the head image of data. 
+Encoding a file into an image is simple-- we take the data of the image, which is already stored as a byte string, and send it to the encoder. The file system is handled differently. When encoding the file system, we first create a string-- it is similar to a comma-separated value file, but it uses commas, spaces, and newline characters to delineate between a single file's name and info, different files, and different directories. By using the same standard for encoding and decoding this string, we are able to recreate the same file system in a different place, after saving to a string. Once the file system is saved to a string, it is converted to a byte string and sent to the steganography class for encoding and upload.

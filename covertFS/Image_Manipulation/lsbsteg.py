@@ -11,10 +11,7 @@ noticeable, if at all.
 
 from PIL import Image
 from io import BytesIO
-try:
-    from Image_Manipulation import genImage
-except ImportError:
-    from src.Image_Manipulation import genImage
+from . import genImage
 import platform
 import subprocess
 import requests
@@ -139,10 +136,12 @@ class Steg(object):
 
             # initialize RGB values
             red, green, blue = 0, 0, 0
-
-            red = pixel[0]
-            green = pixel[1]
-            blue = pixel[2]
+            try:
+                red = pixel[0]
+                green = pixel[1]
+                blue = pixel[2]
+            except TypeError as e:
+                print("Error {}: {}".format(e, pixel))
 
             '''
             encodes a byte into a pixel's colors
@@ -278,8 +277,8 @@ if __name__ == '__main__':
     # python3 -m src.Image_Manipulation.lsbsteg [file]
 
     import sys
-    from src.Web_Connection import api_cons
-    from src.Web_Connection import proxy_list
+    from covertFS.Web_Connection import api_cons
+    from covertFS.Web_Connection import proxy_list
     stego = Steg(proxy_list.proxies, api_cons.SendSpace(proxy_list.proxies))
 
     file_name = sys.argv[1]

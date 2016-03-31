@@ -1,13 +1,22 @@
-#!/usr/bin/env python3
-
 from setuptools import setup, find_packages
+
 
 with open('README.rst', 'r') as f:
     readme = f.read()
 
 setup(
     name='covertFS',
-    version='0.9.2rc1',
+    version='0.9.4b',
+    packages=[
+        'covertFS',
+        'covertFS.Encryption',
+        'covertFS.File_System',
+        'covertFS.File_System.fs',
+        'covertFS.Image_Manipulation',
+        'covertFS.Web_Connection',
+        'covertFS.Web_Connection.API_Keys',
+             ],
+    entry_points={'console_scripts': ['covertFS = covertFS.__main__:main']},
     description='It\'s covert and stuff',
     long_description=readme,
     author='Kyle Gorak, David Hart, Adam Sjoholm, and Ryne Flores',
@@ -24,8 +33,6 @@ setup(
         'Operating System :: Unix',
     ],
     keywords='covert file system steganography',
-    packages=find_packages(exclude=['docs', 'dist', 'design', 'paper',
-                           'covertFS.egg-info', '__pycache__', '.idea']),
     package_data={
         'README': ['README.rst'],
     },
@@ -36,5 +43,5 @@ setup(
         "lxml",
         "Pillow",
         "fusepy",
-    ]
+    ],
 )

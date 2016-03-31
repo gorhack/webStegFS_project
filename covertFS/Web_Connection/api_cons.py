@@ -8,20 +8,17 @@ parameters.
 
 from bs4 import BeautifulSoup  # parse XML response
 from PIL import Image
-try:
-    from Web_Connection.API_Keys import config
-except ImportError:
-    from src.Web_Connection.API_Keys import config
+from .API_Keys import config
 import platform, subprocess
-if platform.system() =='Linux':
-    torEnabled = subprocess.check_output(['ps','aux']).decode().find('/usr/bin/tor')
+import requests  # GET and POST requests
+if platform.system() == 'Linux':
+    torEnabled = subprocess.check_output(['ps', 'aux']).decode().find('/usr/bin/tor')
     if torEnabled > -1:
         import socks
         import socket
         print("Using tor, rerouting connection")
         socks.setdefaultproxy(socks.PROXY_TYPE_SOCKS5, "127.0.0.1", 9050)
         socket.socket = socks.socksocket
-import requests  # GET and POST requests
 
 
 class SendSpace(object):
@@ -69,9 +66,8 @@ class SendSpace(object):
         # get request to get info for anonymous upload
         if self.proxy:
             r = requests.get(self.sendspace_url,
-                              params=connect_params,
-                              proxies=self.proxy)
-            #r = requests.get(self.sendspace_url, params=connect_params)
+                             params=connect_params,
+                             proxies=self.proxy)
         else:
             r = requests.get(self.sendspace_url, params=connect_params)
         if r.status_code == requests.codes.ok:
@@ -119,8 +115,9 @@ class SendSpace(object):
         # POST request with the parameters for upload to SendSpace
         if self.proxy:
             r = requests.post(upl_url, data=post_params,
-                             files=files, proxies=self.proxy)
-            #r = requests.post(upl_url, data=post_params, files=files)
+                              files=files,
+                              proxies=self.proxy)
+            # r = requests.post(upl_url, data=post_params, files=files)
             # TODO:// FIX MaxRetryError, ConnectionError
             # (Caused by ProxyError('Cannot connect to proxy.',
             # BrokenPipeError(32, 'Broken pipe')))
@@ -161,7 +158,7 @@ class SendSpace(object):
             #r = requests.get(url)
         else:
             r = requests.get(url)
-            print(r.status_code, r.text)
+            # print(r.status_code, r.text)
         # the download image retrieved from the uploadImage method does not
         # return a direct download URL. This parses the request to download
         # for the direct download URL.

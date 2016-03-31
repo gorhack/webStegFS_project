@@ -11,19 +11,20 @@ Index
 - :ref:`modindex`
 - :ref:`search`
 
-.. include:: ../README.rst
-
-
 Source Documentation
 ====================
 
 .. toctree::
    :maxdepth: 1
 
-   main
+   console
    File_System
    Image_Manipulation
    Web_Connection
    Encryption
+
+
+.. include:: ../README.rst
+
 
 .. [1] Optional parameter

@@ -19,7 +19,6 @@ from stat import S_IFDIR, S_IFLNK, S_IFREG
 from sys import argv, exit
 import time, datetime
 from .fs import path
-
 from .fuse import FUSE, FuseOSError, Operations, LoggingMixIn
 
 if not hasattr(__builtins__, 'bytes'):

@@ -9,7 +9,7 @@ lsbsteg module
 ---------------------
 
 
-.. automodule:: Image_Manipulation.lsbsteg
+.. automodule:: covertFS.Image_Manipulation.lsbsteg
     :members:
     :undoc-members:
     :show-inheritance:
@@ -19,7 +19,7 @@ genImage module
 ---------------
 
 
-.. automodule:: Image_Manipulation.genImage
+.. automodule:: covertFS.Image_Manipulation.genImage
     :members:
     :undoc-members:
     :show-inheritance:
