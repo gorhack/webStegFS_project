@@ -164,7 +164,7 @@ class SendSpace(object):
         download url returned by SendSpace.
         This method take the download url returned by uploadImage as a
         parameter.
-        This method returns the direct download url.
+        This method returns image as a BytesIO object.
         """
         # check if using full url or partial
         url = "https://www.sendspace.com/file/{}".format(file_id) if len(file_id) == 6 else file_id
