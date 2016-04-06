@@ -11,8 +11,10 @@ from PIL import Image
 from .API_Keys import config
 import platform, subprocess
 import requests  # GET and POST requests
+from io import BytesIO
 if platform.system() == 'Linux':
-    torEnabled = subprocess.check_output(['ps', 'aux']).decode().find('/usr/bin/tor')
+    torEnabled = subprocess.check_output(['ps',
+                                         'aux']).decode().find('/usr/bin/tor')
     if torEnabled > -1:
         import socks
         import socket
@@ -35,6 +37,32 @@ class SendSpace(object):
         self.api_key = config.sendSpaceKey
         self.proxy = proxy
         self.url_size = 6  # length of download URL returned by sendspace
+
+    def getRequest(self, _url, _params):
+        if self.proxy:
+            r = requests.get(_url,
+                             params=_params,
+                             proxies=self.proxy)
+        else:
+            r = requests.get(_url,
+                             params=_params)
+
+        if r.status_code == requests.codes.ok:
+            return r
+        else:
+            print("Invalid response code " + str(r.status_code) +
+                  "\n" + r.text)
+
+    def postRequest(self, _url, _data, _files):
+        if self.proxy:
+            return requests.post(_url,
+                                 data=_data,
+                                 files=_files,
+                                 proxies=self.proxy)
+        else:
+            return requests.post(_url,
+                                 data=_data,
+                                 files=_files)
 
     def upload(self, img):
         """
@@ -64,12 +92,8 @@ class SendSpace(object):
             'api_version': 1.1}
 
         # get request to get info for anonymous upload
-        if self.proxy:
-            r = requests.get(self.sendspace_url,
-                             params=connect_params,
-                             proxies=self.proxy)
-        else:
-            r = requests.get(self.sendspace_url, params=connect_params)
+        r = self.getRequest(self.sendspace_url, connect_params)
+
         if r.status_code == requests.codes.ok:
             # parse the response from the connection to sendspace
             parsed_con_r = self.parseXML(r.text)
@@ -86,7 +110,6 @@ class SendSpace(object):
         else:
             print("Invalid response code " + str(r.status_code) +
                   "\n" + r.text)
-        r.close()
         return (upl_url, upl_max_size, upl_id, upl_extra_info)
 
     # Parse response as xml
@@ -111,35 +134,27 @@ class SendSpace(object):
                         'extra_info': upl_extra_info
                         }
         # convert the BytesIO img object to a viable file parameter
+        # filename for unnamed image is userfile
         files = {'userfile': img.getvalue()}
         # POST request with the parameters for upload to SendSpace
-        if self.proxy:
-            r = requests.post(upl_url, data=post_params,
-                              files=files,
-                              proxies=self.proxy)
-            # r = requests.post(upl_url, data=post_params, files=files)
-            # TODO:// FIX MaxRetryError, ConnectionError
-            # (Caused by ProxyError('Cannot connect to proxy.',
-            # BrokenPipeError(32, 'Broken pipe')))
-            # A Byte Steam is not closed properly.
+        r = self.postRequest(upl_url, post_params, files)
 
-        else:
-            r = requests.post(upl_url, data=post_params, files=files)
+        # TODO:// FIX MaxRetryError, ConnectionError
+        # (Caused by ProxyError('Cannot connect to proxy.',
+        # BrokenPipeError(32, 'Broken pipe')))
+        # A Byte Steam is not closed properly.
+        # r = requests.post(upl_url, data=post_params, files=files)
 
-        if r.status_code == requests.codes.ok:
-            # parse the response from the upload post request
-            parsed_upl_r = self.parseXML(r.text)
-            # try to parse the response
-            try:
-                download_url = parsed_upl_r.download_url.string[-6:]
-                delete_url = parsed_upl_r.delete_url.string
-            except ValueError as e:
-                print("Error parsing URLs from response.\n" + e.value + "\n" +
-                      r.text)
-        else:
-            print("Invalid response code " + r.status_code + "\n" + r.text)
-        img.close()  # close the BytesIO Image object
-        r.close()  # close initial POST request
+        # parse the response from the upload post request
+        parsed_upl_r = self.parseXML(r.text)
+        # try to parse the response
+        try:
+            download_url = parsed_upl_r.download_url.string[-6:]
+            delete_url = parsed_upl_r.delete_url.string
+        except (ValueError, AttributeError) as e:
+            print("Error parsing URLs from response.\n" + e.value + "\n" +
+                  r.text)
+
         return download_url
 
     # Retrieve the direct download URL from the download URL
@@ -153,23 +168,29 @@ class SendSpace(object):
         """
         # check if using full url or partial
         url = "https://www.sendspace.com/file/{}".format(file_id) if len(file_id) == 6 else file_id
-        if self.proxy:  # GET request for image
-            r = requests.get(url, proxies=self.proxy)
-            #r = requests.get(url)
-        else:
-            r = requests.get(url)
-            # print(r.status_code, r.text)
+
+        r = self.getRequest(url, {})  # GET request for image
+
         # the download image retrieved from the uploadImage method does not
         # return a direct download URL. This parses the request to download
         # for the direct download URL.
         dd_url = BeautifulSoup(r.text, "lxml").find("a", {"id": "download_button"})['href']
-        r.close()  # close the GET request.
-        return dd_url
+
+        # download the actual image from the dd_url
+        return BytesIO(self.getRequest(dd_url, {}).content)
 
 if __name__ == '__main__':  # running file directly
     """
-    for testing purposes only!
+    This should get an image from genImage, upload the image, and download the
+    image.
     """
-    from API_Keys import config  # import configuration file
-    s = SendSpace(config.sendSpaceKey)
-    print(s.downloadImage("https://www.sendspace.com/file/thuzbn"))
+    from covertFS.Web_Connection import proxy_list
+    s = SendSpace(proxy_list.proxies)
+    from covertFS.Image_Manipulation import genImage
+    print("Testing Sendspace...generating img for upload")
+    img = genImage.genCatImage()
+    url = s.upload(img)
+    print("Upload success: {}".format(url))
+    img_down = s.downloadImage(url)
+    print("Download success, opening image")
+    Image.open(img_down).show()

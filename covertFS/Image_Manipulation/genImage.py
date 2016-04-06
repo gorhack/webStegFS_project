@@ -26,3 +26,12 @@ def genCatImage():
     else:  # request failed to retrieve the image
         r.close()  # close the get request
         return genCatImage()  # try to return another image
+
+if __name__ == '__main__':
+    """
+    Opens a random image
+    """
+    from PIL import Image
+    print("Opening image")
+    Image.open(genCatImage()).show()
+    print("Success")
