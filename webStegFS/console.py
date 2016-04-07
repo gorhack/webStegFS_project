@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 """
-`covertFS` is a command line based program created using the `cmd` module.
+`WebStegFS` is a command line based program created using the `cmd` module.
 The `console.py` file contains all commands available and additional helper
 functions.
 """
@@ -23,7 +23,7 @@ if system() == 'Linux':
         socket.socket = socks.socksocket
 
 
-__version__ = "0.9.4b"
+__version__ = "0.9.5b"
 __author__ = "Flores, Gorak, Hart, Sjoholm"
 
 
@@ -45,7 +45,7 @@ class Console(cmd.Cmd, object):
         self.encryption = encrypt_class
 
         ###Information for the command prompt###
-        self.preprompt = "covertFS: "
+        self.preprompt = "webStegFS: "
         self.folder = "/"
         self.prompt = self.preprompt + self.folder + "$ "
         self.intro = "Welcome to a Covert File System (v{}).".format(self.version)
@@ -275,8 +275,7 @@ class Console(cmd.Cmd, object):
         Create a covert file system, return the URL of the old fs.\n
         Use: newfs
         """
-        print("STATUS: New file system created. Old file system located" +
-              " at {}".format(end=''))
+        print("STATUS: New file system created. Old ", end='')
         old_url = self.do_uploadfs(None)
         self.fs = covertfs.CovertFS()
         self.folder = self.fs.current_dir

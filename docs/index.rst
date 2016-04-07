@@ -1,8 +1,8 @@
-.. CovertFS documentation master file, created by
+.. webStegFS documentation master file, created by
    sphinx-quickstart on Mon Nov 30 13:50:22 2015.
 
-Welcome to CovertFS!
-********************
+Welcome to WebStegFS!
+*********************
 
 Index
 =====

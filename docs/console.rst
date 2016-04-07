@@ -2,7 +2,7 @@ Command line main module
 ========================
 
 
-.. automodule:: covertFS.console
+.. automodule:: webStegFS.console
     :members:
     :undoc-members:
     :show-inheritance:

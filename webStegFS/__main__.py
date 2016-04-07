@@ -1,5 +1,5 @@
 import argparse
-from covertFS import console
+from webStegFS import console
 
 default_proxies = {'https': 'https://165.139.149.169:3128',
                    'http': 'http://165.139.149.169:3128'}
@@ -47,7 +47,7 @@ def proxy_parser(proxyString=None):
 
 def main():
     parser = argparse.ArgumentParser(description="Calls the main function of" +
-                                     " CovertFS")
+                                     " WebStegFS")
     parser.add_argument('url', type=str, default='', nargs='?',
                         help='Specify the url to load a filesystem from')
     parser.add_argument('-c', dest='cmdloop', default=False,

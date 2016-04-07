@@ -8,7 +8,7 @@ api_cons module
 ---------------
 
 
-.. automodule:: covertFS.Web_Connection.api_cons
+.. automodule:: webStegFS.Web_Connection.api_cons
     :members:
     :undoc-members:
     :show-inheritance:
@@ -18,7 +18,7 @@ proxy_list module
 -----------------
 
 
-.. automodule:: covertFS.Web_Connection.proxy_list
+.. automodule:: webStegFS.Web_Connection.proxy_list
     :members:
     :undoc-members:
     :show-inheritance:
