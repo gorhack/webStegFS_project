@@ -190,20 +190,7 @@ class Steg(object):
         This method takes a url as a string.
         This method returns the decoded message as a bytearray.
         """
-        url = self.cons.downloadImage(file_id)
-        if self.proxy:  # if the application is using proxies
-            # open a url using the proxies
-            r = requests.get(url, proxies=self.proxy)
-        else:  # if the application is not using proxies
-            r = requests.get(url)  # open the url without proxies
-
-        # if the url was successfully opened
-        if r.status_code == requests.codes.ok:
-            # decode the image found in the url
-            return self.decode(BytesIO(r.content))
-        else:  # if the url was not successfully opened
-            # raise an exception that shows the faulty url
-            raise FileNotFoundError("Could not retrieve image at {}.".format(url))
+        return self.decode(self.cons.downloadImage(file_id))
 
     def decode(self, img):
         """
