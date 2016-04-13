@@ -1,0 +1,54 @@
+\begin{thebibliography}{10}
+
+\bibitem{Baliga2007}
+Arati Baliga, Joe Kilian, and Liviu Iftode.
+\newblock {A web based covert file system}.
+\newblock {\em HotOS}, 2007.
+
+\bibitem{CatAPIDoc}
+Aden Forshaw.
+\newblock {The Cat API Documentation'}.
+
+\bibitem{Grover2004}
+Derrick Grover.
+\newblock {Dual encryption and plausible deniability}.
+\newblock {\em Computer Law and Security Report}, 20(1):37--40, 2004.
+
+\bibitem{Guitton2013}
+Clement Guitton.
+\newblock {A review of the available content on Tor hidden services: The case
+  against further development}.
+\newblock {\em Computers in Human Behavior}, 29(6):2805--2815, 2013.
+
+\bibitem{Laden}
+Bin Laden.
+\newblock {e-Book Statistical Steganalysis}.
+\newblock pages 1--70.
+
+\bibitem{Nosrati2011}
+Masoud Nosrati, R~Karimi, and M~Hariri.
+\newblock {An introduction to steganography methods}.
+\newblock {\em World Applied Programming}, 1(3):191--195, 2011.
+
+\bibitem{OxfordDictionary}
+Oxford~Dictionary (online).
+\newblock {Plausiable Deniability Definition}.
+
+\bibitem{PierreRicher2003}
+{Pierre Richer}.
+\newblock {InfoSec Reading Room Steganalysis : Detecting hidden information
+  with tu , A ll r igh ts}.
+\newblock {\em InfoSec Reading Room}, 2003.
+
+\bibitem{Tan2003}
+Kian-lee Tan.
+\newblock {StegFS : A Steganographic File System Laboratories for Information
+  Technology Department of Computer Science}.
+\newblock i:657--667, 2003.
+
+\bibitem{VanDam2015}
+Jan~Willem {Van Dam} and Michel {Van De Velden}.
+\newblock {Online profiling and clustering of Facebook users}.
+\newblock {\em Decision Support Systems}, 70:60--72, 2015.
+
+\end{thebibliography}
