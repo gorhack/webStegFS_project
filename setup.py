@@ -5,23 +5,23 @@ with open('README.rst', 'r') as f:
     readme = f.read()
 
 setup(
-    name='covertFS',
+    name='webStegFS',
     version='0.9.4b',
     packages=[
-        'covertFS',
-        'covertFS.Encryption',
-        'covertFS.File_System',
-        'covertFS.File_System.fs',
-        'covertFS.Image_Manipulation',
-        'covertFS.Web_Connection',
-        'covertFS.Web_Connection.API_Keys',
+        'webStegFS',
+        'webStegFS.Encryption',
+        'webStegFS.File_System',
+        'webStegFS.File_System.fs',
+        'webStegFS.Image_Manipulation',
+        'webStegFS.Web_Connection',
+        'webStegFS.Web_Connection.API_Keys',
              ],
-    entry_points={'console_scripts': ['covertFS = covertFS.__main__:main']},
+    entry_points={'console_scripts': ['webStegFS = webStegFS.__main__:main']},
     description='It\'s covert and stuff',
     long_description=readme,
     author='Kyle Gorak, David Hart, Adam Sjoholm, and Ryne Flores',
     author_email='kyle.gorak@usma.edu',
-    url='https://github.com/gorhack/covertFS',
+    url='https://github.com/gorhack/webStegFS',
     license='USMA',
     classifiers=[
         'Development Status :: 4 - Beta',

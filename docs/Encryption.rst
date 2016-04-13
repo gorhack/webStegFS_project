@@ -9,7 +9,7 @@ xor module
 ----------
 
 
-.. automodule:: covertFS.Encryption.xor
+.. automodule:: webStegFS.Encryption.xor
     :members:
     :undoc-members:
     :show-inheritance:

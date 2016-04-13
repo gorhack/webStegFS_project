@@ -131,7 +131,7 @@ class CovertFS(memoryfs.MemoryFS):
                 ctime = self._time(file_object.created_time)
                 save_string += ' ' + f + ',' + downlink + ',' + str(ctime)
             save_string += '\n'
-        print(save_string)
+        # print(save_string)
         return save_string
 
 ###################################################################

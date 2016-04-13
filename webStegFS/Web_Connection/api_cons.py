@@ -184,9 +184,9 @@ if __name__ == '__main__':  # running file directly
     This should get an image from genImage, upload the image, and download the
     image.
     """
-    from covertFS.Web_Connection import proxy_list
+    from webStegFS.Web_Connection import proxy_list
     s = SendSpace(proxy_list.proxies)
-    from covertFS.Image_Manipulation import genImage
+    from webStegFS.Image_Manipulation import genImage
     print("Testing Sendspace...generating img for upload")
     img = genImage.genCatImage()
     url = s.upload(img)

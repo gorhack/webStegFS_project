@@ -1,4 +1,4 @@
 *.pyc
 .idea/
 build/
-covertFS.egg-info/
+webStegFS.egg-info/
