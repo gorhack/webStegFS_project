@@ -54,6 +54,9 @@ Usage
   - ``help [cmd]`` show list of commands or documentation for a specific command
   - ``exit`` exit the covert file system
 
+Sprints
+=======
+
 We created this project for a Capstone class for Computer Science at the United States Military Academy, West Point. This project was broken up into the seven sprints over the course of one year. Below you can find the progress we have made during each sprint.
 
 Sprint 1: Knowledge acquisition
