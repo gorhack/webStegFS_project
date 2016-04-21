@@ -14,18 +14,19 @@ def genCatImage():
     This function does not take any parameters.
     This function returns a BytesIO object.
     """
-    r = requests.get('http://thecatapi.com/api/images/get?format=src&type=png')
-    if r.status_code == requests.codes.ok:  # image returned OK
-        # DEBUG ONLY TO COMPARE ORIG IMG TO ENCODED IMG
-        # with open("image.png", 'wb') as f:
-        #     for chunk in r:
-        #         f.write(chunk)
-        img = BytesIO(r.content)  # create BytesIO object from the request
-        r.close()  # close the get request
-        return img  # return the BytesIO object
-    else:  # request failed to retrieve the image
-        r.close()  # close the get request
-        return genCatImage()  # try to return another image
+    with requests.Session() as s:
+        try:
+            r = s.get('http://thecatapi.com/api/images/get?format=src&type=png')
+            if r.status_code == requests.codes.ok:  # image returned OK
+                # DEBUG ONLY TO COMPARE ORIG IMG TO ENCODED IMG
+                # with open("image.png", 'wb') as f:
+                #     for chunk in r:
+                #         f.write(chunk)
+                return BytesIO(r.content)
+            else:  # request failed to retrieve the image
+                return genCatImage()  # try to return another image
+        except (requests.exceptions.ConnectionError) as e:
+            raise RuntimeError("Error connecting to The Cat API") from e
 
 if __name__ == '__main__':
     """

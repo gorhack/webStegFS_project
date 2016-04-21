@@ -65,7 +65,7 @@ class Console(cmd.Cmd, object):
                 print("DEBUG: SendSpace loaded as API")
 
         elif self.api == "somethingelse":  # template for some other api
-            print ("Invalid file store")
+            print("Invalid file store")
             return
         ###################################
 
@@ -224,7 +224,8 @@ class Console(cmd.Cmd, object):
         """Turns on the built-in proxy.\n
         Use: proxy"""
         print("STATUS: Proxy turned on.")
-        self.proxy = default_proxies
+        self.proxy = {'https': 'https://165.139.149.169:3128',
+                      'http': 'http://165.139.149.169:3128'}
         self.init_factory()
     #################
 
@@ -304,7 +305,7 @@ class Console(cmd.Cmd, object):
         my_msg = bytearray(message.encode())
         if self.dbg:
             print("DEBUG: About to upload encoded message")
-        self.upload_file(my_msg)
+        print("URL: {}".format(self.upload_file(my_msg)))
 
     def do_decodemsg(self, in_url):
         """Decode the message in an image.\n
@@ -320,8 +321,12 @@ class Console(cmd.Cmd, object):
 
     def download_file(self, url):
         print("downloading...")
-        msg = self.stegFactory.decodeImageFromURL(url)
-        print("download success!")
+        try:
+            msg = self.stegFactory.decodeImageFromURL(url)
+            print("download success!")
+        except (RuntimeError) as e:
+            print("download failed: {}".format(e))
+            return ''
         if self.dbg:
             print("DEBUG: Contents downloaded")
         if self.encryptClass:
@@ -338,7 +343,11 @@ class Console(cmd.Cmd, object):
             contents = self.encryptClass.encrypt(self.encryptKey, contents)
             if self.dbg:
                 print("DEBUG: Contents encrypted. About to upload")
-        url = self.stegFactory.encode(contents)
+        try:
+            url = self.stegFactory.encode(contents)
+        except (RuntimeError) as e:
+            print("Error uploading file, skipping file: {}".format(e))
+            return ''
         if self.dbg:
             print("DEBUG: URL of uploaded file: ", url)
         return url

@@ -9,7 +9,8 @@ parameters.
 from bs4 import BeautifulSoup  # parse XML response
 from PIL import Image
 from .API_Keys import config
-import platform, subprocess
+import platform
+import subprocess
 import requests  # GET and POST requests
 from io import BytesIO
 if platform.system() == 'Linux':
@@ -37,32 +38,95 @@ class SendSpace(object):
         self.api_key = config.sendSpaceKey
         self.proxy = proxy
         self.url_size = 6  # length of download URL returned by sendspace
+        self.count = 0
 
     def getRequest(self, _url, _params):
-        if self.proxy:
-            r = requests.get(_url,
-                             params=_params,
-                             proxies=self.proxy)
-        else:
-            r = requests.get(_url,
-                             params=_params)
+        with requests.Session() as s:
+            if self.proxy:
+                try:  # #### GET REQUEST WITH PROXY
+                    r = s.get(_url,
+                              params=_params,
+                              proxies=self.proxy,
+                              timeout=5)
+                except(requests.exceptions.RequestException) as e:
+                    if self.count > 5:
+                        self.count = 0
+                        print("Too many connection failures, " +
+                              "proxy or sendspace may be down: {}".format(e))
+                        raise RuntimeError("Error connecting to " +
+                                           " sendspace from the " +
+                                           "proxy (GET)") from e
 
-        if r.status_code == requests.codes.ok:
-            return r
-        else:
-            print("Invalid response code " + str(r.status_code) +
-                  "\n" + r.text)
+                    else:
+                        print("Error connecting to sendspace" +
+                              " from the proxy, retrying...")
+                        self.count += 1
+                        return self.getRequest(_url, _params)
+            else:
+                try:  # #### GET REQUEST NO PROXY
+                    r = s.get(_url,
+                              params=_params,
+                              timeout=5)
+                except(requests.exceptions.RequestException) as e:
+                    if self.count > 5:
+                        self.count = 0
+                        print("Too many connection failures, " +
+                              "sendspace may be down: {}".format(e))
+                        raise RuntimeError("Error connecting to " +
+                                           "sendspace (GET)") from e
+
+                    else:
+                        print("Error connecting to sendspace, retrying...")
+                        self.count += 1
+                        return self.getRequest(_url, _params)
+            if r.status_code == requests.codes.ok:
+                return r
+            else:
+                print("Invalid response code " + str(r.status_code) +
+                      "\n" + r.text)
 
     def postRequest(self, _url, _data, _files):
-        if self.proxy:
-            return requests.post(_url,
-                                 data=_data,
-                                 files=_files,
-                                 proxies=self.proxy)
-        else:
-            return requests.post(_url,
-                                 data=_data,
-                                 files=_files)
+        with requests.Session() as s:
+            if self.proxy:
+                try:  # #### POST REQUEST WITH PROXY
+                    return s.post(_url,
+                                  data=_data,
+                                  files=_files,
+                                  proxies=self.proxy,
+                                  timeout=5)
+                except(requests.exceptions.RequestException) as e:
+                    if self.count > 5:
+                        self.count = 0
+                        print("Too many connection failures, " +
+                              "proxy or sendspace may be down: {}".format(e))
+                        raise RuntimeError("Error posting to " +
+                                           "sendspace from the " +
+                                           "proxy (POST)") from e
+
+                    else:
+                        print("Error posting image to sendspace from the " +
+                              "proxy, retrying...")
+                        self.count += 1
+                        return self.postRequest(_url, _data, _files)
+
+            else:  # #### POST REQUEST NO PROXY
+                try:
+                    return s.post(_url,
+                                  data=_data,
+                                  files=_files,
+                                  timeout=5)
+                except(requests.exceptions.RequestException) as e:
+                    if self.count > 5:
+                        self.count = 0
+                        print("Too many connection failures, " +
+                              "sendspace may be down: {}".format(e))
+                        raise RuntimeError("Error posting to " +
+                                           "sendspace") from e
+
+                    else:
+                        print("Error posting image to sendspace, retrying...")
+                        self.count += 1
+                        return self.postRequest(_url, _data, _files)
 
     def upload(self, img):
         """
@@ -92,7 +156,11 @@ class SendSpace(object):
             'api_version': 1.1}
 
         # get request to get info for anonymous upload
-        r = self.getRequest(self.sendspace_url, connect_params)
+        try:
+            r = self.getRequest(self.sendspace_url, connect_params)
+        except (RuntimeError) as e:
+            raise RuntimeError("Error getting info for anonymous " +
+                               "upload.") from e
 
         if r.status_code == requests.codes.ok:
             # parse the response from the connection to sendspace
@@ -137,7 +205,10 @@ class SendSpace(object):
         # filename for unnamed image is userfile
         files = {'userfile': img.getvalue()}
         # POST request with the parameters for upload to SendSpace
-        r = self.postRequest(upl_url, post_params, files)
+        try:
+            r = self.postRequest(upl_url, post_params, files)
+        except (RuntimeError) as e:
+            raise RuntimeError("Error uploading image to sendspace.") from e
 
         # TODO:// FIX MaxRetryError, ConnectionError
         # (Caused by ProxyError('Cannot connect to proxy.',
@@ -152,8 +223,8 @@ class SendSpace(object):
             download_url = parsed_upl_r.download_url.string[-6:]
             delete_url = parsed_upl_r.delete_url.string
         except (ValueError, AttributeError) as e:
-            print("Error parsing URLs from response.\n" + e.value + "\n" +
-                  r.text)
+            print("Error parsing URLs from response. Retrying...")
+            return self.upload(img)
 
         return download_url
 
@@ -169,7 +240,11 @@ class SendSpace(object):
         # check if using full url or partial
         url = "https://www.sendspace.com/file/{}".format(file_id) if len(file_id) == 6 else file_id
 
-        r = self.getRequest(url, {})  # GET request for image
+        try:
+            r = self.getRequest(url, {})  # GET request for image
+        except (RuntimeError) as e:
+            raise RuntimeError("Error getting download URL for image from " +
+                               "sendspace.") from e
 
         # the download image retrieved from the uploadImage method does not
         # return a direct download URL. This parses the request to download
@@ -177,7 +252,11 @@ class SendSpace(object):
         dd_url = BeautifulSoup(r.text, "lxml").find("a", {"id": "download_button"})['href']
 
         # download the actual image from the dd_url
-        return BytesIO(self.getRequest(dd_url, {}).content)
+        try:
+            return BytesIO(self.getRequest(dd_url, {}).content)
+        except (RuntimeError) as e:
+            raise RuntimeError("Error downloading the image from " +
+                               "sendspace.") from e
 
 if __name__ == '__main__':  # running file directly
     """
@@ -188,9 +267,12 @@ if __name__ == '__main__':  # running file directly
     s = SendSpace(proxy_list.proxies)
     from webStegFS.Image_Manipulation import genImage
     print("Testing Sendspace...generating img for upload")
-    img = genImage.genCatImage()
+    try:
+        img = genImage.genCatImage()
+    except (RuntimeError) as e:
+        print("No cats available :( {}".format(e))
     url = s.upload(img)
     print("Upload success: {}".format(url))
     img_down = s.downloadImage(url)
     print("Download success, opening image")
-    Image.open(img_down).show()
+    # Image.open(img_down).show()

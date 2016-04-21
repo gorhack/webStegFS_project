@@ -74,7 +74,10 @@ class Steg(object):
             This function does not take any parameters.
             This function returns an image as a BytesIO object.
             """
-            return Image.open(genImage.genCatImage())
+            try:
+                return Image.open(genImage.genCatImage())
+            except (RuntimeError) as e:
+                raise RuntimeError("Error preparing image for encoding") from e
 
         def prepareMessage(msg, size_available):
             """
@@ -178,7 +181,10 @@ class Steg(object):
         image.close()
 
         # upload the image
-        downlink = self.cons.upload(output_image)
+        try:
+            downlink = self.cons.upload(output_image)
+        except (RuntimeError) as e:
+            raise RuntimeError("Error uploading an encoded image.") from e
 
         return downlink
 
@@ -190,7 +196,10 @@ class Steg(object):
         This method takes a url as a string.
         This method returns the decoded message as a bytearray.
         """
-        return self.decode(self.cons.downloadImage(file_id))
+        try:
+            return self.decode(self.cons.downloadImage(file_id))
+        except (RuntimeError) as e:
+            raise RuntimeError("Error decoding image from URL.") from e
 
     def decode(self, img):
         """

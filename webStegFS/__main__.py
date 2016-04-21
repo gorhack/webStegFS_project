@@ -1,4 +1,5 @@
 import argparse
+import sys
 from webStegFS import console
 
 default_proxies = {'https': 'https://165.139.149.169:3128',
@@ -104,4 +105,8 @@ def main():
             cons.do_mount(None)
 
 if __name__ == '__main__':
-    main()
+    try:
+        main()
+    except (KeyboardInterrupt):
+        print("Goodbye!")
+        sys.exit(0)
