@@ -6,7 +6,7 @@ with open('README.rst', 'r') as f:
 
 setup(
     name='webStegFS',
-    version='0.9.4b',
+    version='0.9.5b',
     packages=[
         'webStegFS',
         'webStegFS.Encryption',
