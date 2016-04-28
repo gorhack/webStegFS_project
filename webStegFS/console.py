@@ -355,7 +355,11 @@ class Console(cmd.Cmd, object):
     def add_file_to_fs(self, fspath, contents):
         """Helper function to add a file to the fs."""
         print("STATUS: Uploading ", fspath)
-        contents_bytes = bytearray(contents.encode())
+
+        try:
+            contents_bytes = bytearray(contents.encode())
+        except AttributeError:
+            contents_bytes = bytearray(contents)
         downlink = self.upload_file(contents_bytes.copy())
         if self.dbg:
             print("DEBUG: Adding file to file system")
@@ -400,15 +404,13 @@ class Console(cmd.Cmd, object):
             covert_path = a[1]
         covert_path, node = self.fs.sanitize_path(covert_path)
         try:
-            fileCont = subprocess.check_output(
-                ["cat " + local_path],
-                shell=True
-            )
-        except:
-            print("{} is not in current OS directory".format(local_path))
+            with open(local_path, 'rb') as f:
+                fileCont = f.read()
+        except OSError as e:
+            print("{} cannot be uploaded. {}".format(local_path, e))
             return
         upload = Thread(target=self.add_file_to_fs,
-                        args=[covert_path, fileCont.decode()])
+                        args=[covert_path, fileCont])
         upload.start()
 
     def do_download(self, args):

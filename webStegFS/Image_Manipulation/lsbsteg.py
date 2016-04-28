@@ -103,7 +103,10 @@ class Steg(object):
         # prepare the message
         rest, msg = prepareMessage(msg, width * height)
         # encode the message
-        url = self.encodeSteg(msg, image)
+        try:
+            url = self.encodeSteg(msg, image)
+        except RuntimeError:
+            url = self.encode(message)
 
         # encode rest of message if necessary
         if len(rest) > 0:
@@ -143,8 +146,9 @@ class Steg(object):
                 red = pixel[0]
                 green = pixel[1]
                 blue = pixel[2]
-            except TypeError as e:
+            except (TypeError, IndexError) as e:
                 print("Error {}: {}".format(e, pixel))
+                raise RuntimeError("Error parsing picture RGB.") from e
 
             '''
             encodes a byte into a pixel's colors
