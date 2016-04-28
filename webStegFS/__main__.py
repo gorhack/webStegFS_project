@@ -19,7 +19,6 @@ def proxy_test(proxyL):
         # Add something in here later to actually test proxy with given file
         # store. Use google for now.
         r = requests.get('http://www.sendspace.com', proxies=proxyL, timeout=5)
-        print(r)
         assert(r.status_code == 200)
     except:
         print("Given (or default) proxy is down, or took too long to respond")
@@ -74,7 +73,6 @@ def main():
                         '  class for encoding in images')
 
     args = parser.parse_args()
-    print(args)
 
     run = True
     if args.proxy == 'noproxy':
