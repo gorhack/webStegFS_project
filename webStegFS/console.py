@@ -94,7 +94,7 @@ class Console(cmd.Cmd, object):
         self.encryptClass = None
         self.encryptKey = None
         if self.encryption == 'xor':
-            from Encryption import xor
+            from .Encryption import xor
             self.encryptClass = xor.XOR()
             while self.encryptKey == None:
                 inputxorKey()
@@ -165,6 +165,7 @@ class Console(cmd.Cmd, object):
                 if entry.downlink is None and f.rsplit('.')[-1] != 'swp':
                     print("STATUS: Uploading ", f)
                     entry.downlink = self.upload_file(bytearray(self.fs.getcontents(f)))
+                    print("STATUS: ",f, " upload complete")
 
     def open_window(self):
         time.sleep(1)
