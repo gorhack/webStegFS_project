@@ -1,7 +1,14 @@
 About the Project
 =================
 
-This Covert File System, called WebStegFS, is a web-based application that allows users to covertly share files through social media sites while maintaining plausible deniability for both the user(s) and the social media site.
+This project was completed in fulfillment of the requirements for XE 402 at the United States Military Academy for AY2016. This Covert File System, called WebStegFS, is a web-based application that allows users to covertly share files through social media sites while maintaining plausible deniability for both the user(s) and the social media site. 
+
+The purpose of this project is to provide the framework for users to fully customize a web based covert file system. The steganography technique, encryption, and online service are modular and allow developers to drop in their own custom modules so that webStegFS suits their specific needs. 
+
+License
+=======
+
+This project is released under the MIT License. 
 
 Setup
 =====
